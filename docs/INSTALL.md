@@ -30,7 +30,7 @@ cover the missing `config` blocks currently present in the standard preset.
 Use a separate profile; never install into `desktop` for this test.
 
 ```bash
-dsh --profile engineering-workflow-test \
+dsh --profile engineering-workflow \
   --from-default-profile web \
   --dump-config
 ```
@@ -41,7 +41,7 @@ It does not touch the Desktop profile or active sessions.
 ## Install into the isolated profile
 
 ```bash
-dsh plugin --profile engineering-workflow-test \
+dsh plugin --profile engineering-workflow \
   add "$HOME/Downloads/dsh-engineering-workflow"
 ```
 
@@ -68,7 +68,7 @@ The v0.2 recovery row ships with `enabled: false`. For the isolated acceptance
 test only, start the test profile with:
 
 ```bash
-DSH_ENGINEERING_RECOVERY_TEST=1 dsh --profile engineering-workflow-test --no-open --port 0
+DSH_ENGINEERING_RECOVERY_TEST=1 dsh --profile engineering-workflow --no-open --port 0
 ```
 
 Do not use this environment override in the Desktop profile.
@@ -76,7 +76,7 @@ Do not use this environment override in the Desktop profile.
 ## Verify
 
 ```bash
-dsh --profile engineering-workflow-test --dump-config
+dsh --profile engineering-workflow --dump-config
 ```
 
 Then start a fresh test session in the isolated profile and verify:
