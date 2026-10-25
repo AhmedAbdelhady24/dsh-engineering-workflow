@@ -1,9 +1,25 @@
-flowchart LR
-    A["Install the bundle"] --> B["Start a new session\nwith Engineering Workflow"]
-    B --> C["Use normal DSH tools\nfor the task"]
-    C --> D{"Context near\n50% pressure?"}
-    D -- "No" --> C
-    D -- "Yes" --> E["Native DSH compaction"]
-    E --> F["If recovery is enabled:\none reminder at the next safe step"]
-    F --> C
-    C --> G["Run checks and finish"]
+flowchart TD
+    subgraph Hosts["Supported Agent Hosts"]
+        H1["Google Antigravity<br/>(IDE / CLI)"]
+        H2["DeepSeek Harness<br/>(DSH)"]
+        H3["OpenAI Codex<br/>(CLI / IDE)"]
+        H4["Claude Code<br/>(CLI)"]
+    end
+
+    Router["/engineering-workflow<br/>(Canonical Skill Router)"]
+    H1 --> Router
+    H2 --> Router
+    H3 --> Router
+    H4 --> Router
+
+    subgraph Operations["Core Workflow Operations"]
+        Setup["1. setup<br/>• Codebase discovery<br/>• Skill & MCP audit<br/>• Standards proposal<br/>• 🛑 Approval Gate"]
+        Execute["2. execute<br/>• Triage & task breakdown<br/>• Dynamic skill routing<br/>• Minimal changes & TDD<br/>• Review loop (≤ 3 cycles)"]
+        Review["3. review<br/>• Read-only security & audit<br/>• Multi-axis severity matrix<br/>• File:line references<br/>• Zero modifications"]
+    end
+
+    Router --> Setup
+    Setup -->|Approved| Execute
+    Execute --> Review
+    Review -->|Pass| Done["Verified Delivery"]
+    Review -->|Issues (≤ 3)| Execute
