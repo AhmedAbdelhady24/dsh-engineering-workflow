@@ -1,0 +1,27 @@
+{
+  "name": "engineering-workflow",
+  "version": "1.1.0",
+  "description": "Compaction-proof software engineering orchestrator for Claude Code, Codex, Antigravity, and DSH. Featuring the Skill Execution Contract, TDD vertical slices, two-axis review, and live UX audit.",
+  "author": {
+    "name": "Ahmed Abdelhady",
+    "url": "https://github.com/AhmedAbdelhady24"
+  },
+  "homepage": "https://github.com/AhmedAbdelhady24/engineering-workflow",
+  "repository": "https://github.com/AhmedAbdelhady24/engineering-workflow",
+  "license": "MIT",
+  "keywords": [
+    "engineering",
+    "skills",
+    "orchestrator",
+    "workflow",
+    "tdd",
+    "code-review",
+    "ux-audit",
+    "antigravity",
+    "codex",
+    "claude-code"
+  ],
+  "skills": [
+    "./skills/engineering-workflow"
+  ]
+}

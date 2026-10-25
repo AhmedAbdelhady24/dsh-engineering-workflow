@@ -1,0 +1,25 @@
+{
+  "name": "AhmedAbdelhady24",
+  "owner": {
+    "name": "Ahmed Abdelhady",
+    "url": "https://github.com/AhmedAbdelhady24"
+  },
+  "description": "Universal Engineering Workflow — Compaction-proof software engineering orchestrator for Claude Code, Codex, Antigravity, and DSH.",
+  "plugins": [
+    {
+      "name": "engineering-workflow",
+      "source": "./",
+      "description": "Compaction-proof software engineering orchestrator with Skill Execution Contract, TDD vertical slices, two-axis code review, and live UX audit.",
+      "category": "engineering",
+      "keywords": [
+        "engineering",
+        "skills",
+        "orchestrator",
+        "workflow",
+        "tdd",
+        "code-review",
+        "ux-audit"
+      ]
+    }
+  ]
+}

@@ -98,3 +98,36 @@ test("Canonical skill/ and mirrored skills/ directories remain strictly synchron
     assert.equal(cContent, mContent, `Reference file '${ref}' in canonical and mirror must be identical`);
   }
 });
+
+test("Claude Plugin and Codex Marketplace manifests are valid and in sync", () => {
+  const pluginJsonPath = path.join(rootDir, ".claude-plugin", "plugin.json");
+  const marketplaceJsonPath = path.join(rootDir, ".claude-plugin", "marketplace.json");
+  const packageJsonPath = path.join(rootDir, "package.json");
+
+  assert(fs.existsSync(pluginJsonPath), ".claude-plugin/plugin.json must exist");
+  assert(fs.existsSync(marketplaceJsonPath), ".claude-plugin/marketplace.json must exist");
+
+  const pluginJson = JSON.parse(fs.readFileSync(pluginJsonPath, "utf-8"));
+  const marketplaceJson = JSON.parse(fs.readFileSync(marketplaceJsonPath, "utf-8"));
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+
+  assert.equal(pluginJson.name, "engineering-workflow", "plugin.json name must match package name");
+  assert.equal(pluginJson.version, packageJson.version, "plugin.json version must match package.json version");
+  assert(Array.isArray(pluginJson.skills) && pluginJson.skills.includes("./skills/engineering-workflow"), "plugin.json must list ./skills/engineering-workflow");
+
+  assert(Array.isArray(marketplaceJson.plugins), "marketplace.json must contain plugins array");
+  const pluginEntry = marketplaceJson.plugins.find((p) => p.name === "engineering-workflow");
+  assert(pluginEntry, "marketplace.json must register engineering-workflow plugin");
+});
+
+test("Architectural Decision Records (ADRs) are documented in .agents/adr", () => {
+  const adrDir = path.join(rootDir, ".agents", "adr");
+  assert(fs.existsSync(adrDir), ".agents/adr directory must exist");
+
+  const adrFiles = fs.readdirSync(adrDir);
+  assert(adrFiles.length >= 3, "Must have at least 3 documented ADRs");
+  assert(adrFiles.some((f) => f.includes("skill-execution-contract")), "Must document skill execution contract ADR");
+  assert(adrFiles.some((f) => f.includes("compaction-proof-ledger")), "Must document compaction proof ledger ADR");
+  assert(adrFiles.some((f) => f.includes("ux-audit")), "Must document UX audit framework ADR");
+});
+
