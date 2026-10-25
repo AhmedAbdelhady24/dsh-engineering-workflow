@@ -1,0 +1,9 @@
+flowchart LR
+    A["Install the bundle"] --> B["Start a new session\nwith Engineering Workflow"]
+    B --> C["Use normal DSH tools\nfor the task"]
+    C --> D{"Context near\n50% pressure?"}
+    D -- "No" --> C
+    D -- "Yes" --> E["Native DSH compaction"]
+    E --> F["If recovery is enabled:\none reminder at the next safe step"]
+    F --> C
+    C --> G["Run checks and finish"]
