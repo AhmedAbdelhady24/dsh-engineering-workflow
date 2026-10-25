@@ -1,51 +1,132 @@
 # Universal Engineering Workflow
 
-![Engineering Workflow overview](docs/visuals/engineering-workflow-overview.svg)
+A portable, production-quality Agent Skills package implementing a disciplined multi-stage software engineering workflow across Google Antigravity, DeepSeek Harness, OpenAI Codex, and Claude Code. Built strictly to the [Agent Skills open specification](https://agentskills.io/specification).
 
-A portable, production-quality Agent Skills package implementing a disciplined multi-stage software engineering workflow across:
-
-1. **Google Antigravity IDE / CLI**
-2. **DeepSeek Harness (DSH)**
-3. **OpenAI Codex CLI / IDE**
-4. **Claude Code**
-
-Built strictly to the **Agent Skills open specification** ([agentskills.io](https://agentskills.io/specification)), this package provides **one canonical implementation** that runs reliably across all four agent platforms without custom daemons, background runtimes, or vendor lock-in.
+![Universal Engineering Workflow](docs/visuals/universal-workflow-banner.png)
 
 > **Note on DSH Evolution**: Formerly the DSH Engineering Workflow Cordis plugin (`v0.1.0` – `v0.2.2`, now archived in [`baseline/`](baseline/)). It has evolved into a universal, runtime-agnostic Agent Skill conforming to open standards. See [`docs/MIGRATION_FROM_DSH.md`](docs/MIGRATION_FROM_DSH.md) for the complete migration audit.
 
 ---
 
-## Architecture & Core Operations
+## Why Engineering Workflow
 
-The workflow standardizes software engineering tasks into three distinct operations:
+Autonomous coding agents are powerful, but complex engineering tasks quickly encounter context chaos: redundant refactoring after context compaction, silent overwrites of uncommitted changes, unverified assumptions, and destructive Git commands.
 
-```text
-               ┌────────────────────────────────────────────────────────┐
-               │              engineering-workflow Router               │
-               └──────────────────────────┬─────────────────────────────┘
-                                          │
-                 ┌────────────────────────┼────────────────────────┐
-                 ▼                        ▼                        ▼
-      ┌────────────────────┐   ┌────────────────────┐   ┌────────────────────┐
-      │       setup        │   │      execute       │   │       review       │
-      ├────────────────────┤   ├────────────────────┤   ├────────────────────┤
-      │ • Repo inspection  │   │ • Task triage      │   │ • Read-only audit  │
-      │ • Capability audit │   │ • On-demand skills │   │ • Correctness/sec  │
-      │ • Standards prop.  │   │ • Minimal changes  │   │ • Severity matrix  │
-      │ • Initial plan     │   │ • TDD verification │   │ • File:line links  │
-      │ • 🛑 APPROVAL GATE │   │ • Review loop (≤3) │   │ • Zero code edits  │
-      └────────────────────┘   └────────────────────┘   └────────────────────┘
-```
-
-| Operation | Primary Command | Objective | Reference Guide |
-| :--- | :--- | :--- | :--- |
-| **`setup`** | `/engineering-workflow setup` | Codebase discovery, skill/MCP audit, standards proposal, initial plan, and **Approval Gate**. | [`references/setup.md`](skill/engineering-workflow/references/setup.md) |
-| **`execute`** | `/engineering-workflow execute` | Proportional planning, specialist skill routing, minimal tested changes, review loop, and final acceptance. | [`references/execute.md`](skill/engineering-workflow/references/execute.md) |
-| **`review`** | `/engineering-workflow review` | Objective, read-only multi-axis audit (correctness, security, performance, a11y) with structured findings. | [`references/review.md`](skill/engineering-workflow/references/review.md) |
+Universal Engineering Workflow brings the discipline of a Staff Software Engineer to coding agents. It enforces a strict single-writer rule, dynamic specialist skill routing, test-driven development (TDD), bounded review loops (maximum 3 cycles), and persistent context compaction recovery. Instead of maintaining four separate workflow plugins, it gives you **one canonical implementation** that runs reliably in your IDE and CLI without background daemons or custom execution runtimes.
 
 ---
 
-## Key Invariants
+## Workflow Operations & Capabilities
+
+Standardizing software engineering tasks into three core operations:
+
+| Operation | How it helps | Specialists & Integrations | Reference Guide |
+| :--- | :--- | :--- | :--- |
+| **[`setup`](./skill/engineering-workflow/references/setup.md)** | Inspects repository structure, audits installed skills & MCPs, proposes standards, drafts an initial plan, and halts at an **Approval Gate**. | `find-skills`, `domain-modeling`, `codebase-design` | [`references/setup.md`](./skill/engineering-workflow/references/setup.md) |
+| **[`execute`](./skill/engineering-workflow/references/execute.md)** | Triages task scope, routes specialist skills on demand, implements minimal changes with TDD, and drives a bounded review loop. | `test-driven-development`, `systematic-debugging`, Matt Pocock skills, UI/UX skills | [`references/execute.md`](./skill/engineering-workflow/references/execute.md) |
+| **[`review`](./skill/engineering-workflow/references/review.md)** | Conducts an objective, independent audit (correctness, security, performance, accessibility) with file:line references and zero code mutations. | `code-review`, `verification-before-completion`, `ui-audit` | [`references/review.md`](./skill/engineering-workflow/references/review.md) |
+| **[`recovery`](./skill/engineering-workflow/references/context-recovery.md)** | Maintains a persistent [`TASK_RECOVERY_LEDGER.md`](./templates/TASK_RECOVERY_LEDGER.md) so agents resume post-compaction without repeating completed edits. | Platform native compaction, Ledger reconciliation | [`references/context-recovery.md`](./skill/engineering-workflow/references/context-recovery.md) |
+
+---
+
+## Getting Started
+
+Install the workflow once into your project or globally across your development environment.
+
+### 1. Google Antigravity (IDE / CLI)
+
+```bash
+# Project-local installation (.agents/skills/engineering-workflow)
+bash scripts/install.sh --target antigravity-ide --scope project
+
+# User-global installation
+bash scripts/install.sh --target antigravity-ide --scope global  # ~/.gemini/config/skills/
+bash scripts/install.sh --target antigravity-cli --scope global  # ~/.gemini/antigravity-cli/skills/
+```
+
+**Invocation**: In Antigravity chat, trigger with `/engineering-workflow <setup | execute | review>` or natural intent (e.g., `"Use engineering-workflow to execute this task"`).
+
+### 2. DeepSeek Harness (DSH)
+
+```bash
+# Project-local installation (.agents/skills/engineering-workflow)
+bash scripts/install.sh --target dsh --scope project
+
+# User-global installation
+bash scripts/install.sh --target dsh --scope global  # ~/.dsh/skills/
+```
+
+**Invocation**: Run `/engineering-workflow <setup | execute | review>` or prompt DSH with `tool-skill: engineering-workflow`.
+
+### 3. OpenAI Codex (CLI / IDE)
+
+```bash
+# Project-local installation (.agents/skills/engineering-workflow)
+bash scripts/install.sh --target codex --scope project
+
+# User-global installation
+bash scripts/install.sh --target codex --scope global  # ~/.agents/skills/
+```
+
+**Invocation**: Mention `$engineering-workflow <setup | execute | review>` or invoke in session prompt.
+
+### 4. Claude Code (CLI)
+
+```bash
+# Project-local installation (.agents/skills/engineering-workflow)
+bash scripts/install.sh --target claude --scope project
+
+# User-global installation
+bash scripts/install.sh --target claude --scope global  # ~/.claude/skills/
+```
+
+**Invocation**: Run `/engineering-workflow <setup | execute | review>`.
+
+### 5. Open Skills CLI (`skills.sh`)
+
+If using the open Skills CLI (`npx skills`):
+
+```bash
+npx skills add ./skill/engineering-workflow
+```
+
+---
+
+## How It Works
+
+Every component in the workflow is strictly file-based — pure markdown, standard YAML frontmatter, and JSON. No custom background daemons, no event buses, and no vendor lock-in.
+
+```text
+engineering-workflow/
+├── SKILL.md                     # Canonical Agent Skill manifest & operation router
+└── references/                  # Specialized execution contracts
+    ├── setup.md                 # Discovery & approval gate
+    ├── execute.md               # TDD, single-writer & review loop
+    ├── review.md                # Read-only audit & severity taxonomy
+    ├── skill-routing.md         # Dynamic specialist activation
+    ├── mcps.md                  # Context7 & Chrome DevTools policies
+    ├── context-recovery.md      # Compaction recovery protocol
+    └── agent-compatibility.md   # Multi-agent roles & host invocations
+```
+
+- **Operations (`setup`, `execute`, `review`)** encode the engineering contract. Each operation has clear boundaries, deliverables, and stop criteria.
+- **Specialists** are activated strictly on demand. For backend projects, UI capabilities are classified as NOT APPLICABLE; for frontend projects, UI and Chrome DevTools skills are activated dynamically.
+- **Connectors (MCPs)** wire your agents to external capabilities (Context7 for library docs, Chrome DevTools for DOM/browser verification) under strict approval-first rules.
+
+---
+
+## Making It Yours
+
+The workflow ships with sensible, production-tested defaults, but is designed to be tailored to your team's stack:
+
+- **Customize Engineering Standards** — Edit [`templates/docs/ENGINEERING_STANDARDS.md`](./templates/docs/ENGINEERING_STANDARDS.md) and [`templates/docs/UI_STANDARDS.md`](./templates/docs/UI_STANDARDS.md) to codify your team's linting, formatting, testing, and architectural conventions.
+- **Configure MCP Connectors** — Follow [`references/mcps.md`](./skill/engineering-workflow/references/mcps.md) to wire Context7 or Chrome DevTools into your specific agent config.
+- **Plug in Specialist Skills** — Add specialized skills (e.g., security audits, custom ORMs, brand styling) to `.agents/skills` and reference them in [`references/skill-routing.md`](./skill/engineering-workflow/references/skill-routing.md).
+- **Configure Multi-Agent Roles** — In multi-agent environments, assign Planner, Executor, and Independent Reviewer to isolated subagents with read-only constraints for reviewers.
+
+---
+
+## Key Invariants & Safety
 
 1. **Strict Git Safety**:
    - Inspects `git status` before touching files; protects concurrent work from other sessions.
@@ -59,178 +140,24 @@ The workflow standardizes software engineering tasks into three distinct operati
 
 ---
 
-## Installation & Deployment
+## Rollback & Uninstallation
 
-### 1. Project-Local Installation (Recommended)
-Installs the canonical skill into the current repository:
-
-```bash
-# Install for all detected agents (writes to .agents/skills)
-bash scripts/install.sh --scope project
-
-# Or target a specific host environment:
-bash scripts/install.sh --target antigravity-ide --scope project
-bash scripts/install.sh --target antigravity-cli --scope project
-bash scripts/install.sh --target dsh             --scope project
-bash scripts/install.sh --target codex           --scope project
-bash scripts/install.sh --target claude          --scope project
-```
-
-### 2. User-Global Installation
-Installs the skill globally for your user account into official agent directories:
-
-```bash
-# Install across all supported global environments:
-bash scripts/install.sh --scope global
-
-# Or target specific global agent directories:
-bash scripts/install.sh --target antigravity-ide --scope global  # ~/.gemini/config/skills/
-bash scripts/install.sh --target antigravity-cli --scope global  # ~/.gemini/antigravity-cli/skills/
-bash scripts/install.sh --target dsh             --scope global  # ~/.dsh/skills/
-bash scripts/install.sh --target codex           --scope global  # ~/.agents/skills/
-bash scripts/install.sh --target claude          --scope global  # ~/.claude/skills/
-```
-
-### 3. Open Skills CLI (`skills.sh`)
-If using the open Skills CLI (`npx skills`):
-
-```bash
-npx skills add ./skill/engineering-workflow
-```
-
-### 4. Rollback & Uninstallation
 Safely removes the skill without affecting any other skills or project files:
 
 ```bash
+# Project-local removal:
 bash scripts/uninstall.sh --scope project
-# Or global:
+
+# Global removal:
 bash scripts/uninstall.sh --scope global
 ```
 
 ---
 
-## Invocation Across Platforms
+## Contributing
 
-| Platform | Primary Invocation | Fallback Prompt Mention |
-| :--- | :--- | :--- |
-| **Antigravity IDE** | `/engineering-workflow <setup \| execute \| review>` | `@engineering-workflow <op>` or `"Use engineering-workflow to..."` |
-| **Antigravity CLI** | `/engineering-workflow <setup \| execute \| review>` | `@engineering-workflow <op>` or `"Use engineering-workflow to..."` |
-| **DeepSeek Harness (DSH)** | `/engineering-workflow <setup \| execute \| review>` | Prompt mention or `tool-skill` |
-| **OpenAI Codex** | `$engineering-workflow <setup \| execute \| review>` | Prompt mention |
-| **Claude Code** | `/engineering-workflow <setup \| execute \| review>` | Prompt mention |
-
-Once a project has completed onboarding with `setup`, subsequent sessions naturally follow the generated [`AGENTS.md`](templates/AGENTS.md) without repeating full initialization instructions.
-
----
-
-## Model Context Protocol (MCP) Integration
-
-The workflow integrates standard MCP servers:
-
-- **Context7 (`upstash/context7`)**: Baseline live documentation provider. Used for official version-specific library docs, migrations, and unfamiliar APIs.
-- **Chrome DevTools MCP (`chrome-devtools-mcp`)**: Required browser testing and runtime verification engine for web applications (DOM, console errors, visual screenshots).
-- **Security & Approvals**: Zero embedded credentials. All MCP connections require user authorization.
-
-For host-by-host configuration snippets, see [`references/mcps.md`](skill/engineering-workflow/references/mcps.md).
-
----
-
-## Multi-Agent Workflow Roles
-
-```text
-┌────────────────┐          ┌────────────────┐          ┌────────────────┐
-│ 1. Planner     │  ─────►  │ 2. Executor    │  ─────►  │ 3. Reviewer    │
-│ (Read-Only)    │          │ (Single Writer)│          │ (Read-Only)    │
-└────────────────┘          └────────────────┘          └────────────────┘
-        ▲                                                       │
-        └─────────────── [Fix Loop: Max 3 Cycles] ──────────────┘
-```
-
-1. **Native Delegation**: Uses native subagent isolation when supported (Antigravity `invoke_subagent`, DSH Cordis agents, Codex/Claude child processes).
-2. **Sequential Fallback**: When process isolation is unavailable, roles execute sequentially within the same context, honestly disclosing that independent subagent isolation was unavailable.
-
----
-
-## Repository Structure
-
-```text
-dsh-engineering-workflow/
-├── skill/
-│   └── engineering-workflow/
-│       ├── SKILL.md                  # Canonical Agent Skills entry point
-│       └── references/
-│           ├── setup.md              # Setup operation guide & approval gate
-│           ├── execute.md            # Execute operation guide, TDD & review loops
-│           ├── review.md             # Review operation guide & severity taxonomy
-│           ├── skill-routing.md      # Dynamic capability matrix & non-UI gating
-│           ├── mcps.md               # Context7 & Chrome DevTools MCP policy
-│           ├── context-recovery.md   # Compaction recovery & Task Recovery Ledger
-│           └── agent-compatibility.md# Host mapping across all supported environments
-├── templates/
-│   ├── AGENTS.md                     # Reusable root agent instructions
-│   ├── README.md                     # Project README template
-│   ├── TASK_RECOVERY_LEDGER.md       # Task Recovery Ledger template
-│   ├── CAPABILITY_READINESS_REPORT.md# Setup readiness audit template
-│   ├── docs/
-│   │   ├── ENGINEERING_STANDARDS.md  # Engineering quality & testing standards
-│   │   ├── ARCHITECTURE.md           # System topology & ADRs
-│   │   └── UI_STANDARDS.md           # UI design tokens & WCAG accessibility
-│   └── compatibility/
-│       ├── CLAUDE.md                 # Thin reference pointer for Claude Code
-│       └── GEMINI.md                 # Thin reference pointer for Antigravity
-├── scripts/
-│   ├── install.sh                    # Multi-host portable installer
-│   ├── uninstall.sh                  # Safe rollback script
-│   └── validate-skill.mjs            # Agent Skills specification validator
-├── tests/
-│   ├── spec-compliance.test.mjs      # Specification & frontmatter tests
-│   ├── host-discovery.test.mjs       # Cross-host directory discovery tests
-│   ├── operations-contract.test.mjs  # setup/execute/review contract tests
-│   ├── capability-routing.test.mjs   # Dynamic routing & non-UI gating tests
-│   ├── mcp-policies.test.mjs         # MCP rules & zero-credential checks
-│   ├── repository-safety.test.mjs    # Git dirty state & overwrite protection tests
-│   ├── context-recovery.test.mjs     # Recovery ledger & post-compaction tests
-│   ├── installer.test.mjs            # Installation & uninstallation tests
-│   └── fixtures/                     # Test fixtures (empty, backend, frontend, monorepo)
-├── docs/
-│   ├── COMPATIBILITY_MATRIX.md       # Cross-agent compatibility deep dive
-│   ├── MIGRATION_FROM_DSH.md         # Migration audit from legacy Cordis plugin
-│   ├── VERIFICATION_EVIDENCE.md      # Verified test evidence & disclosures
-│   └── visuals/                      # Workflow architecture diagrams
-├── baseline/                         # Preserved snapshots of legacy DSH releases
-│   ├── v0.1.0/
-│   ├── v0.2.0/
-│   ├── v0.2.1/
-│   └── v0.2.2/                       # Final Cordis plugin release snapshot
-├── package.json                      # Scripts & metadata
-├── LICENSE                           # MIT License
-└── README.md                         # This documentation
-```
-
----
-
-## Validation & Testing
-
-Run the automated test suite with zero external dependencies:
-
-```bash
-# Run all 26 automated tests across fixtures
-npm test
-
-# Run Agent Skills specification validator
-npm run validate
-```
-
----
-
-## In-Depth Documentation Links
-
-- **[Cross-Agent Compatibility Matrix](docs/COMPATIBILITY_MATRIX.md)**
-- **[DSH Plugin Migration Audit](docs/MIGRATION_FROM_DSH.md)**
-- **[Verification Evidence & Execution Logs](docs/VERIFICATION_EVIDENCE.md)**
-
----
+Universal Engineering Workflow is an open-source Agent Skills package. Contributions, issue reports, and specialist skill integrations are welcome via GitHub pull requests.
 
 ## License
 
-MIT © 2026 Ahmed Abdelhady
+[MIT License](LICENSE)

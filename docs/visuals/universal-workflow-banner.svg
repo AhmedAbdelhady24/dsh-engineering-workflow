@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" width="100%" height="auto" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">Universal Engineering Workflow Specification</title>
+  <desc id="heroDesc">Portable, production-quality Agent Skills workflow across Antigravity, DSH, Codex, and Claude Code.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#070b14"/>
+      <stop offset="50%" stop-color="#0c1322"/>
+      <stop offset="100%" stop-color="#090e1a"/>
+    </linearGradient>
+    <linearGradient id="accent-flow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="stage1-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0c2340"/>
+      <stop offset="100%" stop-color="#0b1728"/>
+    </linearGradient>
+    <linearGradient id="stage2-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1845"/>
+      <stop offset="100%" stop-color="#0b1728"/>
+    </linearGradient>
+    <linearGradient id="stage3-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a3228"/>
+      <stop offset="100%" stop-color="#0b1728"/>
+    </linearGradient>
+    <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="30" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="glow-purple" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="30" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="540" rx="24" fill="url(#bg)" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- Ambient Glows -->
+  <circle cx="1060" cy="80" r="150" fill="#38bdf8" opacity="0.08" filter="url(#glow-cyan)"/>
+  <circle cx="150" cy="460" r="170" fill="#818cf8" opacity="0.07" filter="url(#glow-purple)"/>
+  <circle cx="600" cy="500" r="150" fill="#34d399" opacity="0.06" filter="url(#glow-cyan)"/>
+
+  <!-- Top Pill -->
+  <g transform="translate(60, 32)">
+    <rect width="280" height="26" rx="13" fill="#0f172a" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="1"/>
+    <circle cx="13" cy="13" r="4" fill="#38bdf8"/>
+    <text x="24" y="17" fill="#38bdf8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" font-weight="600" letter-spacing="1.5">OPEN AGENT SKILLS SPEC · V1.0.0</text>
+  </g>
+
+  <!-- Header & Subtitle -->
+  <text x="60" y="88" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="800" letter-spacing="-0.5">Universal Engineering Workflow</text>
+  <text x="60" y="116" fill="#94a3b8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="400">Disciplined multi-stage software engineering across leading autonomous coding agents</text>
+
+  <!-- Platform Compatibility Badges -->
+  <g transform="translate(60, 138)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="500">
+    <g transform="translate(0, 0)">
+      <rect width="144" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <circle cx="14" cy="14" r="3.5" fill="#38bdf8"/>
+      <text x="25" y="18.5" fill="#e2e8f0">Antigravity (IDE/CLI)</text>
+    </g>
+    <g transform="translate(154, 0)">
+      <rect width="170" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <circle cx="14" cy="14" r="3.5" fill="#60a5fa"/>
+      <text x="25" y="18.5" fill="#e2e8f0">DeepSeek Harness (DSH)</text>
+    </g>
+    <g transform="translate(334, 0)">
+      <rect width="148" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <circle cx="14" cy="14" r="3.5" fill="#10b981"/>
+      <text x="25" y="18.5" fill="#e2e8f0">OpenAI Codex (CLI)</text>
+    </g>
+    <g transform="translate(492, 0)">
+      <rect width="134" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <circle cx="14" cy="14" r="3.5" fill="#f59e0b"/>
+      <text x="25" y="18.5" fill="#e2e8f0">Claude Code (CLI)</text>
+    </g>
+  </g>
+
+  <!-- Top Invariants summary chips (top right) -->
+  <g transform="translate(710, 80)">
+    <rect width="430" height="86" rx="12" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="24" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="11" font-weight="600" letter-spacing="1">CANONICAL ARCHITECTURE INVARIANTS</text>
+    <text x="16" y="48" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="12.5">• Single-writer rule &amp; Git safety</text>
+    <text x="235" y="48" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="12.5">• Approval-gated MCP policy</text>
+    <text x="16" y="68" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="12.5">• Dynamic specialist skill routing</text>
+    <text x="235" y="68" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="12.5">• Zero repeats after compaction</text>
+  </g>
+
+  <!-- THREE OPERATIONS CARDS -->
+
+  <!-- Card 1: Setup -->
+  <g transform="translate(60, 192)">
+    <rect width="328" height="240" rx="14" fill="url(#stage1-grad)" stroke="#0284c7" stroke-opacity="0.5" stroke-width="1.2"/>
+    <rect x="16" y="16" width="60" height="20" rx="10" fill="#0369a1" fill-opacity="0.4"/>
+    <text x="46" y="30" text-anchor="middle" fill="#38bdf8" font-family="ui-monospace, monospace" font-size="10" font-weight="700">STAGE 1</text>
+    <text x="16" y="62" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="21" font-weight="700">setup</text>
+    <text x="16" y="80" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Discovery &amp; Standards Alignment</text>
+    <line x1="16" y1="92" x2="312" y2="92" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="116" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Full repository &amp; branch inspection</text>
+    <text x="16" y="138" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Specialist skill &amp; MCP readiness audit</text>
+    <text x="16" y="160" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Standards &amp; architecture proposal</text>
+    <text x="16" y="182" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Implementation plan &amp; risk analysis</text>
+    <g transform="translate(16, 198)">
+      <rect width="168" height="26" rx="8" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" stroke-opacity="0.4" stroke-width="1"/>
+      <text x="84" y="17" text-anchor="middle" fill="#fda4af" font-family="system-ui, sans-serif" font-size="11" font-weight="700">🛑 HUMAN APPROVAL GATE</text>
+    </g>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <g transform="translate(392, 305)">
+    <circle cx="16" cy="0" r="14" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <path d="M 12 -5 L 20 0 L 12 5" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Card 2: Execute -->
+  <g transform="translate(436, 192)">
+    <rect width="328" height="240" rx="14" fill="url(#stage2-grad)" stroke="#6366f1" stroke-opacity="0.5" stroke-width="1.2"/>
+    <rect x="16" y="16" width="60" height="20" rx="10" fill="#4338ca" fill-opacity="0.4"/>
+    <text x="46" y="30" text-anchor="middle" fill="#a5b4fc" font-family="ui-monospace, monospace" font-size="10" font-weight="700">STAGE 2</text>
+    <text x="16" y="62" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="21" font-weight="700">execute</text>
+    <text x="16" y="80" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Implementation &amp; Verification</text>
+    <line x1="16" y1="92" x2="312" y2="92" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="116" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Dynamic skill routing (TDD, UI, Matt Pocock)</text>
+    <text x="16" y="138" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Proportional plan (lean for small tasks)</text>
+    <text x="16" y="160" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Test-driven changes with minimal diffs</text>
+    <text x="16" y="182" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Single active writer per worktree</text>
+    <g transform="translate(16, 198)">
+      <rect width="186" height="26" rx="8" fill="#6366f1" fill-opacity="0.15" stroke="#6366f1" stroke-opacity="0.4" stroke-width="1"/>
+      <text x="93" y="17" text-anchor="middle" fill="#c7d2fe" font-family="system-ui, sans-serif" font-size="11" font-weight="700">🔄 REVIEW LOOP (≤ 3 CYCLES)</text>
+    </g>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <g transform="translate(768, 305)">
+    <circle cx="16" cy="0" r="14" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <path d="M 12 -5 L 20 0 L 12 5" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Card 3: Review -->
+  <g transform="translate(812, 192)">
+    <rect width="328" height="240" rx="14" fill="url(#stage3-grad)" stroke="#10b981" stroke-opacity="0.5" stroke-width="1.2"/>
+    <rect x="16" y="16" width="60" height="20" rx="10" fill="#047857" fill-opacity="0.4"/>
+    <text x="46" y="30" text-anchor="middle" fill="#6ee7b7" font-family="ui-monospace, monospace" font-size="10" font-weight="700">STAGE 3</text>
+    <text x="16" y="62" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="21" font-weight="700">review</text>
+    <text x="16" y="80" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Read-Only Independent Audit</text>
+    <line x1="16" y1="92" x2="312" y2="92" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="116" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Correctness, security, performance, a11y</text>
+    <text x="16" y="138" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Formal severity taxonomy (Critical → Low)</text>
+    <text x="16" y="160" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Actionable findings with file:line citations</text>
+    <text x="16" y="182" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="12.5">• Strictly read-only: no code modifications</text>
+    <g transform="translate(16, 198)">
+      <rect width="186" height="26" rx="8" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.4" stroke-width="1"/>
+      <text x="93" y="17" text-anchor="middle" fill="#a7f3d0" font-family="system-ui, sans-serif" font-size="11" font-weight="700">🔒 ZERO CODE MODIFICATION</text>
+    </g>
+  </g>
+
+  <!-- Bottom Bar -->
+  <line x1="60" y1="462" x2="1140" y2="462" stroke="#1e293b" stroke-width="1"/>
+  <g transform="translate(60, 484)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">
+    <rect width="140" height="24" rx="6" fill="#1e293b" stroke="#334155" stroke-width="0.8"/>
+    <text x="70" y="16" text-anchor="middle" fill="#38bdf8">Spec: agentskills.io</text>
+
+    <g transform="translate(150, 0)">
+      <rect width="170" height="24" rx="6" fill="#1e293b" stroke="#334155" stroke-width="0.8"/>
+      <text x="85" y="16" text-anchor="middle" fill="#818cf8">Context7 &amp; Chrome MCP</text>
+    </g>
+
+    <g transform="translate(330, 0)">
+      <rect width="150" height="24" rx="6" fill="#1e293b" stroke="#334155" stroke-width="0.8"/>
+      <text x="75" y="16" text-anchor="middle" fill="#34d399">Tests: 26/26 Passing ✓</text>
+    </g>
+  </g>
+
+  <text x="1140" y="500" text-anchor="end" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">github.com/AhmedAbdelhady24/dsh-engineering-workflow</text>
+</svg>
