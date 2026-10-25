@@ -52,6 +52,21 @@ The integration harness can opt in with `DSH_ENGINEERING_RECOVERY_TEST=1`; never
 
 The immutable v0.1.0, v0.2.0 and v0.2.1 package snapshots and hashes are under `baseline/` for rollback.
 
+## Optional skills
+
+The bundle intentionally does not install third-party skills. Ponytail, Matt Pocock,
+Archify and `find-skills` remain optional external integrations.
+
+When one of those skills would materially help a task, the active agent may:
+
+1. name the missing optional skill;
+2. explain why it would help; and
+3. ask whether the user wants to install or enable it.
+
+It must **not** download, install, enable or configure an optional skill without
+explicit approval. The two bundled skills (`engineering-workflow` and
+`visual-communication`) are discovered automatically when the preset is active.
+
 ## Regression tests
 
 The generator has tests for the two configurations the shipped standard preset uses
