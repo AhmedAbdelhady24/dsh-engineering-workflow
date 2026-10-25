@@ -14,9 +14,9 @@ This document details the operational semantics, discovery paths, invocation syn
 | **Primary Invocation** | `/engineering-workflow <op>` | `/engineering-workflow <op>` | `/engineering-workflow <op>` | `$engineering-workflow <op>` | `/engineering-workflow <op>` |
 | **Fallback Invocation** | Prompt mention / `@engineering-workflow` | Prompt mention / `@engineering-workflow` | `tool-skill` / prompt mention | Prompt mention / `$skill-name` | Prompt mention / `/skill-name` |
 | **Argument Forwarding** | Yes (captured as prompt suffix) | Yes (captured in turn prompt) | Yes (captured in turn prompt) | Yes (captured after `$name`) | Yes (passed in command line) |
-| **Subagent Delegation** | Native `invoke_subagent` | Native `invoke_subagent` | Native Cordis agents (`ctx.agents`) | Native multi-agent / sequential pass | Native Task runner / sequential pass |
+| **Subagent Delegation** | Native `invoke_subagent` | Native `invoke_subagent` | Native DSH subagents / sequential pass | Native multi-agent / sequential pass | Native Task runner / sequential pass |
 | **Compaction Engine** | Native reactive compaction | Native reactive compaction | Native `compaction-basic` (near 50%) | Native context sliding window | Native `/compact` and auto-pruning |
-| **MCP Registry** | `~/.gemini/antigravity/mcp/` | `~/.gemini/antigravity/mcp/` | Cordis plugin `dsh-mcp` in profile | `~/.codex/mcp.json` | `claude mcp add` / `mcp.json` |
+| **MCP Registry** | `~/.gemini/antigravity/mcp/` | `~/.gemini/antigravity/mcp/` | `~/.dsh/mcp.json` or profile config | `~/.codex/mcp.json` | `claude mcp add` / `mcp.json` |
 | **Sandbox & Approval** | Client permission dialogs | Client permission dialogs | DSH security policies / profile | Codex approval modes | Claude Code confirmation prompts |
 
 ---
@@ -41,7 +41,7 @@ This document details the operational semantics, discovery paths, invocation syn
   5. `~/.agents/skills/` (Rank 500)
   6. Bundled skills (Rank 600)
 - **Invocation**: `/engineering-workflow <operation>`.
-- **Compaction**: Native `compaction-basic` triggers automatic summarization at high context pressure. The skill maintains a lightweight `TASK_RECOVERY_LEDGER.md` without requiring the old Cordis `engineering-recovery` hook plugin.
+- **Compaction**: Native `compaction-basic` triggers automatic summarization at high context pressure. The skill maintains a lightweight `TASK_RECOVERY_LEDGER.md` for deterministic resume.
 
 ### 3. OpenAI Codex
 - **Discovery**: Prioritizes `.agents/skills/engineering-workflow` in the repository and `~/.agents/skills/` globally.

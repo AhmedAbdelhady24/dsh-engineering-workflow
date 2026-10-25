@@ -1,6 +1,0 @@
-cf6528bc83e3ed48602d323c33ea70ec41a46a05df4451243cd7807b9ca93143  ./cordis.patch.yml
-55a42a949770fc73b55e58911d319bff05fd10fc5749a69a68aa339a34891d58  ./package.json
-692f6d27a01768795ea040fd08fe62b8aeaf96eabbdad15516a6ac8d142d3ada  ./recovery/index.js
-2e76db66f756892c4ad6df74ec3fbeb7585bf26d55d82383fd574042b773b9c6  ./recovery/message.js
-8d7f7c0e69032f96b31f257ec7e4182e96989f14afb24c6a35de71bd3eef2a25  ./skills/engineering-workflow/SKILL.md
-24c1d1035abddc0bc9265c72cd355246dc8a70ed7136239c39a2a735690b942e  ./skills/visual-communication/SKILL.md

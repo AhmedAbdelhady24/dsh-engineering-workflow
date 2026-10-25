@@ -16,9 +16,9 @@ This document provides platform engineers and agent contributors with a comprehe
 | **Primary Invocation** | `/engineering-workflow <op>` | `/engineering-workflow <op>` | `/engineering-workflow <op>` | `$engineering-workflow <op>` | `/engineering-workflow <op>` |
 | **Fallback Invocation** | `@engineering-workflow <op>` | `@engineering-workflow <op>` | `tool-skill` / prompt mention | Prompt mention | Prompt mention |
 | **Argument Forwarding** | ✅ Suffix in turn prompt | ✅ Suffix in turn prompt | ✅ Turn prompt argument | ✅ Suffix in command | ✅ CLI argument capture |
-| **Subagent Process Isolation** | ✅ `invoke_subagent` (Isolated context) | ✅ `invoke_subagent` | ✅ Cordis agent delegation | ⚠️ Multi-agent / Sequential | ⚠️ Task runner / Sequential |
+| **Subagent Process Isolation** | ✅ `invoke_subagent` (Isolated context) | ✅ `invoke_subagent` | ✅ DSH native subagents | ⚠️ Multi-agent / Sequential | ⚠️ Task runner / Sequential |
 | **Compaction Strategy** | Native reactive compaction | Native reactive compaction | Native `compaction-basic` | Native context window | Native `/compact` |
-| **MCP Registry** | `~/.gemini/antigravity/mcp/` | `~/.gemini/antigravity/mcp/` | Cordis plugin `dsh-mcp` in profile | `~/.codex/mcp.json` | `claude mcp add` |
+| **MCP Registry** | `~/.gemini/antigravity/mcp/` | `~/.gemini/antigravity/mcp/` | `~/.dsh/mcp.json` or profile | `~/.codex/mcp.json` | `claude mcp add` |
 | **Sandbox & Permissions** | UI modal approval | Terminal approval | DSH profile permissions | Execution approval | Interactive CLI prompt |
 
 ---
@@ -39,7 +39,7 @@ This document provides platform engineers and agent contributors with a comprehe
   3. `customSkillDirs` (Rank 300)
   4. `~/.dsh/skills/` (Rank 400)
   5. `~/.agents/skills/` (Rank 500)
-- **Plugin Migration**: The universal skill completely removes the need for DSH-specific Cordis patches (`cordis.patch.yml`) or recovery daemons (`recovery/index.js`). Native DSH discovers `SKILL.md` directly.
+- **Standalone Architecture**: The universal skill requires no custom background daemons or runtime patches. Native DSH discovers `SKILL.md` directly.
 
 ### 2.3 OpenAI Codex CLI / IDE
 - **Loading Behavior**: Discovers skills in `.agents/skills` or `.codex/skills`. Global skills reside at `~/.agents/skills/engineering-workflow`.

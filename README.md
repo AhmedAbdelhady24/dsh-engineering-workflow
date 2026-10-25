@@ -4,15 +4,13 @@ A portable, production-quality Agent Skills package implementing a disciplined m
 
 ![Universal Engineering Workflow](docs/visuals/universal-workflow-banner.png)
 
-> **Note on DSH Evolution**: Formerly the DSH Engineering Workflow Cordis plugin (`v0.1.0` – `v0.2.2`, now archived in [`baseline/`](baseline/)). It has evolved into a universal, runtime-agnostic Agent Skill conforming to open standards. See [`docs/MIGRATION_FROM_DSH.md`](docs/MIGRATION_FROM_DSH.md) for the complete migration audit.
-
 ---
 
 ## Why Engineering Workflow
 
 Autonomous coding agents are powerful, but complex engineering tasks quickly encounter context chaos: redundant refactoring after context compaction, silent overwrites of uncommitted changes, unverified assumptions, and destructive Git commands.
 
-Universal Engineering Workflow brings the discipline of a Staff Software Engineer to coding agents. It enforces a strict single-writer rule, dynamic specialist skill routing, test-driven development (TDD), bounded review loops (maximum 3 cycles), and persistent context compaction recovery. Instead of maintaining four separate workflow plugins, it gives you **one canonical implementation** that runs reliably in your IDE and CLI without background daemons or custom execution runtimes.
+Universal Engineering Workflow brings the discipline of a Staff Software Engineer to coding agents. It enforces a strict single-writer rule, dynamic specialist skill routing, test-driven development (TDD), bounded review loops (maximum 3 cycles), and persistent context compaction recovery. It provides **one canonical implementation** that runs reliably in your IDE and CLI without background daemons, custom execution runtimes, or vendor lock-in.
 
 ---
 

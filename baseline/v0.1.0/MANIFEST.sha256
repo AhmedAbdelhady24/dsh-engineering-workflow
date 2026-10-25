@@ -1,6 +1,0 @@
-6fda1ab17fe21c30a3ce190c7405c26471c9b66edcece0980fe9b9141ad8e9a9  ./build-patch.py
-39602a9619105a456c99a16648737ec42bb08df9f7a6eec2ef9f2aca71ac762b  ./cordis.patch.yml
-9ec49af121553b23d348ab2ac34b83ee4a6d0e2e707fdf9e5f3c65fbcb9f237a  ./package.json
-8d7f7c0e69032f96b31f257ec7e4182e96989f14afb24c6a35de71bd3eef2a25  ./skills/engineering-workflow/SKILL.md
-24c1d1035abddc0bc9265c72cd355246dc8a70ed7136239c39a2a735690b942e  ./skills/visual-communication/SKILL.md
-ab1799e15e48799d75282c23fedb925cd92c222260040e1ef29d78792e383152  ./test_build_patch.py
