@@ -28,6 +28,42 @@ Standardizing software engineering tasks into three core operations:
 
 ---
 
+## Skill Execution Contract & Dynamic Orchestration
+
+There is a fundamental difference between listing specialist skills in documentation and **actually invoking them at runtime**. Universal Engineering Workflow enforces the **Skill Execution Contract**:
+
+> **Rule — Skill Execution Contract**:
+> Before performing a task, identify the relevant specialist skills, verify that they are installed and invocable, and explicitly load or invoke them through the host's supported mechanism.
+> 
+> **Do not treat mentioning a skill in the routing documentation as execution.**
+> If a required skill is unavailable, report the blocker clearly with its verified installation command.
+> At completion, explicitly distinguish between **Skills Actually Invoked** vs. **Skills Merely Considered** vs. **Skills Missing/Blocked**.
+
+### Task Archetype to Specialist Skill Mapping
+
+| Task Archetype | Specialist Skills Considered | Primary Purpose & Execution Intent |
+| :--- | :--- | :--- |
+| **New feature with unclear requirements** | `grilling` (or `grill-with-docs`), `domain-modeling` | Socratic challenge, clarifying models and entities before writing code. |
+| **Architecture planning** | `codebase-design`, `implementation-planning` | Deep module boundaries, small interfaces hiding complexity, vertical slices. |
+| **Feature implementation** | `implement`, `ponytail`, `test-driven-development` | Guided plan execution, minimal/focused changes without bloat, TDD loop. |
+| **Bug fixing** | `systematic-debugging`, `test-driven-development` | Root-cause reproduction before mutation, failing regression tests, verifying fixes. |
+| **Engineering handoff** | `handoff` | Packaging structured context packages and recovery ledgers for peer agents. |
+| **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `browser-testing-with-devtools`, `break-ui` | Usability heuristics, visual design, micro-interactions, WCAG 2.2 AA testing. |
+| **Simple change** | `ponytail` principles, focused verification | Minimal complete diff, zero speculative abstractions, focused unit testing. |
+
+### Execution Report Contract
+
+Every task execution completion report must include an explicit **Skills Execution Summary**:
+
+```markdown
+- **Skills Execution Summary**:
+  - **Skills Considered**: [List matching task archetype]
+  - **Skills Actually Invoked**: [List confirmed installed and actively executed with method]
+  - **Skills Missing / Blocked**: [Any required specialist skills absent from the environment and fallback applied]
+```
+
+---
+
 ## Getting Started
 
 Install the workflow once into your project or globally across your development environment.

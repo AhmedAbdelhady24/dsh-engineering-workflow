@@ -61,11 +61,13 @@ Optional focus argument for `ux-audit`:
    - Preserve existing code comments, docstrings, and unrelated formatting.
    - No placeholder comments (`// TODO: implement later`, `/* ... */`).
 
-4. **Dynamic Skill & MCP Routing**:
-   - Do not load the entire catalog for every task. Select specialist skills (e.g., TDD, debugging, UI design) strictly on demand based on task requirements.
+4. **Skill Execution Contract**:
+   - Before performing a task, identify the relevant specialist skills, verify that they are installed and invocable, and explicitly load or invoke them through the host's supported mechanism.
+   - Do not treat mentioning a skill in the routing documentation as execution.
+   - If a required skill is unavailable, report the blocker and provide the installation command; never silently downgrade quality gates.
+   - At completion, the execution summary must explicitly distinguish between **Skills Actually Invoked** vs. **Skills Merely Considered** vs. **Skills Missing/Blocked**.
    - For non-UI projects, classify UI skills as **NOT APPLICABLE**.
-   - If a mandatory skill or MCP is missing, report the blocker and provide the verified installation command. Never silently downgrade quality gates.
-   - See [references/skill-routing.md](references/skill-routing.md) and [references/mcps.md](references/mcps.md).
+   - See [references/skill-routing.md](references/skill-routing.md), [references/execute.md](references/execute.md), and [references/mcps.md](references/mcps.md).
 
 5. **Context Compaction & Ledger Discipline**:
    - The skill does not run custom background daemons or attempt to measure runtime tokens.

@@ -67,14 +67,37 @@ Size the plan proportionally to task complexity:
 
 ---
 
-## Phase 3: On-Demand Specialist Skill Routing
+## Phase 3: On-Demand Specialist Skill Routing & Execution Contract
 
-Select specialist skills strictly as needed. Do not load all skills simultaneously:
-- **For bugs**: Activate `systematic-debugging` (reproduce failure before modifying code).
-- **For core logic / business rules**: Activate `test-driven-development` (red-green-refactor loop).
-- **For interface design / refactoring**: Activate Matt Pocock engineering skills (`codebase-design`, `improve-codebase-architecture`) if installed.
-- **For UI features**: Activate `frontend-ui-engineering` and `make-interfaces-feel-better`.
-- If an applicable skill is missing: Consult [references/skill-routing.md](references/skill-routing.md).
+In accordance with the **Skill Execution Contract**, specialist skills are identified, verified, and explicitly invoked on demand. Mentioning a skill in documentation or routing tables does NOT constitute execution.
+
+### 1. Task Archetype Characterization & Skill Matching
+
+The orchestrator matches the current task to its target archetype and identifies candidate specialist skills to consider:
+
+| Task Archetype | Specialist Skills to Consider | Primary Purpose & Execution Intent |
+| :--- | :--- | :--- |
+| **New feature with unclear requirements** | `grilling` (or `grill-with-docs`), `domain-modeling` | Socratic challenge, interrogating assumptions, establishing ubiquitous language and domain models before writing code. |
+| **Architecture planning** | `codebase-design`, `implementation-planning` (or `planning-and-task-breakdown`) | Establishing deep module boundaries, small interfaces hiding complexity, interface seams, and decomposed vertical slices. |
+| **Feature implementation** | `implement`, `ponytail`, `test-driven-development` (or `tdd`) | Guiding implementation against approved plans, maintaining minimal coherent diffs without speculative bloat, red-green-refactor loop. |
+| **Bug fixing** | `systematic-debugging` (or `diagnosing-bugs`), `test-driven-development` (or `tdd`) | Root-cause diagnosis, reproducing failure before mutation, writing failing regression tests, verifying the fix. |
+| **Engineering handoff** | `handoff` | Packaging structured context, recovery ledgers, and architectural summaries for peer agents or session resets. |
+| **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `browser-testing-with-devtools`, `break-ui` | Evaluating usability heuristics, visual hierarchy, micro-interactions, WCAG 2.2 AA accessibility, and runtime browser behavior. |
+| **Simple change** | `ponytail` principles, focused verification | Minimal complete diff, zero speculative abstractions, focused unit testing, fast turn-around. |
+
+### 2. Skill Verification Protocol
+
+Before performing work:
+1. Inspect the host's active skill catalog, workspace `.agents/skills/`, or user-global skill directories (`~/.gemini/config/skills/`, `~/.claude/skills/`, `~/.agents/skills/`, `~/.dsh/skills/`).
+2. If candidate skill is installed: Mark as **VERIFIED AVAILABLE**.
+3. If a required candidate skill is missing: Mark as **MISSING / BLOCKED**. Report the missing capability to the user with its verified installation command (`npx skills add <source>`). Do not silently downgrade quality gates.
+
+### 3. Explicit Invocation Protocol
+
+Do not proceed without explicitly activating verified skills:
+- Read the specialist skill's `SKILL.md` into execution context, or delegate to a specialist subagent if supported by the host.
+- Follow the specialist skill's prescribed operational steps (e.g. write failing test first for TDD; reproduce error before touching source for debugging; apply Ponytail principles to eliminate extraneous code).
+- Record the invocation event in execution memory.
 
 ---
 
@@ -120,4 +143,8 @@ Before declaring completion:
    - **Verification Evidence**: Commands run and verbatim test summary results.
    - **Independent Review Findings**: Resolutions of any reviewed concerns.
    - **Residual Risks & Limitations**: Any unverified edge cases or deferred tasks.
+   - **Skills Execution Summary**:
+     - **Skills Considered**: Specialist skills evaluated based on task archetype.
+     - **Skills Actually Invoked**: Specialist skills verified as installed and explicitly executed (with invocation method).
+     - **Skills Missing / Blocked**: Any required specialist skills absent from the environment and the fallback applied.
    - **Approval Request**: Request user sign-off before committing or merging.

@@ -76,3 +76,59 @@ test("Skill routing: Matt Pocock engineering skills verified by canonical names"
     );
   }
 });
+
+test("Skill routing: enforces the Skill Execution Contract", () => {
+  assert(
+    routingMd.includes("Skill Execution Contract"),
+    "Must document Skill Execution Contract"
+  );
+  assert(
+    routingMd.includes("Do not treat mentioning a skill in the routing documentation as execution"),
+    "Must explicitly forbid treating documentation mention as execution"
+  );
+  assert(
+    routingMd.toLowerCase().includes("skills actually invoked") && routingMd.toLowerCase().includes("skills merely considered"),
+    "Must distinguish skills actually invoked from skills merely considered"
+  );
+});
+
+test("Skill routing: defines Task-to-Skill Consideration Matrix across archetypes", () => {
+  const archetypes = [
+    "New feature with unclear requirements",
+    "Architecture planning",
+    "Feature implementation",
+    "Bug fixing",
+    "Engineering handoff",
+    "UX audit",
+    "Simple change",
+  ];
+
+  for (const arch of archetypes) {
+    assert(
+      routingMd.includes(arch),
+      `skill-routing.md must include task archetype: ${arch}`
+    );
+  }
+
+  // Verify task-specific skill mappings
+  assert(routingMd.includes("grilling") && routingMd.includes("domain-modeling"), "Unclear requirements routes to grilling & domain-modeling");
+  assert(routingMd.includes("codebase-design") && routingMd.includes("implementation-planning"), "Architecture planning routes to codebase-design & planning");
+  assert(routingMd.includes("implement") && routingMd.includes("ponytail") && routingMd.includes("test-driven-development"), "Feature implementation routes to implement, ponytail & TDD");
+  assert(routingMd.includes("systematic-debugging"), "Bug fixing routes to systematic debugging");
+  assert(routingMd.includes("handoff"), "Engineering handoff routes to handoff skill");
+});
+
+test("Skill routing: Ponytail role defined as minimal, focused, and complete implementation", () => {
+  assert(
+    routingMd.toLowerCase().includes("minimal") && routingMd.toLowerCase().includes("focused") && routingMd.toLowerCase().includes("complete"),
+    "Ponytail must be defined as keeping implementations minimal, focused, and complete"
+  );
+});
+
+test("Skill routing: execute completion report requires distinguishing considered vs. invoked vs. blocked skills", () => {
+  const executeMd = fs.readFileSync(path.join(rootDir, "skill/engineering-workflow/references/execute.md"), "utf-8");
+  assert(executeMd.includes("Skills Execution Summary"), "execute.md must require Skills Execution Summary in report");
+  assert(executeMd.includes("Skills Considered"), "execute.md must report Skills Considered");
+  assert(executeMd.includes("Skills Actually Invoked"), "execute.md must report Skills Actually Invoked");
+  assert(executeMd.includes("Skills Missing / Blocked"), "execute.md must report Skills Missing / Blocked");
+});

@@ -17,7 +17,7 @@ The `engineering-workflow` orchestrator selects specialist skills **on demand** 
 | **Code Review** | `code-review-and-quality` / `code-review` | Standards compliance, spec alignment, security checks. | All code changes prior to completion. | Open Agent Skills standard / `npx skills add vercel-labs/skills` |
 | **Verification Gate** | `verification-before-completion` / `hermes-executor-verification` | Enforcing actual terminal command execution before claiming done. | All tasks. | Core invariant or open standard |
 | **Skill Discovery** | `find-skills` | Discovering and installing missing specialist agent capabilities. | When a needed specialist skill is absent. | Built-in or `npx skills add vercel-labs/skills` |
-| **Ponytail** | `ponytail` | Long-term memory and procedural pattern refinement. | Projects with Ponytail configured. | User-installed local skill (`~/.agents/skills/ponytail`) |
+| **Ponytail** | `ponytail` | Keep implementations minimal, focused, and complete without unnecessary complexity or speculative bloat. | All implementation tasks & simple changes. | User-installed local skill (`~/.agents/skills/ponytail`) |
 
 ### 2. Matt Pocock Engineering Skills
 
@@ -42,6 +42,70 @@ The `engineering-workflow` orchestrator selects specialist skills **on demand** 
 | **UI Stress Testing** | `break-ui` / `ui-audit` | Feeding worst-case data (extreme lengths, empty states, edge inputs). | **UI Projects Only**. If pure backend/CLI: **NOT APPLICABLE**. |
 | **Browser DevTools** | `browser-testing-with-devtools` | Real browser testing, console log audits, DOM inspection via MCP. | **UI Projects Only** (requires Chrome DevTools MCP). |
 | **Visual Architecture** | `archify` | Standalone interactive SVG/HTML architecture diagrams. | Visual documentation (when approved and installed). |
+
+---
+
+## Skill Execution Contract
+
+The orchestrator enforces a strict boundary between **listing skills in routing tables** and **actually invoking those skills during execution**:
+
+> **Rule — Skill Execution Contract**:
+> Before performing a task, identify the relevant specialist skills, verify that they are installed and invocable, and explicitly load or invoke them through the host's supported mechanism.
+> 
+> **Do not treat mentioning a skill in the routing documentation as execution.**
+> If a required skill is unavailable, report the blocker clearly with its verified installation command. Never silently downgrade quality gates.
+> At completion, identify the skills actually invoked and distinguish them from skills merely considered.
+
+---
+
+## Task Archetype to Specialist Skill Mapping
+
+The orchestrator considers specialist capabilities based on the concrete task archetype. It does NOT load every skill for every task:
+
+| Task Archetype | Specialist Skills to Consider | Primary Purpose & Execution Intent |
+| :--- | :--- | :--- |
+| **New feature with unclear requirements** | `grilling` (or `grill-with-docs`), `domain-modeling` | Socratic challenge, interrogating assumptions, establishing ubiquitous language and domain models before writing code. |
+| **Architecture planning** | `codebase-design`, `implementation-planning` (or `planning-and-task-breakdown`) | Establishing deep module boundaries, small interfaces hiding complexity, interface seams, and decomposed vertical slices. |
+| **Feature implementation** | `implement`, `ponytail`, `test-driven-development` (or `tdd`) | Guiding implementation against approved plans, maintaining minimal coherent diffs without bloat, red-green-refactor loop. |
+| **Bug fixing** | `systematic-debugging` (or `diagnosing-bugs`), `test-driven-development` (or `tdd`) | Root-cause diagnosis, reproducing failure before mutation, writing failing regression tests, verifying the fix. |
+| **Engineering handoff** | `handoff` | Packaging structured context, recovery ledgers, and architectural summaries for peer agents or session resets. |
+| **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `browser-testing-with-devtools`, `break-ui` | Evaluating usability heuristics, visual hierarchy, micro-interactions, WCAG 2.2 AA accessibility, and runtime browser behavior. |
+| **Simple change** | `ponytail` principles, focused verification | Minimal complete diff, zero speculative abstractions, focused unit testing, fast turn-around. |
+
+---
+
+## Verification & Invocation Lifecycle
+
+```text
+┌────────────────────────────────┐
+│ 1. Identify Candidate Skills   │  (Match task archetype to consideration matrix)
+└───────────────┬────────────────┘
+                ▼
+┌────────────────────────────────┐
+│ 2. Verify Installation Status  │  (Check .agents/skills, global config, or host catalog)
+└───────────────┬────────────────┘
+                ▼
+      ┌─────────┴─────────┐
+      │ Is Skill Present? │
+      └─────────┬─────────┘
+        YES     │     NO
+   ┌────────────┘     └────────────┐
+   ▼                               ▼
+┌────────────────────────┐   ┌────────────────────────┐
+│ 3. Explicit Invocation │   │ 3. Block / Fallback    │
+│ (Read SKILL.md / Run)  │   │ (Report missing skill; │
+│                        │   │  propose install cmd)  │
+└───────────┬────────────┘   └───────────┬────────────┘
+            │                            │
+            └─────────────┬──────────────┘
+                          ▼
+            ┌────────────────────────────┐
+            │ 4. Completion Reporting    │
+            │ - Skills Considered        │
+            │ - Skills Actually Invoked  │
+            │ - Skills Missing / Blocked │
+            └────────────────────────────┘
+```
 
 ---
 
