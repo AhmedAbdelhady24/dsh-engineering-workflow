@@ -1,19 +1,24 @@
 {
-  "name": "@local/dsh-engineering-workflow",
-  "version": "0.2.2",
-  "private": true,
+  "name": "universal-engineering-workflow",
+  "version": "1.0.0",
+  "description": "Universal multi-stage software engineering workflow skill for Google Antigravity, DeepSeek Harness, OpenAI Codex, and Claude Code",
   "type": "module",
   "scripts": {
-    "test": "python3 -m unittest discover -s tests -v && node --test tests/recovery.test.mjs && python3 tools/check-compat.py"
+    "test": "node --test tests/*.test.mjs",
+    "validate": "node scripts/validate-skill.mjs",
+    "install:project": "bash scripts/install.sh --scope project",
+    "install:global": "bash scripts/install.sh --scope global",
+    "uninstall": "bash scripts/uninstall.sh"
   },
-  "dsh": {
-    "bundle": {
-      "patch": "./cordis.patch.yml"
-    }
-  },
-  "exports": {
-    "./recovery": "./recovery/index.js",
-    "./package.json": "./package.json"
-  },
+  "keywords": [
+    "agent-skills",
+    "antigravity",
+    "deepseek-harness",
+    "codex",
+    "claude-code",
+    "engineering-workflow",
+    "tdd",
+    "code-review"
+  ],
   "license": "MIT"
 }

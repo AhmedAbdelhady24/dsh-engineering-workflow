@@ -1,0 +1,12 @@
+{
+  "name": "fixture-backend-api",
+  "version": "1.0.0",
+  "description": "Pure backend REST API service without UI",
+  "scripts": {
+    "test": "node --test",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

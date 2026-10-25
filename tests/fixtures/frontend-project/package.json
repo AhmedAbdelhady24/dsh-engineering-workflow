@@ -1,0 +1,14 @@
+{
+  "name": "fixture-frontend-spa",
+  "version": "1.0.0",
+  "description": "User-facing web application with DOM components",
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
