@@ -23,6 +23,7 @@ Standardizing software engineering tasks into three core operations:
 | **[`setup`](./skill/engineering-workflow/references/setup.md)** | Inspects repository structure, audits installed skills & MCPs, proposes standards, drafts an initial plan, and halts at an **Approval Gate**. | `find-skills`, `domain-modeling`, `codebase-design` | [`references/setup.md`](./skill/engineering-workflow/references/setup.md) |
 | **[`execute`](./skill/engineering-workflow/references/execute.md)** | Triages task scope, routes specialist skills on demand, implements minimal changes with TDD, and drives a bounded review loop. | `test-driven-development`, `systematic-debugging`, Matt Pocock skills, UI/UX skills | [`references/execute.md`](./skill/engineering-workflow/references/execute.md) |
 | **[`review`](./skill/engineering-workflow/references/review.md)** | Conducts an objective, independent audit (correctness, security, performance, accessibility) with file:line references and zero code mutations. | `code-review`, `verification-before-completion`, `ui-audit` | [`references/review.md`](./skill/engineering-workflow/references/review.md) |
+| **[`ux-audit`](./skill/engineering-workflow/references/ux-audit.md)** | Comprehensive product usability, user journey walkthrough, visual design, WCAG 2.2 AA accessibility, and UX technical architecture audit. | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `break-ui`, `browser-testing-with-devtools` | [`references/ux-audit.md`](./skill/engineering-workflow/references/ux-audit.md) |
 | **[`recovery`](./skill/engineering-workflow/references/context-recovery.md)** | Maintains a persistent [`TASK_RECOVERY_LEDGER.md`](./templates/TASK_RECOVERY_LEDGER.md) so agents resume post-compaction without repeating completed edits. | Platform native compaction, Ledger reconciliation | [`references/context-recovery.md`](./skill/engineering-workflow/references/context-recovery.md) |
 
 ---
@@ -42,7 +43,7 @@ bash scripts/install.sh --target antigravity-ide --scope global  # ~/.gemini/con
 bash scripts/install.sh --target antigravity-cli --scope global  # ~/.gemini/antigravity-cli/skills/
 ```
 
-**Invocation**: In Antigravity chat, trigger with `/engineering-workflow <setup | execute | review>` or natural intent (e.g., `"Use engineering-workflow to execute this task"`).
+**Invocation**: In Antigravity chat, trigger with `/engineering-workflow <setup | execute | review | ux-audit>` or natural intent (e.g., `"Use engineering-workflow ux-audit to evaluate this product's usability"`). Supports optional focus argument: `/engineering-workflow ux-audit [onboarding | navigation | accessibility | <flow>]`.
 
 ### 2. DeepSeek Harness (DSH)
 
@@ -54,7 +55,7 @@ bash scripts/install.sh --target dsh --scope project
 bash scripts/install.sh --target dsh --scope global  # ~/.dsh/skills/
 ```
 
-**Invocation**: Run `/engineering-workflow <setup | execute | review>` or prompt DSH with `tool-skill: engineering-workflow`.
+**Invocation**: Run `/engineering-workflow <setup | execute | review | ux-audit>` or prompt DSH with `tool-skill: engineering-workflow`.
 
 ### 3. OpenAI Codex (CLI / IDE)
 
@@ -66,7 +67,7 @@ bash scripts/install.sh --target codex --scope project
 bash scripts/install.sh --target codex --scope global  # ~/.agents/skills/
 ```
 
-**Invocation**: Mention `$engineering-workflow <setup | execute | review>` or invoke in session prompt.
+**Invocation**: Mention `$engineering-workflow <setup | execute | review | ux-audit>` or invoke in session prompt.
 
 ### 4. Claude Code (CLI)
 
@@ -78,7 +79,7 @@ bash scripts/install.sh --target claude --scope project
 bash scripts/install.sh --target claude --scope global  # ~/.claude/skills/
 ```
 
-**Invocation**: Run `/engineering-workflow <setup | execute | review>`.
+**Invocation**: Run `/engineering-workflow <setup | execute | review | ux-audit>`.
 
 ### 5. Open Skills CLI (`skills.sh`)
 
@@ -101,13 +102,14 @@ engineering-workflow/
     ├── setup.md                 # Discovery & approval gate
     ├── execute.md               # TDD, single-writer & review loop
     ├── review.md                # Read-only audit & severity taxonomy
+    ├── ux-audit.md              # Product usability, UI/UX & technical UX audit
     ├── skill-routing.md         # Dynamic specialist activation
     ├── mcps.md                  # Context7 & Chrome DevTools policies
     ├── context-recovery.md      # Compaction recovery protocol
     └── agent-compatibility.md   # Multi-agent roles & host invocations
 ```
 
-- **Operations (`setup`, `execute`, `review`)** encode the engineering contract. Each operation has clear boundaries, deliverables, and stop criteria.
+- **Operations (`setup`, `execute`, `review`, `ux-audit`)** encode the engineering and product contracts. Each operation has clear boundaries, deliverables, and stop criteria.
 - **Specialists** are activated strictly on demand. For backend projects, UI capabilities are classified as NOT APPLICABLE; for frontend projects, UI and Chrome DevTools skills are activated dynamically.
 - **Connectors (MCPs)** wire your agents to external capabilities (Context7 for library docs, Chrome DevTools for DOM/browser verification) under strict approval-first rules.
 

@@ -73,3 +73,21 @@ The `engineering-workflow` orchestrator selects specialist skills **on demand** 
 4. **Zero Bundling & Redistribution**:
    - The universal engineering workflow does not copy or vendor third-party skill markdown into its own repository.
    - All external capabilities are referenced strictly by canonical name and installed via official distribution channels.
+
+---
+
+## Specialist Skill Routing for `ux-audit`
+
+When running the **`ux-audit`** operation on an application with a user interface, the orchestrator dynamically activates the following specialist capabilities:
+
+| Stage | Activated Specialist Skills | Role in UX Audit | Fallback Policy if Missing |
+| :--- | :--- | :--- | :--- |
+| **Stage 1 & 6 (Discovery & Challenge)** | `codebase-design`, `domain-modeling` | Identifying core domain entities, interaction seams, and architectural models. | Inspect route definitions and state stores directly. |
+| **Stage 2 (Runtime Walkthrough)** | `browser-testing-with-devtools` | Launching browser sessions, inspecting DOM, capturing screenshots, recording console/network errors. | If Chrome DevTools MCP is unavailable: Mark browser tests `NOT TESTED` and fallback to code-supported analysis. |
+| **Stage 3 (Usability Heuristics)** | `ui-ux-pro-max`, `ui-audit` | Auditing against Nielsen's 10 heuristics, cognitive load, progressive disclosure, and user mental models. | Built-in heuristic scorecard guidelines in `references/ux-audit.md`. |
+| **Stage 4 (Visual & Interaction Design)** | `frontend-design`, `make-interfaces-feel-better`, `emil-design-eng` | Evaluating visual hierarchy, 4/8px spacing rhythm, WCAG contrast, typography, and micro-interactions. | Standard WCAG 2.2 AA rules and CSS inspections. |
+| **Stage 5 (Technical UX Architecture)** | `frontend-ui-engineering`, `codebase-design` | Tracing UI state synchronization, race conditions, form persistence, and error boundary handling. | Direct AST/source code inspection with file:line citations. |
+| **Stage 6 & 7 (Journey Modeling)** | `visual-communication`, `archify` (if available) | Generating Mermaid current-state and proposed future-state user journey flowcharts. | Built-in Mermaid flowchart syntax. |
+| **Standards & Docs Grounding** | Context7 MCP | Live official documentation for WCAG 2.2, accessibility APIs, or modern UI framework patterns. | Use local documentation or report unverified standards. |
+
+> **Important**: For non-UI codebases (CLI utilities, background workers, backend APIs), invoking `ux-audit` immediately informs the user that the project has no user-facing interface, classifying UI skills as **NOT APPLICABLE**.

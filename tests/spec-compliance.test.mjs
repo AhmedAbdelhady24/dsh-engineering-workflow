@@ -37,6 +37,7 @@ test("Agent Skills specification: all referenced documents exist and are populat
     "references/setup.md",
     "references/execute.md",
     "references/review.md",
+    "references/ux-audit.md",
     "references/skill-routing.md",
     "references/mcps.md",
     "references/context-recovery.md",
@@ -71,5 +72,29 @@ test("Zero DSH-specific plugin/daemon execution infrastructure in universal skil
         `Found obsolete DSH runtime plugin code '${banned}' in ${path.relative(rootDir, filePath)}`
       );
     }
+  }
+});
+
+test("Canonical skill/ and mirrored skills/ directories remain strictly synchronized", () => {
+  const canonicalDir = path.join(rootDir, "skill", "engineering-workflow");
+  const mirrorDir = path.join(rootDir, "skills", "engineering-workflow");
+
+  assert(fs.existsSync(canonicalDir), "Canonical skill/engineering-workflow must exist");
+  assert(fs.existsSync(mirrorDir), "Mirror skills/engineering-workflow must exist");
+
+  const canonicalFiles = fs.readdirSync(path.join(canonicalDir, "references"));
+  const mirrorFiles = fs.readdirSync(path.join(mirrorDir, "references"));
+
+  assert.deepEqual(canonicalFiles.sort(), mirrorFiles.sort(), "References in canonical and mirror must match exactly");
+
+  // Check content identity
+  const canonicalSkillMd = fs.readFileSync(path.join(canonicalDir, "SKILL.md"), "utf-8");
+  const mirrorSkillMd = fs.readFileSync(path.join(mirrorDir, "SKILL.md"), "utf-8");
+  assert.equal(canonicalSkillMd, mirrorSkillMd, "SKILL.md in canonical and mirror must be identical");
+
+  for (const ref of canonicalFiles) {
+    const cContent = fs.readFileSync(path.join(canonicalDir, "references", ref), "utf-8");
+    const mContent = fs.readFileSync(path.join(mirrorDir, "references", ref), "utf-8");
+    assert.equal(cContent, mContent, `Reference file '${ref}' in canonical and mirror must be identical`);
   }
 });

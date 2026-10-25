@@ -16,6 +16,7 @@ flowchart TD
         Setup["1. setup<br/>• Codebase discovery<br/>• Skill & MCP audit<br/>• Standards proposal<br/>• 🛑 Approval Gate"]
         Execute["2. execute<br/>• Triage & task breakdown<br/>• Dynamic skill routing<br/>• Minimal changes & TDD<br/>• Review loop (≤ 3 cycles)"]
         Review["3. review<br/>• Read-only security & audit<br/>• Multi-axis severity matrix<br/>• File:line references<br/>• Zero modifications"]
+        UXAudit["4. ux-audit [focus]<br/>• Heuristic & journey audit<br/>• WCAG 2.2 AA accessibility<br/>• UX technical architecture<br/>• Actionable backlog"]
     end
 
     Router --> Setup
@@ -23,3 +24,5 @@ flowchart TD
     Execute --> Review
     Review -->|Pass| Done["Verified Delivery"]
     Review -->|Issues (≤ 3)| Execute
+    Router --> UXAudit
+    UXAudit --> AuditReport["Prioritized UX Report"]

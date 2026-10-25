@@ -11,13 +11,20 @@ This document details the operational semantics, discovery paths, invocation syn
 | **Standard Discovery Root** | `.agents/skills/` | `.agents/skills/` | `.dsh/skills/` (Rank 100) or `.agents/skills/` (Rank 200) | `.agents/skills/` | `.claude/skills/` or `.agents/skills/` |
 | **User Global Root** | `~/.gemini/config/skills/` | `~/.gemini/antigravity-cli/skills/` | `~/.dsh/skills/` (Rank 400) | `~/.agents/skills/` | `~/.claude/skills/` |
 | **Skills CLI Target** | Supported via open standard | Supported via open standard | Supported via `.agents/skills` or `customSkillDirs` | Supported (`~/.agents/skills`) | Supported (`npx skills add --agent claude-code`) |
-| **Primary Invocation** | `/engineering-workflow <op>` | `/engineering-workflow <op>` | `/engineering-workflow <op>` | `$engineering-workflow <op>` | `/engineering-workflow <op>` |
+| **Primary Invocation** | `/engineering-workflow <op> [focus]` | `/engineering-workflow <op> [focus]` | `/engineering-workflow <op> [focus]` | `$engineering-workflow <op> [focus]` | `/engineering-workflow <op> [focus]` |
 | **Fallback Invocation** | Prompt mention / `@engineering-workflow` | Prompt mention / `@engineering-workflow` | `tool-skill` / prompt mention | Prompt mention / `$skill-name` | Prompt mention / `/skill-name` |
 | **Argument Forwarding** | Yes (captured as prompt suffix) | Yes (captured in turn prompt) | Yes (captured in turn prompt) | Yes (captured after `$name`) | Yes (passed in command line) |
 | **Subagent Delegation** | Native `invoke_subagent` | Native `invoke_subagent` | Native DSH subagents / sequential pass | Native multi-agent / sequential pass | Native Task runner / sequential pass |
 | **Compaction Engine** | Native reactive compaction | Native reactive compaction | Native `compaction-basic` (near 50%) | Native context sliding window | Native `/compact` and auto-pruning |
 | **MCP Registry** | `~/.gemini/antigravity/mcp/` | `~/.gemini/antigravity/mcp/` | `~/.dsh/mcp.json` or profile config | `~/.codex/mcp.json` | `claude mcp add` / `mcp.json` |
 | **Sandbox & Approval** | Client permission dialogs | Client permission dialogs | DSH security policies / profile | Codex approval modes | Claude Code confirmation prompts |
+
+### Supported Operations & Argument Syntax
+- **`setup`**: `/engineering-workflow setup` (Initial repository onboarding and capability audit)
+- **`execute`**: `/engineering-workflow execute [task description]` (TDD and implementation loop)
+- **`review`**: `/engineering-workflow review [branch | PR | diff]` (Read-only technical and code review)
+- **`ux-audit`**: `/engineering-workflow ux-audit [onboarding | navigation | accessibility | <flow>]` (Product usability, UI/UX, and technical UX audit)
+- **Portable Fallback**: `"Use the engineering-workflow skill in ux-audit mode to evaluate this product's usability, UI/UX, and technical experience."`
 
 ---
 

@@ -73,7 +73,7 @@ if (missingRefs > 0) {
 }
 
 // 3. Verify Operations router
-const requiredOps = ["setup", "execute", "review"];
+const requiredOps = ["setup", "execute", "review", "ux-audit"];
 for (const op of requiredOps) {
   if (!content.includes(op)) {
     console.error(`❌ SKILL.md does not document operation: '${op}'`);
