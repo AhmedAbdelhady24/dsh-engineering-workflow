@@ -312,14 +312,18 @@ generate_install_manifest() {
 
     function getFiles(dir, base = '') {
       let results = [];
-      const entries = fs.readdirSync(dir, { withFileTypes: true });
-      for (const entry of entries) {
-        if (entry.name === '.install-manifest.json' || entry.name.includes('.bak.') || entry.name.includes('.tmp.')) continue;
-        const fullPath = path.join(dir, entry.name);
-        const relPath = base ? path.join(base, entry.name) : entry.name;
-        if (entry.isDirectory()) {
+      const entries = fs.readdirSync(dir);
+      for (const name of entries) {
+        if (name === '.install-manifest.json' || name.includes('.bak.') || name.includes('.tmp.')) continue;
+        const fullPath = path.join(dir, name);
+        const relPath = base ? path.join(base, name) : name;
+        const stat = fs.lstatSync(fullPath);
+        if (stat.isSymbolicLink()) {
+          const linkTarget = fs.readlinkSync(fullPath);
+          results.push([relPath.split(path.sep).join('/'), 'symlink:' + linkTarget]);
+        } else if (stat.isDirectory()) {
           results = results.concat(getFiles(fullPath, relPath));
-        } else if (entry.isFile()) {
+        } else if (stat.isFile()) {
           const content = fs.readFileSync(fullPath);
           const hash = crypto.createHash('sha256').update(content).digest('hex');
           results.push([relPath.split(path.sep).join('/'), hash]);
@@ -384,15 +388,18 @@ check_existing_destination() {
 
       function getDiskFiles(dir, base = '') {
         let results = [];
-        const entries = fs.readdirSync(dir, { withFileTypes: true });
-        for (const entry of entries) {
-          if (entry.name === '.install-manifest.json' || entry.name.includes('.bak.') || entry.name.includes('.tmp.')) continue;
-          const fullPath = path.join(dir, entry.name);
-          const relPath = base ? path.join(base, entry.name) : entry.name;
-          if (entry.isDirectory()) {
+        const entries = fs.readdirSync(dir);
+        for (const name of entries) {
+          if (name === '.install-manifest.json' || name.includes('.bak.') || name.includes('.tmp.')) continue;
+          const fullPath = path.join(dir, name);
+          const relPath = base ? path.join(base, name) : name;
+          const stat = fs.lstatSync(fullPath);
+          if (stat.isSymbolicLink()) {
+            results.push({ rel: relPath.split(path.sep).join('/'), isSymlink: true, fullPath });
+          } else if (stat.isDirectory()) {
             results = results.concat(getDiskFiles(fullPath, relPath));
-          } else if (entry.isFile()) {
-            results.push(relPath.split(path.sep).join('/'));
+          } else if (stat.isFile()) {
+            results.push({ rel: relPath.split(path.sep).join('/'), isSymlink: false, fullPath });
           }
         }
         return results;
@@ -403,20 +410,32 @@ check_existing_destination() {
 
       for (const [rel, expectedHash] of Object.entries(manifestFiles)) {
         const full = path.join(dest, ...rel.split('/'));
-        if (!fs.existsSync(full)) {
+        let stat;
+        try {
+          stat = fs.lstatSync(full);
+        } catch {
           console.log('MODIFIED: deleted ' + rel);
           process.exit(0);
         }
-        const actualHash = crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex');
-        if (actualHash !== expectedHash) {
-          console.log('MODIFIED: changed ' + rel);
-          process.exit(0);
+
+        if (stat.isSymbolicLink()) {
+          const actualTarget = 'symlink:' + fs.readlinkSync(full);
+          if (actualTarget !== expectedHash) {
+            console.log('MODIFIED: changed symlink target ' + rel);
+            process.exit(0);
+          }
+        } else if (stat.isFile()) {
+          const actualHash = crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex');
+          if (actualHash !== expectedHash) {
+            console.log('MODIFIED: changed ' + rel);
+            process.exit(0);
+          }
         }
       }
 
-      for (const rel of diskFiles) {
-        if (!(rel in manifestFiles)) {
-          console.log('EXTRA: ' + rel);
+      for (const item of diskFiles) {
+        if (!(item.rel in manifestFiles)) {
+          console.log('EXTRA: ' + item.rel + (item.isSymlink ? ' (user-added symlink)' : ''));
           process.exit(0);
         }
       }

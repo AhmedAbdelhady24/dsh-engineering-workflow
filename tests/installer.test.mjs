@@ -449,4 +449,152 @@ test("Installer: uninstaller refuses to delete arbitrary symlinks pointing to un
   }
 });
 
+test("Installer: symlinks pointing to external directories cannot cause external files or directories to be modified or deleted during uninstall", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-symlink-cleanup-"));
+  const externalCanary = fs.mkdtempSync(path.join(os.tmpdir(), "uew-external-canary-"));
+  try {
+    // 1. Create external canary directory with files and subdirectories
+    const canaryFile = path.join(externalCanary, "secret-data.txt");
+    fs.writeFileSync(canaryFile, "IMPORTANT_USER_SECRET_DO_NOT_DELETE");
+    const subCanaryDir = path.join(externalCanary, "sub-dir");
+    fs.mkdirSync(subCanaryDir, { recursive: true });
+    const subCanaryFile = path.join(subCanaryDir, "sub-data.txt");
+    fs.writeFileSync(subCanaryFile, "SUB_CANARY_PAYLOAD");
+
+    // 2. Install skill
+    execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    const targetDir = path.join(tempProject, ".agents/skills/engineering-workflow");
+
+    // 3. Add user symlink pointing to external directory and another to external file
+    const symlinkDir = path.join(targetDir, "user-external-dir-link");
+    const symlinkFile = path.join(targetDir, "user-external-file-link");
+    fs.symlinkSync(externalCanary, symlinkDir);
+    fs.symlinkSync(canaryFile, symlinkFile);
+
+    // 4. Run uninstaller
+    const uninstallOutput = execSync(`bash "${uninstallScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    // 5. Invariant verifications:
+    // Uninstaller must announce preserved user symlink
+    assert(uninstallOutput.includes("user-added symlink"), "Uninstaller must detect and preserve user-added symlinks");
+
+    // External canary directory and contents MUST NOT be deleted or modified!
+    assert(fs.existsSync(externalCanary), "External directory must not be deleted");
+    assert(fs.existsSync(canaryFile), "External file must not be deleted");
+    assert.equal(
+      fs.readFileSync(canaryFile, "utf-8"),
+      "IMPORTANT_USER_SECRET_DO_NOT_DELETE",
+      "External file content must remain completely unchanged"
+    );
+    assert(fs.existsSync(subCanaryFile), "External sub-file must not be deleted");
+    assert.equal(
+      fs.readFileSync(subCanaryFile, "utf-8"),
+      "SUB_CANARY_PAYLOAD",
+      "External sub-file content must remain unchanged"
+    );
+
+    // User symlink itself inside install directory is preserved
+    assert(fs.lstatSync(symlinkDir).isSymbolicLink(), "User symlink must remain intact");
+
+    // Stock skill files must be removed
+    assert(!fs.existsSync(path.join(targetDir, "references", "setup.md")), "Stock files must be removed");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+    fs.rmSync(externalCanary, { recursive: true, force: true });
+  }
+});
+
+test("Installer: installation ownership manifest detects user-added symlinks and refuses upgrade without --force", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-symlink-upgrade-"));
+  const externalDir = fs.mkdtempSync(path.join(os.tmpdir(), "uew-upgrade-canary-"));
+  try {
+    fs.writeFileSync(path.join(externalDir, "config.json"), '{"external": true}');
+
+    // 1. Initial install
+    execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    const targetDir = path.join(tempProject, ".agents/skills/engineering-workflow");
+
+    // 2. Add user symlink
+    fs.symlinkSync(externalDir, path.join(targetDir, "external-symlink"));
+
+    // 3. Attempt upgrade without --force -> MUST FAIL
+    let failed = false;
+    let errOutput = "";
+    try {
+      execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+        encoding: "utf-8",
+        stdio: "pipe",
+      });
+    } catch (err) {
+      failed = true;
+      errOutput = (err.stderr || "").toString() + (err.stdout || "").toString();
+    }
+
+    assert(failed, "Upgrade must fail when user-added symlink exists without --force");
+    assert(
+      errOutput.includes("user-modified content") && errOutput.includes("external-symlink"),
+      "Error must identify user-added symlink and refuse overwrite"
+    );
+
+    // External target must remain untouched
+    assert.equal(fs.readFileSync(path.join(externalDir, "config.json"), "utf-8"), '{"external": true}');
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+    fs.rmSync(externalDir, { recursive: true, force: true });
+  }
+});
+
+test("Installer: legacy unmanifested uninstaller safely preserves user files and symlinks without destructive rm -rf", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-legacy-unmanifest-"));
+  const externalDir = fs.mkdtempSync(path.join(os.tmpdir(), "uew-legacy-external-"));
+  try {
+    fs.writeFileSync(path.join(externalDir, "safe.txt"), "EXTERNAL_SAFE_CONTENT");
+
+    const targetDir = path.join(tempProject, ".agents/skills/engineering-workflow");
+    fs.mkdirSync(path.join(targetDir, "references"), { recursive: true });
+
+    // Populate standard skill files mimicking an old unmanifested v1.0 install
+    fs.writeFileSync(
+      path.join(targetDir, "SKILL.md"),
+      "---\nname: engineering-workflow\ndescription: Legacy\n---\n# Legacy Skill"
+    );
+    fs.writeFileSync(path.join(targetDir, "references", "setup.md"), "# Setup Reference");
+
+    // Add user custom file and user symlink
+    const customUserFile = path.join(targetDir, "user-custom-rule.md");
+    fs.writeFileSync(customUserFile, "# My Custom Rule\nNever delete!");
+    const userSymlink = path.join(targetDir, "user-ext-link");
+    fs.symlinkSync(externalDir, userSymlink);
+
+    // Run uninstaller on legacy unmanifested install
+    const output = execSync(`bash "${uninstallScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    assert(output.includes("Legacy unmanifested installation detected"), "Must announce legacy detection");
+    assert(output.includes("Preserved user content"), "Must announce preserved user content");
+
+    // Invariants:
+    // Custom user file preserved
+    assert(fs.existsSync(customUserFile), "Custom user file in legacy install must be preserved");
+    // User symlink preserved
+    assert(fs.lstatSync(userSymlink).isSymbolicLink(), "User symlink in legacy install must be preserved");
+    // External directory completely untouched
+    assert.equal(fs.readFileSync(path.join(externalDir, "safe.txt"), "utf-8"), "EXTERNAL_SAFE_CONTENT");
+    // Standard files unlinked
+    assert(!fs.existsSync(path.join(targetDir, "references", "setup.md")), "Standard setup.md must be unlinked");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+    fs.rmSync(externalDir, { recursive: true, force: true });
+  }
+});
+
 

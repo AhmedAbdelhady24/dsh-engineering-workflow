@@ -279,11 +279,14 @@ engineering-workflow/
 The repository includes an automated test suite verifying spec compliance, routing rules, installer idempotency, recovery protocols, link integrity, and UX audit contracts:
 
 ```bash
-# Run the automated test suite (81 tests)
+# Run the automated test suite (89 tests)
 npm test
 
-# Run the live agent host smoke suite (CLIs detected in PATH)
+# Run Host CLI Availability Tests (CLIs detected in PATH)
 npm run test:live-smoke
+
+# Run Host End-to-End Tests (Discovery & Invocability)
+npm run test:host-e2e
 
 # Validate Agent Skills specification compliance
 npm run validate

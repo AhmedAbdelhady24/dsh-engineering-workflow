@@ -1,15 +1,15 @@
 /**
- * Live Agent Host Smoke Tests (Optional / Explicit Invocability Suite)
+ * Host CLI Availability Tests (Live Environment Availability Suite)
  *
  * NOTE: These tests inspect the current execution environment for installed
  * agent host CLIs (Claude Code, OpenAI Codex, Google Antigravity, DeepSeek Harness,
  * and Skills CLI).
  *
  * Behavior:
- * - If a host CLI is detected in PATH, it executes a live, non-destructive check
- *   (e.g., `--version`) to verify runtime invocability.
+ * - If a host CLI is detected in PATH, it executes a live check
+ *   (e.g., `--version`) to verify runtime availability.
  * - If a host CLI is NOT detected in PATH (such as in headless CI environments),
- *   the test skips cleanly via `t.skip(...)` without failing the suite.
+ *   the test skips cleanly via `t.skip(...)` reporting NOT TESTED without failing the suite.
  *
  * To run this suite specifically:
  *   npm run test:live-smoke
@@ -36,10 +36,10 @@ function findExecutable(binName) {
   }
 }
 
-test("Live agent smoke test: Claude Code CLI invocability", (t) => {
+test("Host CLI Availability Test: Claude Code", (t) => {
   const bin = findExecutable("claude");
   if (!bin) {
-    t.skip("Host CLI 'claude' not found in PATH; skipping live runtime check");
+    t.skip("[NOT TESTED: Host CLI 'claude' not found in PATH; skipping availability check]");
     return;
   }
 
@@ -51,10 +51,10 @@ test("Live agent smoke test: Claude Code CLI invocability", (t) => {
   );
 });
 
-test("Live agent smoke test: OpenAI Codex CLI invocability", (t) => {
+test("Host CLI Availability Test: OpenAI Codex", (t) => {
   const bin = findExecutable("codex");
   if (!bin) {
-    t.skip("Host CLI 'codex' not found in PATH; skipping live runtime check");
+    t.skip("[NOT TESTED: Host CLI 'codex' not found in PATH; skipping availability check]");
     return;
   }
 
@@ -66,10 +66,10 @@ test("Live agent smoke test: OpenAI Codex CLI invocability", (t) => {
   );
 });
 
-test("Live agent smoke test: Google Antigravity / Gemini CLI invocability", (t) => {
+test("Host CLI Availability Test: Google Antigravity / Gemini", (t) => {
   const bin = findExecutable("agy") || findExecutable("gemini");
   if (!bin) {
-    t.skip("Host CLI 'agy' or 'gemini' not found in PATH; skipping live runtime check");
+    t.skip("[NOT TESTED: Host CLI 'agy' or 'gemini' not found in PATH; skipping availability check]");
     return;
   }
 
@@ -78,10 +78,10 @@ test("Live agent smoke test: Google Antigravity / Gemini CLI invocability", (t) 
   assert(output.length > 0, `${cmd} CLI must return version information`);
 });
 
-test("Live agent smoke test: DeepSeek Harness CLI invocability", (t) => {
+test("Host CLI Availability Test: DeepSeek Harness", (t) => {
   const bin = findExecutable("dsh");
   if (!bin) {
-    t.skip("Host CLI 'dsh' not found in PATH; skipping live runtime check");
+    t.skip("[NOT TESTED: Host CLI 'dsh' not found in PATH; skipping availability check]");
     return;
   }
 
@@ -89,10 +89,10 @@ test("Live agent smoke test: DeepSeek Harness CLI invocability", (t) => {
   assert(output.length > 0, "DSH CLI must return version information");
 });
 
-test("Live agent smoke test: Skills CLI invocability", (t) => {
+test("Host CLI Availability Test: Skills CLI", (t) => {
   const bin = findExecutable("skills");
   if (!bin) {
-    t.skip("Skills CLI 'skills' not found in PATH; skipping live runtime check");
+    t.skip("[NOT TESTED: Skills CLI 'skills' not found in PATH; skipping availability check]");
     return;
   }
 

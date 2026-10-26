@@ -10,6 +10,7 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "test:live-smoke": "node --test tests/live-agent-smoke.test.mjs",
+    "test:host-e2e": "node --test tests/host-e2e.test.mjs",
     "validate": "node scripts/validate-skill.mjs",
     "check-plugin-version": "node scripts/sync-plugin-version.mjs --check",
     "sync-plugin-version": "node scripts/sync-plugin-version.mjs",
