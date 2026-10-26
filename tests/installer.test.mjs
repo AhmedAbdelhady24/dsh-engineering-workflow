@@ -200,16 +200,34 @@ test("Installer: safely handles and removes symlinks without traversing targets"
   }
 });
 
-test("Installer: --skills-cli flag support and dry-run execution", () => {
-  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-cli-"));
+test("Installer: --skills-cli forwards explicit agent selection and scope for claude, codex, antigravity, and all", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-cli-args-"));
   try {
-    const output = execSync(`bash "${installScript}" --path "${tempProject}" --target codex --skills-cli --dry-run`, {
-      encoding: "utf-8",
-    });
-    assert(
-      output.includes("Skills CLI") || output.includes("skills add"),
-      "Installer must support --skills-cli flag"
-    );
+    const testCases = [
+      { target: "claude", scope: "project", expectedScope: "-p", expectedAgent: "-a claude-code" },
+      { target: "claude", scope: "global", expectedScope: "-g", expectedAgent: "-a claude-code" },
+      { target: "codex", scope: "project", expectedScope: "-p", expectedAgent: "-a codex" },
+      { target: "codex", scope: "global", expectedScope: "-g", expectedAgent: "-a codex" },
+      { target: "antigravity", scope: "project", expectedScope: "-p", expectedAgent: "-a antigravity" },
+      { target: "antigravity", scope: "global", expectedScope: "-g", expectedAgent: "-a antigravity" },
+      { target: "all", scope: "project", expectedScope: "-p", expectedAgent: "-a *" },
+      { target: "all", scope: "global", expectedScope: "-g", expectedAgent: "-a *" },
+    ];
+
+    for (const tc of testCases) {
+      const output = execSync(
+        `bash "${installScript}" --path "${tempProject}" --target ${tc.target} --scope ${tc.scope} --skills-cli --dry-run`,
+        { encoding: "utf-8" }
+      );
+      assert(
+        output.includes(tc.expectedScope),
+        `--skills-cli for target=${tc.target} scope=${tc.scope} must forward scope flag '${tc.expectedScope}'`
+      );
+      assert(
+        output.includes(tc.expectedAgent),
+        `--skills-cli for target=${tc.target} scope=${tc.scope} must forward agent flag '${tc.expectedAgent}'`
+      );
+    }
   } finally {
     fs.rmSync(tempProject, { recursive: true, force: true });
   }
@@ -552,7 +570,7 @@ test("Installer: installation ownership manifest detects user-added symlinks and
   }
 });
 
-test("Installer: legacy unmanifested uninstaller safely preserves user files and symlinks without destructive rm -rf", () => {
+test("Installer: legacy unmanifested uninstaller safely preserves customized files and symlinks with manual migration guidance", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-legacy-unmanifest-"));
   const externalDir = fs.mkdtempSync(path.join(os.tmpdir(), "uew-legacy-external-"));
   try {
@@ -561,36 +579,53 @@ test("Installer: legacy unmanifested uninstaller safely preserves user files and
     const targetDir = path.join(tempProject, ".agents/skills/engineering-workflow");
     fs.mkdirSync(path.join(targetDir, "references"), { recursive: true });
 
-    // Populate standard skill files mimicking an old unmanifested v1.0 install
+    // 1. Customized standard file (customized setup.md and customized SKILL.md)
+    const customSkillPath = path.join(targetDir, "SKILL.md");
     fs.writeFileSync(
-      path.join(targetDir, "SKILL.md"),
-      "---\nname: engineering-workflow\ndescription: Legacy\n---\n# Legacy Skill"
+      customSkillPath,
+      "---\nname: engineering-workflow\ndescription: Legacy with custom edits\n---\n# Custom Legacy Skill\n"
     );
-    fs.writeFileSync(path.join(targetDir, "references", "setup.md"), "# Setup Reference");
+    const customSetupPath = path.join(targetDir, "references", "setup.md");
+    fs.writeFileSync(customSetupPath, "# My Customized Setup Instructions\nDo not delete!");
 
-    // Add user custom file and user symlink
+    // 2. Unmodified standard file (copied byte-for-byte from stock source)
+    const stockReviewPath = path.join(rootDir, "skill/engineering-workflow/references/review.md");
+    const destReviewPath = path.join(targetDir, "references", "review.md");
+    fs.copyFileSync(stockReviewPath, destReviewPath);
+
+    // 3. User custom file & user symlink
     const customUserFile = path.join(targetDir, "user-custom-rule.md");
     fs.writeFileSync(customUserFile, "# My Custom Rule\nNever delete!");
     const userSymlink = path.join(targetDir, "user-ext-link");
     fs.symlinkSync(externalDir, userSymlink);
 
-    // Run uninstaller on legacy unmanifested install
+    // 4. Run uninstaller
     const output = execSync(`bash "${uninstallScript}" --path "${tempProject}" --target codex --scope project`, {
       encoding: "utf-8",
     });
 
     assert(output.includes("Legacy unmanifested installation detected"), "Must announce legacy detection");
     assert(output.includes("Preserved user content"), "Must announce preserved user content");
+    assert(output.includes("Manual Migration Steps"), "Must output explicit manual migration steps");
 
     // Invariants:
-    // Custom user file preserved
-    assert(fs.existsSync(customUserFile), "Custom user file in legacy install must be preserved");
-    // User symlink preserved
-    assert(fs.lstatSync(userSymlink).isSymbolicLink(), "User symlink in legacy install must be preserved");
-    // External directory completely untouched
+    // - Customized standard file is PRESERVED
+    assert(fs.existsSync(customSetupPath), "Customized standard file (setup.md) must be preserved");
+    assert.equal(
+      fs.readFileSync(customSetupPath, "utf-8"),
+      "# My Customized Setup Instructions\nDo not delete!",
+      "Custom content in setup.md must remain intact"
+    );
+
+    // - Unmodified stock file IS UNLINKED
+    assert(!fs.existsSync(destReviewPath), "Unmodified stock review.md must be unlinked");
+
+    // - Extra user file & user symlink are PRESERVED
+    assert(fs.existsSync(customUserFile), "Custom user file must be preserved");
+    assert(fs.lstatSync(userSymlink).isSymbolicLink(), "User symlink must be preserved");
+
+    // - External directory untouched
     assert.equal(fs.readFileSync(path.join(externalDir, "safe.txt"), "utf-8"), "EXTERNAL_SAFE_CONTENT");
-    // Standard files unlinked
-    assert(!fs.existsSync(path.join(targetDir, "references", "setup.md")), "Standard setup.md must be unlinked");
   } finally {
     fs.rmSync(tempProject, { recursive: true, force: true });
     fs.rmSync(externalDir, { recursive: true, force: true });

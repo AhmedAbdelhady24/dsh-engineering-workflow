@@ -7,6 +7,8 @@ TARGET="all"
 SCOPE="project"
 PROJECT_DIR="$(pwd)"
 DRY_RUN=false
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+STOCK_SOURCE="${SCRIPT_DIR}/../skill/engineering-workflow"
 
 usage() {
   cat <<EOF
@@ -276,9 +278,11 @@ for p in "${TARGET_PATHS[@]}"; do
       node -e "
         const fs = require('fs');
         const path = require('path');
+        const crypto = require('crypto');
 
         const targetDir = process.argv[1];
         const dryRun = process.argv[2] === 'true';
+        const stockDir = process.argv[3];
 
         // Known standard skill files (relative paths)
         const standardFiles = new Set([
@@ -293,6 +297,16 @@ for p in "${TARGET_PATHS[@]}"; do
           'references/context-recovery.md',
           'references/agent-compatibility.md'
         ]);
+
+        let trustedHashes = {};
+        if (stockDir && fs.existsSync(stockDir)) {
+          for (const rel of standardFiles) {
+            const stockPath = path.join(stockDir, ...rel.split('/'));
+            if (fs.existsSync(stockPath) && fs.lstatSync(stockPath).isFile()) {
+              trustedHashes[rel] = crypto.createHash('sha256').update(fs.readFileSync(stockPath)).digest('hex');
+            }
+          }
+        }
 
         function getDiskFiles(dir, base = '') {
           let results = [];
@@ -320,13 +334,25 @@ for p in "${TARGET_PATHS[@]}"; do
 
         for (const item of diskFiles) {
           if (standardFiles.has(item.rel) && !item.isSymlink) {
-            removedFiles.push(item.rel);
-            if (!dryRun) {
-              fs.unlinkSync(item.fullPath);
+            if (item.rel in trustedHashes) {
+              const diskHash = crypto.createHash('sha256').update(fs.readFileSync(item.fullPath)).digest('hex');
+              if (diskHash === trustedHashes[item.rel]) {
+                removedFiles.push(item.rel);
+                if (!dryRun) {
+                  fs.unlinkSync(item.fullPath);
+                }
+                continue;
+              } else {
+                preservedFiles.push(item.rel + ' (customized standard file - preserved for manual migration)');
+                continue;
+              }
+            } else {
+              // Cannot verify hash against trusted stock source; preserve file!
+              preservedFiles.push(item.rel + ' (unverified standard file - preserved for manual migration)');
+              continue;
             }
-          } else {
-            preservedFiles.push(item.rel + (item.isSymlink ? ' (user-added symlink)' : ' (user-added file)'));
           }
+          preservedFiles.push(item.rel + (item.isSymlink ? ' (user-added symlink)' : ' (user-added file)'));
         }
 
         if (!dryRun) {
@@ -353,7 +379,12 @@ for p in "${TARGET_PATHS[@]}"; do
             for (const p of preservedFiles) {
               console.log('       - ' + p);
             }
-            console.log('    ✓ Cleaned up standard skill files while preserving user content.');
+            console.log('    ✓ Cleaned up unmodified standard skill files while preserving customized files.');
+            console.log('');
+            console.log('    📋 Manual Migration Steps:');
+            console.log('       1. Review preserved customized files in: ' + targetDir);
+            console.log('       2. Back up your customized instructions or configurations.');
+            console.log('       3. To reinstall cleanly with an ownership manifest, run: bash scripts/install.sh --force');
           }
         } else {
           console.log('    [Dry Run] Would remove ' + removedFiles.length + ' standard files.');
@@ -361,7 +392,7 @@ for p in "${TARGET_PATHS[@]}"; do
             console.log('    [Dry Run] Would preserve ' + preservedFiles.length + ' user files.');
           }
         }
-      " "${p}" "${DRY_RUN}"
+      " "${p}" "${DRY_RUN}" "${STOCK_SOURCE}"
     fi
   else
     echo "──► Not found: ${p} (Already clean)"

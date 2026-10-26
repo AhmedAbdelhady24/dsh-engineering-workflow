@@ -1,17 +1,17 @@
 # Verification Evidence & Test Execution Report
 
 - **Date of Verification**: October 26–27, 2026
-- **Base Commit**: [`5ae864e`](https://github.com/AhmedAbdelhady24/engineering-workflow/commit/5ae864e)
+- **Base Commit**: [`cb3860f`](https://github.com/AhmedAbdelhady24/engineering-workflow/commit/cb3860f)
 - **Execution Environment**: macOS Darwin 24.x (Apple Silicon), Node.js v22.23.1, Git 2.4x
 - **CI Environment**: GitHub Actions (`ubuntu-latest`, Node.js 20.x & 22.x matrix)
-- **Latest Remote CI Status**: **PASSED GREEN** (Run [#40401312494](https://github.com/AhmedAbdelhady24/engineering-workflow/actions/runs/40401312494) on commit `5ae864e`)
+- **Latest Remote CI Status**: **PASSED GREEN** (Run [#40403962531](https://github.com/AhmedAbdelhady24/engineering-workflow/actions/runs/40403962531) on commit `cb3860f`)
 - **Test Suite Runner**: Built-in Node.js Test Runner (`node --test tests/*.test.mjs`)
 - **Specification Compliance**: [Agent Skills open specification](https://agentskills.io/specification)
 - **Registered Capabilities**: **16 verified capabilities** in `skill-registry.json`
 
 ---
 
-## 1. Automated Test Suite Execution Evidence (89 Tests)
+## 1. Automated Test Suite Execution Evidence (92 Tests)
 
 Command executed:
 ```bash
@@ -23,104 +23,107 @@ Verbatim execution log:
 > engineering-workflow@1.1.0 test
 > node --test tests/*.test.mjs
 
-✔ Simulated Agent Scenario 1: setup operation produces readiness report and halts at Approval Gate without mutating code (3.45ms)
-✔ Simulated Agent Scenario 2: execute operation enforces red-green TDD discipline and bounded correction cycles (241.88ms)
-✔ Simulated Agent Scenario 3: independent review operation evaluates standards and spec compliance strictly read-only (95.18ms)
-✔ Simulated Agent Scenario 4: missing specialist skill triggers registered fallback policy without hallucinated claims (0.38ms)
-✔ Simulated Agent Scenario 5: context recovery reconciles git and test state, detecting stale evidence and preventing redundant work (98.02ms)
-✔ Skill routing: pure backend projects classify UI capabilities as NOT APPLICABLE (1.41ms)
-✔ Skill routing: frontend projects activate UI capabilities (0.42ms)
-✔ Skill routing: enforces no silent downgrade when a mandatory skill is missing (0.15ms)
-✔ Skill routing: Matt Pocock engineering skills verified by canonical names (0.09ms)
-✔ Skill routing: enforces the Skill Execution Contract (0.18ms)
-✔ Skill routing: defines Task-to-Skill Consideration Matrix across archetypes (0.08ms)
-✔ Skill routing: Ponytail role defined as minimal, focused, and complete implementation (0.15ms)
-✔ Skill routing: execute completion report requires distinguishing considered vs. invoked vs. blocked skills (0.19ms)
-✔ Context reconciliation: parses structured ledger fields accurately (124.10ms)
-✔ Context reconciliation: detects stale evidence when working tree is dirtied post-test (129.71ms)
-✔ Context recovery: Task Recovery Ledger contains all mandatory recovery fields (0.57ms)
-✔ Context recovery: reconciliation protocol enforces zero redundant work after compaction (0.13ms)
-✔ Context recovery: simulation of post-compaction continuation (0.21ms)
-✔ Host discovery: global skill directories match verified target specs (0.49ms)
+✔ Simulated Agent Scenario 1: setup operation produces readiness report and halts at Approval Gate without mutating code (3.32ms)
+✔ Simulated Agent Scenario 2: execute operation enforces red-green TDD discipline and bounded correction cycles (231.53ms)
+✔ Simulated Agent Scenario 3: independent review operation evaluates standards and spec compliance strictly read-only (99.61ms)
+✔ Simulated Agent Scenario 4: missing specialist skill triggers registered fallback policy without hallucinated claims (0.33ms)
+✔ Simulated Agent Scenario 5: context recovery reconciles git and test state, detecting stale evidence and preventing redundant work (111.22ms)
+✔ Skill routing: pure backend projects classify UI capabilities as NOT APPLICABLE (1.43ms)
+✔ Skill routing: frontend projects activate UI capabilities (0.32ms)
+✔ Skill routing: enforces no silent downgrade when a mandatory skill is missing (0.06ms)
+✔ Skill routing: Matt Pocock engineering skills verified by canonical names (0.05ms)
+✔ Skill routing: enforces the Skill Execution Contract (0.13ms)
+✔ Skill routing: defines Task-to-Skill Consideration Matrix across archetypes (0.06ms)
+✔ Skill routing: Ponytail role defined as minimal, focused, and complete implementation (0.11ms)
+✔ Skill routing: execute completion report requires distinguishing considered vs. invoked vs. blocked skills (0.11ms)
+✔ Context reconciliation: parses structured ledger fields accurately (108.69ms)
+✔ Context reconciliation: detects stale evidence when working tree is dirtied post-test (134.95ms)
+✔ Context recovery: Task Recovery Ledger contains all mandatory recovery fields (0.33ms)
+✔ Context recovery: reconciliation protocol enforces zero redundant work after compaction (0.05ms)
+✔ Context recovery: simulation of post-compaction continuation (0.20ms)
+✔ Host discovery: global skill directories match verified target specs (0.47ms)
 ✔ Host discovery: project-local .agents/skills is universally discoverable (0.24ms)
-✔ Host discovery: native host-specific fallback directories are preserved (0.27ms)
-✔ Host E2E: Skills CLI live skill discovery and multi-agent compatibility (229.34ms)
-﹣ Host E2E: OpenAI Codex skill discovery and operation execution (4069.69ms) # [NOT TESTED: Codex live LLM operation execution unavailable in current environment: spawnSync /bin/sh ETIMEDOUT]
-﹣ Host E2E: Claude Code plugin discovery and operation execution (6.18ms) # [NOT TESTED: Claude Code headless operation execution requires ANTHROPIC_API_KEY or interactive terminal session]
-﹣ Host E2E: Google Antigravity skill discovery and operation execution (56.60ms) # [NOT TESTED: Google Antigravity live subagent execution requires active Antigravity IDE app-server session]
-﹣ Host E2E: DeepSeek Harness skill discovery and operation execution (50.55ms) # [NOT TESTED: DeepSeek Harness live headless execution requires configured DSH profile and DeepSeek API key]
-✔ Installer: dry-run prints destinations without modifying filesystem (17.37ms)
-✔ Installer: installs and verifies project-local scope across agent targets (248.01ms)
-✔ Installer: installs and verifies global scope with distinct agent directories (345.71ms)
-✔ Installer: rejects invalid target and scope with informative error and exit code 1 (26.07ms)
-✔ Installer: repeated installation is safe, idempotent, and updates existing files cleanly (146.05ms)
-✔ Installer: uninstaller verifies skill ownership and protects unowned directories (8.79ms)
-✔ Installer: safely handles and removes symlinks without traversing targets (8.78ms)
-✔ Installer: --skills-cli flag support and dry-run execution (9.89ms)
-✔ Installer: refuses to replace unowned directory without --force (62.21ms)
-✔ Installer: refuses to replace user-modified skill directory without --force (134.50ms)
-✔ Installer: uninstaller refuses to delete directory without SKILL.md (6.47ms)
-✔ Installer: rejects unsupported target combination with --skills-cli (8.99ms)
-✔ Installer: upgrades between legitimate skill versions without --force when files are unmodified (121.74ms)
-✔ Installer: uninstaller preserves user-added extra files using installation manifest (75.65ms)
-✔ Installer: uninstaller preserves user-modified files using installation manifest (68.94ms)
-✔ Installer: uninstaller refuses to delete arbitrary symlinks pointing to unowned skills (7.66ms)
-✔ Installer: symlinks pointing to external directories cannot cause external files or directories to be modified or deleted during uninstall (68.97ms)
-✔ Installer: installation ownership manifest detects user-added symlinks and refuses upgrade without --force (73.13ms)
-✔ Installer: legacy unmanifested uninstaller safely preserves user files and symlinks without destructive rm -rf (29.80ms)
-✔ Links validation: all markdown files contain valid, resolvable local links (11.31ms)
-✔ Host CLI Availability Test: Claude Code (23.71ms)
-✔ Host CLI Availability Test: OpenAI Codex (50.38ms)
-✔ Host CLI Availability Test: Google Antigravity / Gemini (74.64ms)
-✔ Host CLI Availability Test: DeepSeek Harness (111.00ms)
-✔ Host CLI Availability Test: Skills CLI (60.25ms)
-✔ MCP policy: all installations and connections require user approval (0.48ms)
-✔ Context7 MCP: baseline documentation rules defined accurately (0.10ms)
-✔ Chrome DevTools MCP: browser testing rules defined accurately (0.15ms)
-✔ Host configurations: provided for Antigravity, DSH, Codex, and Claude Code (0.73ms)
-✔ Operation contract: setup terminates strictly at an Approval Gate (0.38ms)
-✔ Operation contract: execute enforces proportional planning, TDD, and max 3 review cycles (0.06ms)
-✔ Operation contract: review is strictly read-only and uses formal severity taxonomy (0.16ms)
-✔ Project classification: empty project identified as greenfield (1.02ms)
-✔ Project classification: backend fixture classified with UI NOT APPLICABLE (0.39ms)
-✔ Project classification: frontend fixture activates UI capabilities (1.45ms)
-✔ Project classification: monorepo fixture detected with workspace boundaries (0.64ms)
-✔ Repository safety: detects dirty working tree and preserves concurrent edits (103.88ms)
-✔ Repository safety: templates do not overwrite existing instructions blindly (0.36ms)
-✔ Repository safety: destructive git commands are strictly prohibited (0.16ms)
-✔ Skill Registry: canonical and mirror registry files exist and are identical (1.65ms)
-✔ Skill Registry: schema validity, taxonomy, and mandatory skill fields (0.51ms)
-✔ Skill Registry: duplicate canonical name detection (0.36ms)
-✔ Skill Registry: dependency validation and invalid reference checks (0.62ms)
-✔ Skill Registry: Ponytail canonical source and fallback definition (0.30ms)
-✔ Skill Registry: Matt Pocock skills, grill-with-docs dependencies, and user-only invocation (0.27ms)
-✔ Skill Registry: verified upstream repositories for Anthropic frontend-design and UI/UX skills (0.68ms)
-✔ Skill Registry: Testing and debugging mutual conflict declarations (0.16ms)
-✔ Agent Skills specification: valid frontmatter and naming (0.78ms)
-✔ Agent Skills specification: all referenced documents exist and are populated (0.99ms)
-✔ Zero DSH-specific plugin/daemon execution infrastructure in universal skill (1.29ms)
-✔ Canonical skill/ and mirrored skills/ directories remain strictly synchronized (1.90ms)
-✔ Claude Plugin and Codex Marketplace manifests are valid and in sync (0.58ms)
-✔ Architectural Decision Records (ADRs) are documented in .agents/adr (0.17ms)
-✔ UX Audit: operation discovery and routing in SKILL.md (0.50ms)
-✔ UX Audit: focus argument support and modes (0.18ms)
-✔ UX Audit: all 8 audit stages are thoroughly documented (0.07ms)
-✔ UX Audit: evidence classification taxonomy and usability scorecard (0.06ms)
-✔ UX Audit: visual and WCAG 2.2 AA accessibility standards (0.19ms)
-✔ UX Audit: UX-related technical architecture inspection requirements (0.06ms)
-✔ UX Audit: report template contains all 14 mandatory sections (0.28ms)
-✔ UX Audit: strict read-only safety constraints (0.05ms)
-✔ UX Audit: missing browser automation tool handling (0.27ms)
-✔ UX Audit: exercises UI component inspection on frontend fixture without modifying it (0.64ms)
+✔ Host discovery: native host-specific fallback directories are preserved (0.38ms)
+✔ Host E2E: Skills CLI live skill discovery and multi-agent compatibility (229.16ms)
+✔ Host E2E: Real-host setup operation halts before writing files and initializes only post-approval (53.32ms)
+✔ Host E2E: Real-host read-only review operation evaluates git diff without mutating working tree (107.87ms)
+✔ Host E2E: Real-host recovery behavior reconciles git commit and flags stale evidence on dirty tree (112.92ms)
+﹣ Host E2E: OpenAI Codex skill discovery and operation execution (4062.71ms) # [NOT TESTED: Codex live LLM operation execution unavailable in current environment: spawnSync /bin/sh ETIMEDOUT]
+﹣ Host E2E: Claude Code plugin discovery and operation execution (6.87ms) # [NOT TESTED: Claude Code headless operation execution requires ANTHROPIC_API_KEY or interactive terminal session]
+﹣ Host E2E: Google Antigravity skill discovery and operation execution (51.96ms) # [NOT TESTED: Google Antigravity live subagent execution requires active Antigravity IDE app-server session]
+﹣ Host E2E: DeepSeek Harness skill discovery and operation execution (50.09ms) # [NOT TESTED: DeepSeek Harness live headless execution requires configured DSH profile and DeepSeek API key]
+✔ Installer: dry-run prints destinations without modifying filesystem (16.93ms)
+✔ Installer: installs and verifies project-local scope across agent targets (244.20ms)
+✔ Installer: installs and verifies global scope with distinct agent directories (366.06ms)
+✔ Installer: rejects invalid target and scope with informative error and exit code 1 (25.80ms)
+✔ Installer: repeated installation is safe, idempotent, and updates existing files cleanly (132.70ms)
+✔ Installer: uninstaller verifies skill ownership and protects unowned directories (12.84ms)
+✔ Installer: safely handles and removes symlinks without traversing targets (11.15ms)
+✔ Installer: --skills-cli forwards explicit agent selection and scope for claude, codex, antigravity, and all (82.45ms)
+✔ Installer: refuses to replace unowned directory without --force (70.00ms)
+✔ Installer: refuses to replace user-modified skill directory without --force (137.66ms)
+✔ Installer: uninstaller refuses to delete directory without SKILL.md (9.37ms)
+✔ Installer: rejects unsupported target combination with --skills-cli (8.96ms)
+✔ Installer: upgrades between legitimate skill versions without --force when files are unmodified (116.01ms)
+✔ Installer: uninstaller preserves user-added extra files using installation manifest (71.36ms)
+✔ Installer: uninstaller preserves user-modified files using installation manifest (76.70ms)
+✔ Installer: uninstaller refuses to delete arbitrary symlinks pointing to unowned skills (9.57ms)
+✔ Installer: symlinks pointing to external directories cannot cause external files or directories to be modified or deleted during uninstall (72.66ms)
+✔ Installer: installation ownership manifest detects user-added symlinks and refuses upgrade without --force (74.56ms)
+✔ Installer: legacy unmanifested uninstaller safely preserves customized files and symlinks with manual migration guidance (37.18ms)
+✔ Links validation: all markdown files contain valid, resolvable local links (11.30ms)
+✔ Host CLI Availability Test: Claude Code (95.95ms)
+✔ Host CLI Availability Test: OpenAI Codex (47.29ms)
+✔ Host CLI Availability Test: Google Antigravity / Gemini (230.96ms)
+✔ Host CLI Availability Test: DeepSeek Harness (254.32ms)
+✔ Host CLI Availability Test: Skills CLI (57.00ms)
+✔ MCP policy: all installations and connections require user approval (0.66ms)
+✔ Context7 MCP: baseline documentation rules defined accurately (0.07ms)
+✔ Chrome DevTools MCP: browser testing rules defined accurately (0.08ms)
+✔ Host configurations: provided for Antigravity, DSH, Codex, and Claude Code (0.78ms)
+✔ Operation contract: setup terminates strictly at an Approval Gate (0.52ms)
+✔ Operation contract: execute enforces proportional planning, TDD, and max 3 review cycles (0.07ms)
+✔ Operation contract: review is strictly read-only and uses formal severity taxonomy (0.15ms)
+✔ Project classification: empty project identified as greenfield (1.04ms)
+✔ Project classification: backend fixture classified with UI NOT APPLICABLE (0.56ms)
+✔ Project classification: frontend fixture activates UI capabilities (1.06ms)
+✔ Project classification: monorepo fixture detected with workspace boundaries (0.33ms)
+✔ Repository safety: detects dirty working tree and preserves concurrent edits (98.25ms)
+✔ Repository safety: templates do not overwrite existing instructions blindly (0.52ms)
+✔ Repository safety: destructive git commands are strictly prohibited (0.19ms)
+✔ Skill Registry: canonical and mirror registry files exist and are identical (1.66ms)
+✔ Skill Registry: schema validity, taxonomy, and mandatory skill fields (0.41ms)
+✔ Skill Registry: duplicate canonical name detection (0.23ms)
+✔ Skill Registry: dependency validation and invalid reference checks (0.32ms)
+✔ Skill Registry: Ponytail canonical source and fallback definition (0.18ms)
+✔ Skill Registry: Matt Pocock skills, grill-with-docs dependencies, and user-only invocation (0.83ms)
+✔ Skill Registry: verified upstream repositories for Anthropic frontend-design and UI/UX skills (0.30ms)
+✔ Skill Registry: Testing and debugging mutual conflict declarations (0.15ms)
+✔ Agent Skills specification: valid frontmatter and naming (0.70ms)
+✔ Agent Skills specification: all referenced documents exist and are populated (0.82ms)
+✔ Zero DSH-specific plugin/daemon execution infrastructure in universal skill (1.11ms)
+✔ Canonical skill/ and mirrored skills/ directories remain strictly synchronized (2.57ms)
+✔ Claude Plugin and Codex Marketplace manifests are valid and in sync (0.46ms)
+✔ Architectural Decision Records (ADRs) are documented in .agents/adr (0.20ms)
+✔ UX Audit: operation discovery and routing in SKILL.md (0.66ms)
+✔ UX Audit: focus argument support and modes (0.16ms)
+✔ UX Audit: all 8 audit stages are thoroughly documented (0.06ms)
+✔ UX Audit: evidence classification taxonomy and usability scorecard (0.17ms)
+✔ UX Audit: visual and WCAG 2.2 AA accessibility standards (0.36ms)
+✔ UX Audit: UX-related technical architecture inspection requirements (0.18ms)
+✔ UX Audit: report template contains all 14 mandatory sections (0.48ms)
+✔ UX Audit: strict read-only safety constraints (0.12ms)
+✔ UX Audit: missing browser automation tool handling (0.24ms)
+✔ UX Audit: exercises UI component inspection on frontend fixture without modifying it (0.76ms)
 
-ℹ tests 89
+ℹ tests 92
 ℹ suites 0
-ℹ pass 85
+ℹ pass 88
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 4
 ℹ todo 0
-ℹ duration_ms 4461.53ms
+ℹ duration_ms 4721.28ms
 ```
 
 ---
@@ -137,11 +140,11 @@ Verbatim execution log:
 > engineering-workflow@1.1.0 test:live-smoke
 > node --test tests/live-agent-smoke.test.mjs
 
-✔ Host CLI Availability Test: Claude Code (81.28ms)
-✔ Host CLI Availability Test: OpenAI Codex (40.58ms)
-✔ Host CLI Availability Test: Google Antigravity / Gemini (210.88ms)
-✔ Host CLI Availability Test: DeepSeek Harness (226.07ms)
-✔ Host CLI Availability Test: Skills CLI (51.97ms)
+✔ Host CLI Availability Test: Claude Code (15.76ms)
+✔ Host CLI Availability Test: OpenAI Codex (42.24ms)
+✔ Host CLI Availability Test: Google Antigravity / Gemini (58.18ms)
+✔ Host CLI Availability Test: DeepSeek Harness (110.71ms)
+✔ Host CLI Availability Test: Skills CLI (62.21ms)
 
 ℹ tests 5
 ℹ suites 0
@@ -150,7 +153,7 @@ Verbatim execution log:
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 642.95ms
+ℹ duration_ms 323.07ms
 ```
 
 ---
@@ -167,21 +170,26 @@ Verbatim execution log:
 > engineering-workflow@1.1.0 test:host-e2e
 > node --test tests/host-e2e.test.mjs
 
-✔ Host E2E: Skills CLI live skill discovery and multi-agent compatibility (176.70ms)
-﹣ Host E2E: OpenAI Codex skill discovery and operation execution (4064.84ms) # [NOT TESTED: Codex live LLM operation execution unavailable in current environment: spawnSync /bin/sh ETIMEDOUT]
-﹣ Host E2E: Claude Code plugin discovery and operation execution (7.49ms) # [NOT TESTED: Claude Code headless operation execution requires ANTHROPIC_API_KEY or interactive terminal session]
-﹣ Host E2E: Google Antigravity skill discovery and operation execution (56.21ms) # [NOT TESTED: Google Antigravity live subagent execution requires active Antigravity IDE app-server session]
-﹣ Host E2E: DeepSeek Harness skill discovery and operation execution (53.67ms) # [NOT TESTED: DeepSeek Harness live headless execution requires configured DSH profile and DeepSeek API key]
+✔ Host E2E: Skills CLI live skill discovery and multi-agent compatibility (197.02ms)
+✔ Host E2E: Real-host setup operation halts before writing files and initializes only post-approval (48.07ms)
+✔ Host E2E: Real-host read-only review operation evaluates git diff without mutating working tree (100.06ms)
+✔ Host E2E: Real-host recovery behavior reconciles git commit and flags stale evidence on dirty tree (93.88ms)
+﹣ Host E2E: OpenAI Codex skill discovery and operation execution (4059.24ms) # [NOT TESTED: Codex live LLM operation execution unavailable in current environment: spawnSync /bin/sh ETIMEDOUT]
+﹣ Host E2E: Claude Code plugin discovery and operation execution (5.64ms) # [NOT TESTED: Claude Code headless operation execution requires ANTHROPIC_API_KEY or interactive terminal session]
+﹣ Host E2E: Google Antigravity skill discovery and operation execution (49.93ms) # [NOT TESTED: Google Antigravity live subagent execution requires active Antigravity IDE app-server session]
+﹣ Host E2E: DeepSeek Harness skill discovery and operation execution (51.15ms) # [NOT TESTED: DeepSeek Harness live headless execution requires configured DSH profile and DeepSeek API key]
 
-ℹ tests 5
+ℹ tests 8
 ℹ suites 0
-ℹ pass 1
+ℹ pass 4
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 4
 ℹ todo 0
-ℹ duration_ms 4391.24ms
+ℹ duration_ms 4638.70ms
 ```
+
+*Note: In `host-e2e.test.mjs`, assertion failures are never skipped; any failed assertion immediately fails the test suite. Only remote network timeouts and missing interactive credentials produce `[NOT TESTED]` skips.*
 
 ---
 
@@ -189,8 +197,8 @@ Verbatim execution log:
 
 | Environment | Host CLIs Present | Test Behavior | Result |
 | :--- | :--- | :--- | :--- |
-| **Local macOS Developer Machine** | `claude`, `codex`, `agy`, `dsh`, `skills` | Host availability tests execute live `--version` queries; Skills CLI E2E discovery executes live. | **85 Passed / 4 Skipped (Live LLM execution skipped)** |
-| **GitHub Actions CI (`ubuntu-latest`)** | None (Node.js runtime only) | Host availability and live E2E tests detect absent host CLIs and gracefully call `t.skip('[NOT TESTED: ...]')`. Core suite (spec, installer, recovery, routing, scenarios) executes deterministically. | **80 Passed / 9 Skipped / 0 Failed** |
+| **Local macOS Developer Machine** | `claude`, `codex`, `agy`, `dsh`, `skills` | Host availability tests pass; Skills CLI live discovery passes; real-host setup, review, and recovery contracts pass. Remote LLMs without headless auth skip cleanly. | **88 Passed / 4 Skipped / 0 Failed** |
+| **GitHub Actions CI (`ubuntu-latest`)** | None (Node.js runtime only) | Host availability and live LLM tests detect absent host CLIs and gracefully call `t.skip('[NOT TESTED: ...]')`. Core suite (spec, installer, recovery, routing, scenarios, setup gate, review immutability) executes deterministically. | **83 Passed / 9 Skipped / 0 Failed** |
 
 ---
 
@@ -274,7 +282,7 @@ plugin.json version is 1.1.0 (already in sync)
 
 | Target Host Environment | Verification Status | Primary Verification Method | Evidence Details |
 | :--- | :---: | :--- | :--- |
-| **Node.js Test Runner** | **VERIFIED** | Automated test suite execution | 85 passed, 4 skipped, 0 failed in 4.46s |
+| **Node.js Test Runner** | **VERIFIED** | Automated test suite execution | 88 passed, 4 skipped, 0 failed in 4.72s |
 | **Specification Conformance** | **VERIFIED** | `validate-skill.mjs` script | YAML frontmatter, 8 references & 4 operations valid |
 | **Link Integrity** | **VERIFIED** | `links-validation.test.mjs` | All markdown files checked; 0 broken links |
 | **Installer Safety & Manifest** | **VERIFIED** | `installer.test.mjs` (19 tests) | Ownership manifest, symlink safety, unmanifested legacy safe migration |

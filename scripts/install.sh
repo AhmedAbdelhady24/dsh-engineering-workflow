@@ -147,16 +147,30 @@ echo "   Source:  ${SKILL_SOURCE}"
 # Handle --skills-cli if requested
 if [[ "${USE_SKILLS_CLI}" == "true" ]]; then
   if [[ "${TARGET}" == "dsh" || "${TARGET}" == "antigravity-cli" ]]; then
-    echo "❌ Error: --skills-cli does not support target '${TARGET}'. Use direct installation for ${TARGET} or choose target 'all', 'claude', or 'codex'." >&2
+    echo "❌ Error: --skills-cli does not support target '${TARGET}'. Use direct installation for ${TARGET} or choose target 'all', 'claude', 'codex', or 'antigravity'." >&2
     exit 1
   fi
 
   if command -v npx >/dev/null 2>&1; then
     echo "⚙️  Invoking Skills CLI (npx skills add)..."
-    declare -a CLI_CMD=("npx" "--yes" "skills" "add" "${SKILL_SOURCE}")
+    declare -a CLI_CMD=("npx" "--yes" "skills" "add" "${SKILL_SOURCE}" "-y")
     if [[ "${SCOPE}" == "global" ]]; then
       CLI_CMD+=("-g")
+    else
+      CLI_CMD+=("-p")
     fi
+
+    case "${TARGET}" in
+      claude)                      CLI_CMD+=("-a" "claude-code") ;;
+      codex)                       CLI_CMD+=("-a" "codex") ;;
+      antigravity|antigravity-ide) CLI_CMD+=("-a" "antigravity") ;;
+      all)                         CLI_CMD+=("-a" "*") ;;
+      *)
+        echo "❌ Error: --skills-cli does not support target '${TARGET}'. Use direct installation for ${TARGET} or choose target 'all', 'claude', 'codex', or 'antigravity'." >&2
+        exit 1
+        ;;
+    esac
+
     if [[ "${DRY_RUN}" == "true" ]]; then
       echo "    [Dry Run] Would execute: (cd \"${PROJECT_DIR}\" && ${CLI_CMD[*]})"
       exit 0

@@ -279,7 +279,7 @@ engineering-workflow/
 The repository includes an automated test suite verifying spec compliance, routing rules, installer idempotency, recovery protocols, link integrity, and UX audit contracts:
 
 ```bash
-# Run the automated test suite (89 tests)
+# Run the automated test suite (92 tests)
 npm test
 
 # Run Host CLI Availability Tests (CLIs detected in PATH)
