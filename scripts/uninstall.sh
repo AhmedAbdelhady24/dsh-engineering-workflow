@@ -136,13 +136,9 @@ fi
 for p in "${TARGET_PATHS[@]}"; do
   if [[ -L "${p}" ]]; then
     echo "──► Found symlink: ${p}"
-    # Never delete arbitrary symlinks! Verify target does not belong to another skill or project
-    if [[ -d "${p}" && -f "${p}/SKILL.md" ]] && ! grep -q "name: engineering-workflow" "${p}/SKILL.md" 2>/dev/null; then
-      echo "    ⚠️ Skipping symlink ${p}: Points to an unowned skill (different name in SKILL.md)."
-      continue
-    fi
-    if [[ -d "${p}" && -f "${p}/package.json" ]] && ! grep -q '"engineering-workflow"' "${p}/package.json" 2>/dev/null; then
-      echo "    ⚠️ Skipping symlink ${p}: Points to an arbitrary project directory."
+    # Positively establish ownership: symlink target must exist, be a directory, and contain SKILL.md declaring name: engineering-workflow
+    if [[ ! -e "${p}" || ! -d "${p}" || ! -f "${p}/SKILL.md" ]] || ! grep -q "name: engineering-workflow" "${p}/SKILL.md" 2>/dev/null; then
+      echo "    ⚠️ Skipping unrecognized symlink ${p}: Does not positively resolve to a verified engineering-workflow skill (preserve-by-default)."
       continue
     fi
 

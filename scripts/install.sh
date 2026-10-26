@@ -156,8 +156,6 @@ if [[ "${USE_SKILLS_CLI}" == "true" ]]; then
     declare -a CLI_CMD=("npx" "--yes" "skills" "add" "${SKILL_SOURCE}" "-y")
     if [[ "${SCOPE}" == "global" ]]; then
       CLI_CMD+=("-g")
-    else
-      CLI_CMD+=("-p")
     fi
 
     case "${TARGET}" in

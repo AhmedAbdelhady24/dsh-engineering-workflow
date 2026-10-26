@@ -176,10 +176,16 @@ test("Installer: uninstaller verifies skill ownership and protects unowned direc
   }
 });
 
-test("Installer: safely handles and removes symlinks without traversing targets", () => {
+test("Installer: safely handles and removes verified symlinks without traversing targets", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-symlink-"));
   const realStorage = fs.mkdtempSync(path.join(os.tmpdir(), "uew-realstorage-"));
   try {
+    // Make target a verified engineering-workflow skill
+    fs.writeFileSync(
+      path.join(realStorage, "SKILL.md"),
+      "---\nname: engineering-workflow\ndescription: Verified\n---\n# Workflow"
+    );
+
     const symlinkDest = path.join(tempProject, ".claude/skills/engineering-workflow");
     fs.mkdirSync(path.dirname(symlinkDest), { recursive: true });
     fs.symlinkSync(realStorage, symlinkDest);
@@ -192,7 +198,7 @@ test("Installer: safely handles and removes symlinks without traversing targets"
     });
 
     assert(output.includes("Found symlink"), "Uninstaller must detect symlink");
-    assert(!fs.existsSync(symlinkDest), "Symlink itself must be removed");
+    assert(!fs.existsSync(symlinkDest), "Verified symlink itself must be removed");
     assert(fs.existsSync(realStorage), "Target directory referenced by symlink must NOT be deleted");
   } finally {
     fs.rmSync(tempProject, { recursive: true, force: true });
@@ -200,18 +206,69 @@ test("Installer: safely handles and removes symlinks without traversing targets"
   }
 });
 
-test("Installer: --skills-cli forwards explicit agent selection and scope for claude, codex, antigravity, and all", () => {
+test("Installer: uninstaller preserves dangling symlinks by default", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-dangling-symlink-"));
+  try {
+    const symlinkDest = path.join(tempProject, ".claude/skills/engineering-workflow");
+    fs.mkdirSync(path.dirname(symlinkDest), { recursive: true });
+    fs.symlinkSync(path.join(tempProject, "nonexistent-target-directory"), symlinkDest);
+
+    assert(fs.lstatSync(symlinkDest).isSymbolicLink(), "Dangling symlink must exist");
+
+    const output = execSync(`bash "${uninstallScript}" --path "${tempProject}" --target claude --scope project`, {
+      encoding: "utf-8",
+    });
+
+    assert(
+      output.includes("Skipping unrecognized symlink") && output.includes("preserve-by-default"),
+      "Uninstaller must preserve dangling symlink with preserve-by-default guidance"
+    );
+    assert(fs.lstatSync(symlinkDest).isSymbolicLink(), "Dangling symlink must remain intact");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+  }
+});
+
+test("Installer: uninstaller preserves symlinks pointing to ordinary non-skill directories by default", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-ordinary-symlink-"));
+  const ordinaryDir = fs.mkdtempSync(path.join(os.tmpdir(), "uew-ordinary-target-"));
+  try {
+    fs.writeFileSync(path.join(ordinaryDir, "notes.txt"), "regular user directory without SKILL.md");
+
+    const symlinkDest = path.join(tempProject, ".agents/skills/engineering-workflow");
+    fs.mkdirSync(path.dirname(symlinkDest), { recursive: true });
+    fs.symlinkSync(ordinaryDir, symlinkDest);
+
+    assert(fs.lstatSync(symlinkDest).isSymbolicLink(), "Symlink must exist");
+
+    const output = execSync(`bash "${uninstallScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    assert(
+      output.includes("Skipping unrecognized symlink") && output.includes("preserve-by-default"),
+      "Uninstaller must preserve symlink to ordinary directory"
+    );
+    assert(fs.lstatSync(symlinkDest).isSymbolicLink(), "User-owned symlink must remain untouched");
+    assert(fs.existsSync(path.join(ordinaryDir, "notes.txt")), "Target contents must remain untouched");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+    fs.rmSync(ordinaryDir, { recursive: true, force: true });
+  }
+});
+
+test("Installer: --skills-cli forwards explicit agent selection and scope for claude, codex, antigravity, and all without invalid -p flag", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-cli-args-"));
   try {
     const testCases = [
-      { target: "claude", scope: "project", expectedScope: "-p", expectedAgent: "-a claude-code" },
-      { target: "claude", scope: "global", expectedScope: "-g", expectedAgent: "-a claude-code" },
-      { target: "codex", scope: "project", expectedScope: "-p", expectedAgent: "-a codex" },
-      { target: "codex", scope: "global", expectedScope: "-g", expectedAgent: "-a codex" },
-      { target: "antigravity", scope: "project", expectedScope: "-p", expectedAgent: "-a antigravity" },
-      { target: "antigravity", scope: "global", expectedScope: "-g", expectedAgent: "-a antigravity" },
-      { target: "all", scope: "project", expectedScope: "-p", expectedAgent: "-a *" },
-      { target: "all", scope: "global", expectedScope: "-g", expectedAgent: "-a *" },
+      { target: "claude", scope: "project", isGlobal: false, expectedAgent: "-a claude-code" },
+      { target: "claude", scope: "global", isGlobal: true, expectedAgent: "-a claude-code" },
+      { target: "codex", scope: "project", isGlobal: false, expectedAgent: "-a codex" },
+      { target: "codex", scope: "global", isGlobal: true, expectedAgent: "-a codex" },
+      { target: "antigravity", scope: "project", isGlobal: false, expectedAgent: "-a antigravity" },
+      { target: "antigravity", scope: "global", isGlobal: true, expectedAgent: "-a antigravity" },
+      { target: "all", scope: "project", isGlobal: false, expectedAgent: "-a *" },
+      { target: "all", scope: "global", isGlobal: true, expectedAgent: "-a *" },
     ];
 
     for (const tc of testCases) {
@@ -219,15 +276,59 @@ test("Installer: --skills-cli forwards explicit agent selection and scope for cl
         `bash "${installScript}" --path "${tempProject}" --target ${tc.target} --scope ${tc.scope} --skills-cli --dry-run`,
         { encoding: "utf-8" }
       );
-      assert(
-        output.includes(tc.expectedScope),
-        `--skills-cli for target=${tc.target} scope=${tc.scope} must forward scope flag '${tc.expectedScope}'`
-      );
+      if (tc.isGlobal) {
+        assert(
+          output.includes("-g"),
+          `--skills-cli for target=${tc.target} scope=${tc.scope} must include '-g'`
+        );
+      } else {
+        assert(
+          !output.includes(" -p ") && !output.includes(" -p\n"),
+          `--skills-cli for project scope must NOT supply invalid '-p' flag (project is default in skills add)`
+        );
+      }
       assert(
         output.includes(tc.expectedAgent),
         `--skills-cli for target=${tc.target} scope=${tc.scope} must forward agent flag '${tc.expectedAgent}'`
       );
     }
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+  }
+});
+
+test("Installer: --skills-cli successfully installs skill into real project via npx skills add without -p", (t) => {
+  let hasSkillsCli = false;
+  try {
+    execSync("npx --yes skills --version", { stdio: "ignore" });
+    hasSkillsCli = true;
+  } catch {
+    hasSkillsCli = false;
+  }
+
+  if (!hasSkillsCli) {
+    t.skip("[NOT TESTED: npx skills CLI unavailable in environment]");
+    return;
+  }
+
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-skills-cli-real-"));
+  try {
+    // Initialize git repo for skills CLI project context
+    execSync("git init -q", { cwd: tempProject });
+
+    const installOutput = execSync(
+      `bash "${installScript}" --path "${tempProject}" --target codex --scope project --skills-cli`,
+      { encoding: "utf-8" }
+    );
+
+    assert(
+      installOutput.includes("Successfully installed via Skills CLI"),
+      "Must report successful Skills CLI installation"
+    );
+    assert(
+      fs.existsSync(path.join(tempProject, ".agents/skills/engineering-workflow/SKILL.md")),
+      "Installed skill SKILL.md must exist in target directory"
+    );
   } finally {
     fs.rmSync(tempProject, { recursive: true, force: true });
   }
@@ -459,7 +560,10 @@ test("Installer: uninstaller refuses to delete arbitrary symlinks pointing to un
       encoding: "utf-8",
     });
 
-    assert(output.includes("Skipping symlink") && output.includes("unowned skill"), "Uninstaller must skip unowned symlink");
+    assert(
+      output.includes("Skipping unrecognized symlink") && output.includes("preserve-by-default"),
+      "Uninstaller must skip unowned symlink with preserve-by-default guidance"
+    );
     assert(fs.lstatSync(symlinkDest).isSymbolicLink(), "Unowned symlink must remain untouched");
   } finally {
     fs.rmSync(tempProject, { recursive: true, force: true });

@@ -201,6 +201,14 @@ test("Host E2E: OpenAI Codex skill discovery and operation execution", (t) => {
 
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-codex-e2e-"));
   try {
+    // 1. Initialize sample project with git history
+    execSync("git init -q", { cwd: tempProject });
+    execSync('git config user.name "Test User"', { cwd: tempProject });
+    execSync('git config user.email "test@example.com"', { cwd: tempProject });
+    fs.writeFileSync(path.join(tempProject, "math.js"), "export function add(a, b) { return a + b; }\n");
+    execSync("git add . && git commit -qm 'initial'", { cwd: tempProject });
+
+    // 2. Install skill for Codex
     execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
       encoding: "utf-8",
     });
@@ -208,30 +216,47 @@ test("Host E2E: OpenAI Codex skill discovery and operation execution", (t) => {
     const skillPath = path.join(tempProject, ".agents/skills/engineering-workflow/SKILL.md");
     assert(fs.existsSync(skillPath), "Codex skill directory must exist at .agents/skills/engineering-workflow");
 
-    // Attempt live headless execution with short timeout
+    // 3. Attempt live execution of review operation with adequate timeout
     let executionResult;
     try {
       executionResult = execSync(
-        'codex exec --ephemeral --skip-git-repo-check --sandbox read-only "Describe the engineering-workflow setup operation in one sentence"',
+        'codex exec --ephemeral --sandbox read-only "Read .agents/skills/engineering-workflow/SKILL.md and run the review operation on math.js. Return a concise review summary."',
         {
           cwd: tempProject,
           encoding: "utf-8",
-          timeout: 4000,
+          timeout: 75000,
           stdio: ["pipe", "pipe", "pipe"],
         }
       );
     } catch (err) {
-      // Do not convert assertion errors into skips!
       if (err.name === "AssertionError" || err.code === "ERR_ASSERTION") {
         throw err;
       }
-      t.skip(
-        `[NOT TESTED: Codex live LLM operation execution unavailable in current environment: ${err.message?.split("\n")[0] || "Network timeout or credentials required"}]`
-      );
-      return;
+      const combinedOutput = (err.stderr ? err.stderr.toString() : "") + " " + (err.stdout ? err.stdout.toString() : "") + " " + (err.message || "");
+      const isInfraUnavailable = /failed to refresh available models: request timed out|unauthorized|authentication|api key|credentials|network unreachable|offline|econnrefused/i.test(combinedOutput);
+
+      if (isInfraUnavailable) {
+        t.skip(
+          `[NOT TESTED: Codex live remote model inference unavailable in current environment: ${err.message?.split("\n")[0]}]`
+        );
+        return;
+      }
+
+      // Distinguish unavailable infrastructure from genuine invocation failures:
+      // Command-line flag errors, invalid options, exit codes 1/2 from syntax defects FAIL the test.
+      throw new Error(`Codex CLI execution failed (exit ${err.status}): ${combinedOutput.trim().slice(0, 300)}`);
     }
 
-    assert(executionResult.length > 0, "Codex execution must produce output when available");
+    assert(executionResult.length > 0, "Codex execution must produce non-empty review output");
+    assert(
+      executionResult.includes("math.js") || executionResult.includes("review") || executionResult.includes("check"),
+      "Codex execution output must confirm inspection of math.js under review operation"
+    );
+
+    // Verify read-only invariant: working tree files must not be mutated
+    const status = execSync("git status --porcelain", { cwd: tempProject, encoding: "utf-8" }).trim();
+    const modifiedLines = status.split("\n").filter((l) => l.trim() && !l.includes(".agents"));
+    assert.equal(modifiedLines.length, 0, "Read-only review operation must not mutate working tree files");
   } finally {
     fs.rmSync(tempProject, { recursive: true, force: true });
   }
