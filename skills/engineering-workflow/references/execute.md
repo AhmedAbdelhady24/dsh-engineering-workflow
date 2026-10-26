@@ -1,6 +1,6 @@
 # Execute Operation Reference: Implementation, Verification & Delivery
 
-The **`execute`** operation carries out a specific software engineering task—feature, bugfix, refactor, or optimization—with strict engineering discipline, minimal incremental changes, test-driven validation, bounded independent review, and verifiable acceptance gates.
+The **`execute`** operation carries out a specific software engineering task—feature, bugfix, refactor, or optimization—with adaptive engineering discipline, minimal incremental changes, native test-driven validation, bounded independent review, and verifiable acceptance gates.
 
 ---
 
@@ -12,11 +12,11 @@ The **`execute`** operation carries out a specific software engineering task—f
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│ 2. Task Triage & Plan Sizing    │  (Trivial vs. Medium vs. Complex)
+│ 2. Adaptive Task Sizing         │  (Trivial vs. Medium vs. Complex)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│ 3. On-Demand Skill Routing      │  (Activate TDD, debugging, or UI specialists)
+│ 3. On-Demand Skill Routing      │  (Check availability; apply native TDD/minimalism)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
@@ -48,22 +48,26 @@ Before making any modification:
 
 ---
 
-## Phase 2: Task Triage & Plan Sizing
+## Phase 2: Adaptive Execution Sizing
 
-Size the plan proportionally to task complexity:
+Proportion execution overhead directly to task complexity:
 
-- **Trivial Edits (Single function, typo, styling fix, config update)**:
-  - Do not create extensive subagent plans or multi-round deliberations.
-  - State the intended change directly, write a test if logic is touched, apply the fix, verify, and complete.
+### A. Trivial Edits (Single function, typo, styling tweak, config update)
+- **Flow**: Inspect -> minimal change -> targeted verification.
+- Do NOT spawn multiple subagents, generate multi-page plans, or perform extended deliberations.
+- State the intended change concisely, update or add a test if logic is touched, apply the fix, verify, and complete.
 
-- **Medium / Multi-File Changes (New endpoint, component, refactor)**:
-  - Outline explicit acceptance criteria and affected modules.
-  - Define interfaces/contracts before writing concrete implementations.
-  - Create a lightweight 3–5 step plan in the chat or in `TASK_RECOVERY_LEDGER.md`.
+### B. Medium Tasks (New endpoint, UI component, targeted refactor)
+- **Flow**: Concise plan -> route specialist skills -> implement -> test -> review.
+- Outline explicit acceptance criteria and affected modules.
+- Define interfaces/contracts before writing concrete implementations.
+- Maintain a lightweight 3–5 step plan in the chat or in `TASK_RECOVERY_LEDGER.md`.
 
-- **Complex / Architectural Changes (New subsystem, data migration, protocol rewrite)**:
-  - Decompose into thin, verifiable slices where each slice leaves the test suite green.
-  - Establish a rollback strategy and interface seams before altering core behavior.
+### C. Complex / Architectural Tasks (New subsystem, data migration, protocol rewrite)
+- **Flow**: Requirements / architecture alignment -> approved decisions -> vertical slices -> isolated execution where supported -> comprehensive verification.
+- Interrogate requirements and assumptions before writing code.
+- Decompose into thin, verifiable slices where each slice leaves the test suite green.
+- Record milestones and decisions in `TASK_RECOVERY_LEDGER.md` with rollback boundaries before altering core behavior.
 
 ---
 
@@ -73,7 +77,7 @@ In accordance with the **Skill Execution Contract**, specialist skills are ident
 
 ### 1. Task Archetype Characterization & Skill Matching
 
-The orchestrator matches the current task to its target archetype and identifies candidate specialist skills to consider:
+The orchestrator matches the current task to its target archetype using [`skill-registry.json`](../skill-registry.json):
 
 | Task Archetype | Specialist Skills to Consider | Primary Purpose & Execution Intent |
 | :--- | :--- | :--- |
@@ -85,19 +89,21 @@ The orchestrator matches the current task to its target archetype and identifies
 | **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `browser-testing-with-devtools`, `break-ui` | Evaluating usability heuristics, visual hierarchy, micro-interactions, WCAG 2.2 AA accessibility, and runtime browser behavior. |
 | **Simple change** | `ponytail` principles, focused verification | Minimal complete diff, zero speculative abstractions, focused unit testing, fast turn-around. |
 
-### 2. Skill Verification Protocol
+### 2. Built-In Test Discipline (No External Skill Required)
 
-Before performing work:
-1. Inspect the host's active skill catalog, workspace `.agents/skills/`, or user-global skill directories (`~/.gemini/config/skills/`, `~/.claude/skills/`, `~/.agents/skills/`, `~/.dsh/skills/`).
-2. If candidate skill is installed: Mark as **VERIFIED AVAILABLE**.
-3. If a required candidate skill is missing: Mark as **MISSING / BLOCKED**. Report the missing capability to the user with its verified installation command (`npx skills add <source>`). Do not silently downgrade quality gates.
+The workflow does **NOT** require an external TDD skill merely to run tests:
+- When a specialist TDD skill (`tdd` or `test-driven-development`) is installed: route to it seamlessly.
+- When an external TDD skill is **absent**: the orchestrator applies native test discipline:
+  1. Write a targeted, failing unit or integration test defining expected behavior.
+  2. Run the project's test command and observe the test failure (RED phase).
+  3. Implement the minimal code required to satisfy the test (GREEN phase).
+  4. Re-run the test command and verify clean exit code 0.
+  5. Refactor while keeping tests green.
 
-### 3. Explicit Invocation Protocol
+### 3. Pragmatic Minimalism (Ponytail Fallback)
 
-Do not proceed without explicitly activating verified skills:
-- Read the specialist skill's `SKILL.md` into execution context, or delegate to a specialist subagent if supported by the host.
-- Follow the specialist skill's prescribed operational steps (e.g. write failing test first for TDD; reproduce error before touching source for debugging; apply Ponytail principles to eliminate extraneous code).
-- Record the invocation event in execution memory.
+- When `ponytail` is installed: invoke it to guide minimal implementation.
+- When `ponytail` is **absent**: apply the 7-Rung Decision Ladder directly (YAGNI -> reuse existing -> standard library -> platform native -> dependency -> one line -> minimum code) without claiming external skill invocation.
 
 ---
 
@@ -112,12 +118,18 @@ Follow the **Iron Laws of Execution**:
 
 ---
 
-## Phase 5: Focused Verification
+## Phase 5: Focused Verification & Failure Handling
 
 Verify changes in progressive tiers:
 1. **Typecheck & Linter**: Run project typecheck (`tsc --noEmit`, `mypy`, `cargo check`) to ensure contract safety.
 2. **Targeted Unit Tests**: Run only the tests directly associated with the modified files (`vitest run path/to/test.ts`, `pytest tests/test_feature.py`).
 3. **Browser / UI Verification (if UI)**: Use Chrome DevTools MCP or CDP screenshot scripts to visually verify layout, console logs, and responsiveness.
+
+### Failure Handling Protocol
+- If a verification step fails, do NOT guess or apply random edits.
+- Read the compiler, linter, or test runner error output carefully.
+- If an unexpected regression occurs, revert the minimal failing edit and re-isolate.
+- If a blocker persists after **3 correction cycles**, halt and escalate to the human user with exact reproduction commands and error output.
 
 ---
 

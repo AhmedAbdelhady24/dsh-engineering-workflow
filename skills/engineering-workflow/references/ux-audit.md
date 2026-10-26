@@ -43,7 +43,7 @@ The `ux-audit` operation is strictly **read-only with respect to application imp
 3. **Honest Runtime Reporting**:
    - If browser automation tools (Chrome DevTools MCP, Playwright) or local dev servers are unavailable, explicitly report the constraint and classify affected findings as **CODE-SUPPORTED** or **NOT TESTED**. Never claim runtime verification without execution evidence.
 4. **Approval Gate for Reports**:
-   - Draft findings in memory or a scratch buffer. Request user confirmation before writing the final [`UX_AUDIT_REPORT.md`](../../templates/UX_AUDIT_REPORT.md) to the project repository.
+   - Draft findings in memory or a scratch buffer. Request user confirmation before writing the final [`UX_AUDIT_REPORT.md`](../../../templates/UX_AUDIT_REPORT.md) to the project repository.
 
 ---
 
@@ -132,6 +132,7 @@ For every heuristic evaluation, classify the evidence strictly:
 - **`Observed`**: Verified through live runtime interaction, console logs, or browser screenshots.
 - **`Code-Supported`**: Verified by inspecting JSX/HTML/CSS implementation, route guards, or store state.
 - **`Hypothesis`**: Inferred design tension that requires dedicated qualitative user testing to confirm.
+- **`NOT TESTED`**: Capability, responsive viewport, or user flow was not verified at runtime (e.g. browser automation tool missing, live backend unavailable, or flow requires third-party OAuth). Never guess or fabricate runtime results.
 
 #### Usability Scorecard (1 to 5 Scale)
 Rate each evaluated usability dimension:
@@ -145,7 +146,10 @@ Rate each evaluated usability dimension:
 
 ### Stage 4 — Visual & Interaction Design Audit
 
-Audit the visual and tactile layers of the product:
+Audit the visual and tactile layers of the product, separating static analysis, runtime interaction testing, and accessibility verification:
+
+> **Important — Accessibility Conformance Notice**:
+> Automated accessibility passes (via automated linters or headless checks) catch only ~30–40% of WCAG issues. Passing automated checks does NOT equate to full WCAG 2.2 AA conformance. Verify keyboard navigation, focus traps, aria labels, and screen-reader semantics explicitly. Mark unverified criteria as `NOT TESTED`.
 
 1. **Visual Hierarchy & Grid**:
    - Consistent spatial rhythm (4px/8px scale).
@@ -194,7 +198,7 @@ Inspect underlying code implementations **strictly where they directly create UX
    - Cumulative Layout Shift (CLS) from late-loading images or dynamic banners pushing buttons.
    - Content flashes (Flash of Unstyled Text / FOUT, empty tables before skeletons render).
 6. **Source Citations**:
-   - Ground every technical finding with exact `file:line` references (e.g. `[Sidebar.tsx:42-58](src/components/Sidebar.tsx#L42-L58)`).
+   - Ground every technical finding with exact `file:line` references (e.g. `Sidebar.tsx:42-58` citing `src/components/Sidebar.tsx#L42-L58`).
    - Clearly distinguish between confirmed defects and architectural hypotheses.
 
 ---
@@ -274,6 +278,6 @@ Define a measurable validation framework to prove that subsequent engineering ch
 
 ## Output Contract: The UX Audit Report
 
-Upon completion of the audit, generate a complete report using the [`templates/UX_AUDIT_REPORT.md`](../../templates/UX_AUDIT_REPORT.md) template.
+Upon completion of the audit, generate a complete report using the [`templates/UX_AUDIT_REPORT.md`](../../../templates/UX_AUDIT_REPORT.md) template.
 
 Ensure every section is populated with concrete project facts. Avoid generic design platitudes or unsubstantiated claims. Provide clear, actionable guidance that product managers, designers, and frontend engineers can immediately execute.

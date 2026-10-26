@@ -2,8 +2,8 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Compliant-brightgreen)](https://agentskills.io/specification)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests: 41 passing](https://img.shields.io/badge/Tests-41%20passing-success)](tests/)
-[![Platforms: Claude Code | Codex | Antigravity | DSH](https://img.shields.io/badge/Platforms-Claude%20Code%20%7C%20Codex%20%7C%20Antigravity%20%7C%20DSH-orange)](docs/architecture/)
+[![Tests: 60 passing](https://img.shields.io/badge/Tests-60%20passing-success)](tests/)
+[![Platforms: Claude Code | Codex | Antigravity | DSH](https://img.shields.io/badge/Platforms-Claude%20Code%20%7C%20Codex%20%7C%20Antigravity%20%7C%20DSH-orange)](docs/COMPATIBILITY_MATRIX.md)
 
 The compaction-proof orchestrator for real software engineering — not vibe coding.
 
@@ -11,13 +11,39 @@ The compaction-proof orchestrator for real software engineering — not vibe cod
 
 Developing production applications with coding agents is hard. Monolithic frameworks try to help by owning the process, locking your terminal into rigid state machines and stripping away human control. At the other extreme, unguided agents fly without a compass, hallucinate passing tests, and suffer from total amnesia the moment context compacts.
 
-**Universal Engineering Workflow** provides the missing discipline: four lean operations (`setup`, `execute`, `review`, `ux-audit`), an ironclad **Skill Execution Contract**, a compaction-proof recovery ledger, and end-to-end runtime verification across Claude Code, OpenAI Codex, Google Antigravity, and DeepSeek Harness.
+**Universal Engineering Workflow** provides the missing discipline: four lean operations (`setup`, `execute`, `review`, `ux-audit`), an ironclad **Skill Execution Contract**, a machine-readable [Skill Registry](skill/engineering-workflow/skill-registry.json), a compaction-proof recovery ledger, and end-to-end runtime verification across Claude Code, OpenAI Codex, Google Antigravity, and DeepSeek Harness.
+
+---
+
+## What It Does vs. What It Does NOT Do
+
+| What This Workflow DOES | What This Workflow Does NOT Do |
+| :--- | :--- |
+| **Enforces four disciplined operations**: `setup`, `execute`, `review`, and `ux-audit`. | **Does NOT hijack your terminal** or run proprietary background daemon processes. |
+| **Enforces the Skill Execution Contract**: Verifies installed skills, invokes them explicitly, and requires hard command evidence. | **Does NOT vendor third-party skills**: References canonical upstreams (`DietrichGebert/ponytail`, `mattpocock/skills`, `obra/superpowers`). |
+| **Maintains native test discipline**: Applies red-green cycles natively even when external TDD skills are absent. | **Does NOT claim unverified execution**: Never claims TDD or Ponytail was invoked without real execution evidence. |
+| **Guarantees zero compaction amnesia**: Persists `TASK_LOG.md` and `RECOVERY_LEDGER.md` with explicit checkpoints. | **Does NOT lock you into proprietary runtimes**: Pure markdown, JSON manifests, and standard shell scripts. |
+| **Conducts two-axis code reviews**: Inspects diffs for both Engineering Standards and Spec fulfillment. | **Does NOT mutate code during reviews or audits**: Review and UX-audit roles are strictly read-only. |
+| **Performs 6-stage UX audits**: Walks real user journeys, audits 10 Nielsen heuristics, and inspects accessibility. | **Does NOT equate automated passes with full WCAG conformance**: Distinguishes automated checks from true accessibility. |
+
+---
+
+## Prerequisites
+
+- **Git**: v2.20 or later with standard porcelain support.
+- **Node.js**: v18.0.0 or later (Node 20+ recommended for test suite).
+- **Supported Agent Environments**:
+  - Claude Code (CLI or plugin marketplace)
+  - OpenAI Codex (CLI or IDE extension)
+  - Google Antigravity / Gemini CLI (`agy`)
+  - DeepSeek Harness (DSH)
+  - Any agent supporting the open [Agent Skills specification](https://agentskills.io/specification) (Cursor, Windsurf, OpenCode)
 
 ---
 
 ## 30-Second Setup
 
-A plugin updates automatically. Pick your environment below:
+Pick your agent environment below:
 
 ### 1. Install
 
@@ -29,7 +55,7 @@ claude plugin marketplace add AhmedAbdelhady24/engineering-workflow
 claude plugin install engineering-workflow@AhmedAbdelhady24
 ```
 
-*Updates automatically on startup.*
+*Follows Claude Code plugin marketplace update policies.*
 
 </details>
 
@@ -41,7 +67,7 @@ codex plugin marketplace add AhmedAbdelhady24/engineering-workflow
 codex plugin add engineering-workflow@AhmedAbdelhady24
 ```
 
-*Updates automatically on startup.*
+*Follows Codex plugin marketplace update policies.*
 
 </details>
 
@@ -49,10 +75,10 @@ codex plugin add engineering-workflow@AhmedAbdelhady24
 <summary><strong>Google Antigravity / Gemini CLI</strong> (Native Skills)</summary>
 
 ```bash
-# Global installation
+# Global installation (Antigravity IDE & CLI)
 gemini skills install https://github.com/AhmedAbdelhady24/engineering-workflow.git --path skills/engineering-workflow
 
-# Or project-local installation
+# Or project-local installation via installer script
 bash scripts/install.sh --target antigravity-ide --scope project
 ```
 
@@ -72,10 +98,10 @@ npx skills add AhmedAbdelhady24/engineering-workflow
 
 ```bash
 # Project-local installation (.agents/skills/engineering-workflow)
-curl -fsSL https://raw.githubusercontent.com/AhmedAbdelhady24/engineering-workflow/master/install.sh | bash -s -- --scope project
+curl -fsSL https://raw.githubusercontent.com/AhmedAbdelhady24/engineering-workflow/master/scripts/install.sh | bash -s -- --scope project
 
 # User-global installation
-curl -fsSL https://raw.githubusercontent.com/AhmedAbdelhady24/engineering-workflow/master/install.sh | bash -s -- --scope global
+curl -fsSL https://raw.githubusercontent.com/AhmedAbdelhady24/engineering-workflow/master/scripts/install.sh | bash -s -- --scope global
 ```
 
 </details>
@@ -89,9 +115,9 @@ In your agent's chat or CLI, run setup once per repository:
 ```
 
 The orchestrator will:
-1. Inspect the codebase, package managers, and test runners.
+1. Inspect the codebase, package managers, and test runners (non-blocking).
 2. Audit installed skills, MCP tools, and runtime capabilities.
-3. Detect your issue tracker (GitHub Issues, GitLab, Jira, or local files).
+3. Classify project archetype (backend, frontend, monorepo, greenfield).
 4. Initialize the compaction-proof `TASK_LOG.md` and `RECOVERY_LEDGER.md`.
 5. Halt at an explicit **Approval Gate** before modifying any code.
 
@@ -121,19 +147,19 @@ Built to eliminate the four fatal failure modes of AI-assisted software engineer
 > "Without data, you're just another person with an opinion."
 > — W. Edwards Deming
 
-**The Problem**: Agents often have access to great specialist skills (`tdd`, `codebase-design`, `grill-with-docs`, `systematic-debugging`), but merely mention them in conversation without actually invoking them. The agent claims it followed TDD, but wrote the implementation first, added tests as an afterthought, or skipped testing altogether.
+**The Problem**: Agents often have access to great specialist skills (`tdd`, `codebase-design`, `grilling`, `ponytail`), but merely mention them in conversation without actually invoking them. The agent claims it followed TDD, but wrote the implementation first, added tests as an afterthought, or skipped testing altogether.
 
 **The Fix**: The **Skill Execution Contract**.
 Before taking action, the agent must:
-1. Match the task archetype against the **Task-to-Skill Consideration Matrix**.
+1. Match the task archetype against the **Task-to-Skill Consideration Matrix** in [`skill-registry.json`](skill/engineering-workflow/skill-registry.json).
 2. Verify the selected specialist skill is installed in the current host environment.
 3. Explicitly invoke the skill through the host's supported mechanism.
 4. Report concrete runtime evidence (test commands, logs, exit codes) in the completion report.
 
 ```markdown
 - **Skills Execution Summary**:
-  - **Skills Considered**: [`grill-with-docs`, `domain-modeling`]
-  - **Skills Actually Invoked**: [`tdd` (ran `npm test` red -> green), `Ponytail` (minimal focused diff)]
+  - **Skills Considered**: [`grilling`, `domain-modeling`]
+  - **Skills Actually Invoked**: [`tdd` (ran `npm test` red -> green), `ponytail` (minimal focused diff)]
   - **Skills Missing / Blocked**: [None]
 ```
 
@@ -174,17 +200,17 @@ Direct commands triggered by humans in the agent chat or CLI:
 
 ### Dynamic Specialist Skill Integration
 
-Universal Engineering Workflow acts as an orchestrator that dynamically activates specialist skills on demand:
+Specialist capabilities are evaluated dynamically via [`skill-registry.json`](skill/engineering-workflow/skill-registry.json):
 
 | Task Archetype | Specialist Skills Considered | Primary Purpose & Execution Intent |
 | :--- | :--- | :--- |
 | **New feature with unclear requirements** | `grilling`, `grill-with-docs`, `domain-modeling` | Socratic interview; clarifying domain models and entities before writing code. |
 | **Architecture planning** | `codebase-design`, `implementation-planning` | Deep module boundaries, small interfaces hiding complexity, vertical slices. |
-| **Feature implementation** | `implement`, `Ponytail`, `test-driven-development` | Guided plan execution, minimal/focused changes without bloat, TDD loop. |
+| **Feature implementation** | `implement`, `ponytail`, `test-driven-development` | Guided plan execution, minimal/focused changes without bloat, TDD loop. |
 | **Bug fixing** | `systematic-debugging`, `test-driven-development` | Root-cause reproduction before mutation, failing regression tests, verifying fixes. |
 | **Engineering handoff** | `handoff` | Packaging structured context packages and recovery ledgers for peer agents. |
 | **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `break-ui`, `browser-testing-with-devtools` | Usability heuristics, visual design, micro-interactions, WCAG 2.2 AA testing. |
-| **Simple change** | `Ponytail` principles, focused verification | Minimal complete diff, zero speculative abstractions, focused unit testing. |
+| **Simple change** | `ponytail` principles, focused verification | Minimal complete diff, zero speculative abstractions, focused unit testing. |
 
 ---
 
@@ -194,6 +220,8 @@ Built strictly to the [Agent Skills open specification](https://agentskills.io/s
 
 ```text
 engineering-workflow/
+├── .github/workflows/                 # CI automation (Node 20/22, least-privilege)
+│   └── ci.yml
 ├── .claude-plugin/                    # Native Claude Code & Codex Marketplace
 │   ├── marketplace.json               # Registers repository as an installable plugin catalog
 │   └── plugin.json                    # Plugin manifest with operations & metadata
@@ -206,22 +234,23 @@ engineering-workflow/
 ├── scripts/
 │   ├── sync-plugin-version.mjs        # Synchronizes versions across manifests
 │   ├── validate-skill.mjs             # Schema & reference integrity validator
-│   ├── install.sh                     # Multi-host installation script
-│   └── uninstall.sh                   # Clean removal script
+│   ├── install.sh                     # Idempotent, atomic multi-host installer
+│   └── uninstall.sh                   # Safe rollback & uninstallation script
 ├── skill/engineering-workflow/        # Canonical Agent Skill implementation
 │   ├── SKILL.md                       # Core router & Skill Execution Contract
+│   ├── skill-registry.json            # Machine-readable specialist skill matrix
 │   └── references/
 │       ├── setup.md                   # Discovery & approval gate
-│       ├── execute.md                 # TDD, single-writer & review loop
-│       ├── review.md                  # Read-only audit & severity taxonomy
+│       ├── execute.md                 # Adaptive execution, TDD, single-writer & review loop
+│       ├── review.md                  # Read-only two-axis audit & severity taxonomy
 │       ├── ux-audit.md                # 6-stage usability & accessibility audit
 │       ├── skill-routing.md           # Dynamic specialist consideration matrix
 │       ├── mcps.md                    # Context7 & Chrome DevTools policies
-│       ├── context-recovery.md        # Compaction recovery protocol
+│       ├── context-recovery.md        # Compaction recovery protocol & multi-agent rules
 │       └── agent-compatibility.md     # Multi-agent roles & host invocations
 ├── skills/engineering-workflow/       # Agent Skills standard mirror (strictly synced)
-├── templates/                         # TASK_LOG, RECOVERY_LEDGER, Standards
-├── tests/                             # Automated test suite (41 tests)
+├── templates/                         # TASK_LOG, RECOVERY_LEDGER, UX_AUDIT_REPORT, Standards
+├── tests/                             # Comprehensive automated test suite (60 tests)
 ├── package.json
 └── README.md
 ```
@@ -232,22 +261,22 @@ engineering-workflow/
 
 1. **Strict Git Safety**:
    - Inspects `git status` before touching files; protects concurrent work from other sessions.
-   - Destructive Git operations (`git reset --hard`, `git clean -fd`, `git push --force`) are prohibited.
+   - Destructive Git operations (`git reset --hard`, `git clean -fd`, `git push --force`) are strictly prohibited.
    - Requires explicit human approval before any commit, push, or branch switch.
-2. **Single-Writer Rule**: Only one active writer per file or worktree. Planning and Review roles are strictly read-only.
+2. **Single-Writer Rule**: Only one active writer per file or worktree. Planning, Review, and UX Audit roles are strictly read-only.
 3. **Bounded Review Loop**: Maximum 3 fix-and-verify iterations between Reviewer and Executor.
 4. **Non-Destructive Setup**: Existing repository instructions (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`) are never overwritten blindly.
-5. **Context Compaction Recovery**: Utilizes native platform compaction alongside a persistent [`TASK_RECOVERY_LEDGER.md`](templates/TASK_RECOVERY_LEDGER.md) to resume execution without repeating completed edits.
+5. **Context Compaction Recovery**: Utilizes native platform compaction alongside persistent [`TASK_LOG.md`](./templates/TASK_LOG.md) and [`TASK_RECOVERY_LEDGER.md`](./templates/TASK_RECOVERY_LEDGER.md) to resume execution without repeating completed edits.
 6. **Dynamic Specialist Routing**: Preloads nothing unnecessarily. Activates TDD, debugging, Matt Pocock skills, or UI skills strictly on demand. Pure backend projects classify UI capabilities as **NOT APPLICABLE**.
 
 ---
 
 ## Verification & Testing
 
-The repository includes a comprehensive automated test suite verifying spec compliance, routing rules, installer behavior, recovery protocols, and UX audit contracts:
+The repository includes an automated test suite verifying spec compliance, routing rules, installer idempotency, recovery protocols, link integrity, and UX audit contracts:
 
 ```bash
-# Run the automated test suite (41 tests)
+# Run the automated test suite (60 tests)
 npm test
 
 # Validate Agent Skills specification compliance
@@ -259,10 +288,20 @@ npm run check-plugin-version
 
 ---
 
-## Rollback & Uninstallation
+## Troubleshooting & FAQ
 
-Safely removes the skill without affecting any other skills or project files:
+<details>
+<summary><strong>Q: What if a specialist skill (like TDD or Ponytail) is not installed?</strong></summary>
 
+Universal Engineering Workflow applies its own built-in discipline:
+- For TDD: It writes a failing test, runs the project test runner to confirm the failure, implements minimal code, and verifies the passing run.
+- For Ponytail: It applies the 7-Rung Decision Ladder directly (YAGNI, standard library, minimal diff) without falsely claiming external skill invocation.
+</details>
+
+<details>
+<summary><strong>Q: How do I remove the skill or roll back an installation?</strong></summary>
+
+Run the uninstaller script with the appropriate scope:
 ```bash
 # Project-local removal:
 bash scripts/uninstall.sh --scope project
@@ -270,6 +309,8 @@ bash scripts/uninstall.sh --scope project
 # Global removal:
 bash scripts/uninstall.sh --scope global
 ```
+The uninstaller verifies ownership before deletion and preserves unowned files and symlink targets.
+</details>
 
 ---
 

@@ -61,4 +61,4 @@ When executing non-trivial tasks in this repository, use the canonical `engineer
 - **Engineering Standards**: [`docs/ENGINEERING_STANDARDS.md`](docs/ENGINEERING_STANDARDS.md)
 - **Architecture & System Topology**: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - **UI & Accessibility Standards**: [`docs/UI_STANDARDS.md`](docs/UI_STANDARDS.md)
-- **Task Recovery Ledger**: [`.agents/TASK_RECOVERY_LEDGER.md`](.agents/TASK_RECOVERY_LEDGER.md)
+- **Task Recovery Ledger**: `.agents/TASK_RECOVERY_LEDGER.md` (or `TASK_RECOVERY_LEDGER.md`)

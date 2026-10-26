@@ -123,14 +123,14 @@ Evaluated against Nielsen's 10 Heuristics and modern product interaction standar
 
 ### [UX-TECH-01] {{Title: e.g. Stale Data Flash on Tab Switching}}
 - **Technical Mechanism**: {{e.g. Component re-mounts on route change without caching prior query state, flashing an empty table before re-fetching}}
-- **Source Citation**: `[{{File.tsx:Line}}](src/path/to/File.tsx#L40-L65)`
+- **Source Citation**: `src/path/to/File.tsx#L40-L65` (cite exact component file and line range)
 - **UX Manifestation**: Jarring layout flicker every time user toggles between active and archived tabs.
 - **Confirmed vs. Hypothesis**: `Confirmed Defect`
 - **Technical Recommendation**: {{e.g. Enable TanStack Query placeholderData / keepPreviousData or hoist state to persistent store}}
 
 ### [UX-TECH-02] {{Title: e.g. Unsubmitted Form State Wiped on Navigation}}
 - **Technical Mechanism**: {{e.g. Form state managed solely in local component useState without localStorage persistence or leave-page guard}}
-- **Source Citation**: `[{{Form.tsx:Line}}](src/path/to/Form.tsx#L18-L35)`
+- **Source Citation**: `src/path/to/Form.tsx#L18-L35` (cite exact component file and line range)
 - **UX Manifestation**: User loses all multi-paragraph inputs if they accidentally click outside or refresh.
 - **Confirmed vs. Hypothesis**: `Confirmed Defect`
 - **Technical Recommendation**: {{e.g. Implement auto-save draft in localStorage or prompt with beforeunload guard}}

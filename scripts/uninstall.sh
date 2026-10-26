@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Universal Engineering Workflow Uninstaller / Rollback
-# Safely removes the engineering-workflow skill without touching other skills.
+# Safely removes the engineering-workflow skill without touching other skills or user files.
 set -euo pipefail
 
 TARGET="all"
@@ -32,14 +32,51 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --target) TARGET="$2"; shift 2 ;;
-    --scope) SCOPE="$2"; shift 2 ;;
-    --path) PROJECT_DIR="$2"; shift 2 ;;
-    --dry-run) DRY_RUN=true; shift ;;
-    -h|--help) usage ;;
-    *) echo "Unknown option: $1" >&2; exit 1 ;;
+    --target)
+      TARGET="$2"
+      shift 2
+      ;;
+    --scope)
+      SCOPE="$2"
+      shift 2
+      ;;
+    --path)
+      PROJECT_DIR="$2"
+      shift 2
+      ;;
+    --dry-run)
+      DRY_RUN=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      ;;
+    *)
+      echo "❌ Error: Unknown option '$1'" >&2
+      usage
+      ;;
   esac
 done
+
+# Validate --target
+VALID_TARGETS=("antigravity-ide" "antigravity-cli" "antigravity" "dsh" "codex" "claude" "all")
+TARGET_VALID=false
+for valid in "${VALID_TARGETS[@]}"; do
+  if [[ "${TARGET}" == "${valid}" ]]; then
+    TARGET_VALID=true
+    break
+  fi
+done
+if [[ "${TARGET_VALID}" != "true" ]]; then
+  echo "❌ Error: Invalid target '${TARGET}'. Must be one of: ${VALID_TARGETS[*]}" >&2
+  exit 1
+fi
+
+# Validate --scope
+if [[ "${SCOPE}" != "project" && "${SCOPE}" != "global" ]]; then
+  echo "❌ Error: Invalid scope '${SCOPE}'. Must be 'project' or 'global'." >&2
+  exit 1
+fi
 
 echo "🗑️  Rolling back 'engineering-workflow' skill..."
 echo "   Target:  ${TARGET}"
@@ -95,8 +132,22 @@ if [[ "${TARGET}" == "all" || "${TARGET}" == "claude" ]]; then
 fi
 
 for p in "${TARGET_PATHS[@]}"; do
-  if [[ -d "${p}" ]]; then
+  if [[ -L "${p}" ]]; then
+    echo "──► Found symlink: ${p}"
+    if [[ "${DRY_RUN}" == "true" ]]; then
+      echo "    [Dry Run] Would remove symlink ${p}"
+    else
+      rm -f "${p}"
+      echo "    ✓ Successfully removed symlink ${p}"
+    fi
+  elif [[ -d "${p}" ]]; then
     echo "──► Found: ${p}"
+    # Ownership verification: confirm SKILL.md belongs to engineering-workflow
+    if [[ -f "${p}/SKILL.md" ]] && ! grep -q "name: engineering-workflow" "${p}/SKILL.md" 2>/dev/null; then
+      echo "    ⚠️ Skipping ${p}: SKILL.md does not belong to engineering-workflow (unowned directory)."
+      continue
+    fi
+
     if [[ "${DRY_RUN}" == "true" ]]; then
       echo "    [Dry Run] Would remove ${p}"
     else

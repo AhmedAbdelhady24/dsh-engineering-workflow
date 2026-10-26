@@ -62,14 +62,16 @@ Tier 1 (Native Slash Command):
   /engineering-workflow setup
   /engineering-workflow execute
   /engineering-workflow review
+  /engineering-workflow ux-audit [focus]
 
 Tier 2 (Codex Command Prefix):
   $engineering-workflow setup
   $engineering-workflow execute
   $engineering-workflow review
+  $engineering-workflow ux-audit [focus]
 
 Tier 3 (Universal Prompt Mention):
-  "Use the engineering-workflow skill to [setup | execute | review] ..."
+  "Use the engineering-workflow skill to [setup | execute | review | ux-audit] ..."
 ```
 
-The router checks the first 100 tokens of the incoming request for operation keywords (`setup`, `execute`, `review`) to ensure reliable dispatch regardless of how the client passes arguments.
+The router checks the incoming request for operation keywords (`setup`, `execute`, `review`, `ux-audit`) to ensure reliable dispatch regardless of how the client passes arguments.
