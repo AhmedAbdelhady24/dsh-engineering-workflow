@@ -15,6 +15,8 @@ test("Operation contract: setup terminates strictly at an Approval Gate", () => 
   assert(setupMd.includes("HALT AND REQUEST EXPLICIT APPROVAL"), "setup.md must halt before mutating repository");
   assert(setupMd.includes("Capability Readiness Report"), "setup.md must produce a Capability Readiness Report");
   assert(setupMd.includes("Never overwrite existing instructions blindly"), "setup.md must protect existing project instructions");
+  assert(setupMd.includes("Phase 7: Post-Approval Initialization"), "setup.md must place file generation strictly post-approval");
+  assert(setupMd.includes("Only after the user explicitly signs off at the Approval Gate"), "setup.md must forbid writing files prior to approval");
 });
 
 test("Operation contract: execute enforces proportional planning, TDD, and max 3 review cycles", () => {

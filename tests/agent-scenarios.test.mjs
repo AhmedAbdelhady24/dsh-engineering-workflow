@@ -1,3 +1,15 @@
+/**
+ * Simulated Agent Scenarios (Deterministic Unit / Behavioral Mock Suite)
+ *
+ * NOTE: These tests evaluate orchestrator protocols and safety invariants
+ * (setup gates, TDD execution loops, independent read-only reviews, missing skill
+ * fallback routing, and context recovery reconciliation) using deterministic,
+ * isolated unit/mock simulations.
+ *
+ * For live host CLI execution tests on real agent runtimes, see:
+ * tests/live-agent-smoke.test.mjs (invocable via `npm run test:live-smoke`).
+ */
+
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -12,7 +24,7 @@ const canonicalRegistryPath = path.join(rootDir, "skill/engineering-workflow/ski
 const taskLogTemplate = fs.readFileSync(path.join(rootDir, "templates/TASK_LOG.md"), "utf-8");
 const ledgerTemplate = fs.readFileSync(path.join(rootDir, "templates/TASK_RECOVERY_LEDGER.md"), "utf-8");
 
-test("Agent scenario 1: setup operation produces readiness report and halts at Approval Gate without mutating code", () => {
+test("Simulated Agent Scenario 1: setup operation produces readiness report and halts at Approval Gate without mutating code", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-scenario-setup-"));
   try {
     // 1. Simulate greenfield / existing project with package.json
@@ -58,7 +70,7 @@ test("Agent scenario 1: setup operation produces readiness report and halts at A
   }
 });
 
-test("Agent scenario 2: execute operation enforces red-green TDD discipline and bounded correction cycles", () => {
+test("Simulated Agent Scenario 2: execute operation enforces red-green TDD discipline and bounded correction cycles", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-scenario-execute-"));
   try {
     // Initialize git repo for porcelain checks
@@ -114,7 +126,7 @@ test('add numbers correctly', () => {
   }
 });
 
-test("Agent scenario 3: independent review operation evaluates standards and spec compliance strictly read-only", () => {
+test("Simulated Agent Scenario 3: independent review operation evaluates standards and spec compliance strictly read-only", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-scenario-review-"));
   try {
     execSync("git init -q", { cwd: tempProject });
@@ -157,7 +169,7 @@ test("Agent scenario 3: independent review operation evaluates standards and spe
   }
 });
 
-test("Agent scenario 4: missing specialist skill triggers registered fallback policy without hallucinated claims", () => {
+test("Simulated Agent Scenario 4: missing specialist skill triggers registered fallback policy without hallucinated claims", () => {
   const registry = JSON.parse(fs.readFileSync(canonicalRegistryPath, "utf-8"));
   const ponytail = registry.skills.find((s) => s.canonicalName === "ponytail");
 
@@ -186,7 +198,7 @@ test("Agent scenario 4: missing specialist skill triggers registered fallback po
   assert(executionSummary.includes("Missing / Blocked**: ponytail"), "Execution report must report missing skill");
 });
 
-test("Agent scenario 5: context recovery reconciles git and test state, detecting stale evidence and preventing redundant work", () => {
+test("Simulated Agent Scenario 5: context recovery reconciles git and test state, detecting stale evidence and preventing redundant work", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-scenario-recovery-"));
   try {
     execSync("git init -q", { cwd: tempProject });

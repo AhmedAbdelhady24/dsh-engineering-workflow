@@ -29,6 +29,10 @@ The **`setup`** operation establishes engineering clarity for a new or existing 
              ▼
 ┌─────────────────────────┐
 │ 6. Approval Gate        │  (Present Capability Readiness Report; HALT)
+└────────────┬────────────┘
+             ▼
+┌─────────────────────────┐
+│ 7. Post-Approval Init   │  (Write TASK_LOG.md, TASK_RECOVERY_LEDGER.md)
 └─────────────────────────┘
 ```
 
@@ -127,3 +131,14 @@ Consequential operations **require explicit human approval** before proceeding:
 2. Present the report clearly to the user.
 3. **HALT AND REQUEST EXPLICIT APPROVAL**:
    - Ask the user to confirm the proposed architecture, documentation templates, and next steps before proceeding to execution.
+
+---
+
+## Phase 7: Post-Approval Initialization
+
+Only after the user explicitly signs off at the Approval Gate:
+1. Initialize the project execution log: write [`TASK_LOG.md`](../../../templates/TASK_LOG.md) to the repository root.
+2. Initialize the task recovery ledger: write [`TASK_RECOVERY_LEDGER.md`](../../../templates/TASK_RECOVERY_LEDGER.md).
+3. If approved, write the proposed project standards baseline ([`AGENTS.md`](../../../templates/AGENTS.md) or `docs/ENGINEERING_STANDARDS.md`).
+4. Record the initial baseline commit SHA in the ledger and ready the environment for `/engineering-workflow execute`.
+

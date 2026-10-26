@@ -341,3 +341,112 @@ test("Installer: rejects unsupported target combination with --skills-cli", () =
   }
 });
 
+test("Installer: upgrades between legitimate skill versions without --force when files are unmodified", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-upgrade-clean-"));
+  try {
+    // 1. Initial install
+    const firstRun = execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+    assert(firstRun.includes("Installation complete and verified!"), "First install must succeed");
+
+    const installedSkill = path.join(tempProject, ".agents/skills/engineering-workflow");
+    const manifestPath = path.join(installedSkill, ".install-manifest.json");
+    assert(fs.existsSync(manifestPath), "Manifest must be generated on install");
+
+    // 2. Repeat install without --force (clean upgrade / update)
+    const upgradeRun = execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+    assert(
+      upgradeRun.includes("Clean previous installation detected") || upgradeRun.includes("Installation complete and verified!"),
+      "Clean upgrade without --force must succeed"
+    );
+    assert(fs.existsSync(manifestPath), "Manifest must exist after upgrade");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+  }
+});
+
+test("Installer: uninstaller preserves user-added extra files using installation manifest", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-uninst-extra-"));
+  try {
+    // 1. Install
+    execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    const targetDir = path.join(tempProject, ".agents/skills/engineering-workflow");
+    const userFile = path.join(targetDir, "custom_user_workflow.md");
+    fs.writeFileSync(userFile, "# Custom User Content\nDo not delete me!");
+
+    // 2. Run uninstaller
+    const uninstallOutput = execSync(`bash "${uninstallScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    assert(uninstallOutput.includes("Preserved user content"), "Uninstaller must announce preserved user content");
+    assert(fs.existsSync(userFile), "User-added file must be preserved");
+    assert.equal(fs.readFileSync(userFile, "utf-8"), "# Custom User Content\nDo not delete me!");
+
+    // Stock files should be removed
+    assert(!fs.existsSync(path.join(targetDir, "references", "execute.md")), "Stock files must be removed");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+  }
+});
+
+test("Installer: uninstaller preserves user-modified files using installation manifest", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-uninst-mod-"));
+  try {
+    // 1. Install
+    execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    const targetDir = path.join(tempProject, ".agents/skills/engineering-workflow");
+    const skillMd = path.join(targetDir, "SKILL.md");
+    fs.appendFileSync(skillMd, "\n# User Custom Instructions Added Here\n");
+
+    // 2. Run uninstaller
+    const uninstallOutput = execSync(`bash "${uninstallScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    assert(uninstallOutput.includes("Preserved user content"), "Uninstaller must announce preserved modified files");
+    assert(fs.existsSync(skillMd), "Modified SKILL.md must be preserved on disk");
+    assert(fs.readFileSync(skillMd, "utf-8").includes("User Custom Instructions"), "User custom edits must be intact");
+
+    // Unmodified stock files should be cleaned up
+    assert(!fs.existsSync(path.join(targetDir, "references", "review.md")), "Unmodified files must be removed");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+  }
+});
+
+test("Installer: uninstaller refuses to delete arbitrary symlinks pointing to unowned skills", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-symlink-unowned-"));
+  const otherSkill = fs.mkdtempSync(path.join(os.tmpdir(), "uew-other-skill-"));
+  try {
+    fs.writeFileSync(
+      path.join(otherSkill, "SKILL.md"),
+      "---\nname: completely-different-skill\ndescription: Unrelated\n---\n# Other Skill"
+    );
+
+    const symlinkDest = path.join(tempProject, ".claude/skills/engineering-workflow");
+    fs.mkdirSync(path.dirname(symlinkDest), { recursive: true });
+    fs.symlinkSync(otherSkill, symlinkDest);
+
+    const output = execSync(`bash "${uninstallScript}" --path "${tempProject}" --target claude --scope project`, {
+      encoding: "utf-8",
+    });
+
+    assert(output.includes("Skipping symlink") && output.includes("unowned skill"), "Uninstaller must skip unowned symlink");
+    assert(fs.lstatSync(symlinkDest).isSymbolicLink(), "Unowned symlink must remain untouched");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+    fs.rmSync(otherSkill, { recursive: true, force: true });
+  }
+});
+
+

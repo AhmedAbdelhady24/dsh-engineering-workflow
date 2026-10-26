@@ -300,6 +300,147 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 trap 'exit 129' HUP
 
+# Function to generate an installation ownership manifest
+generate_install_manifest() {
+  local target_dir="$1"
+  node -e "
+    const fs = require('fs');
+    const path = require('path');
+    const crypto = require('crypto');
+
+    const targetDir = process.argv[1];
+
+    function getFiles(dir, base = '') {
+      let results = [];
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.name === '.install-manifest.json' || entry.name.includes('.bak.') || entry.name.includes('.tmp.')) continue;
+        const fullPath = path.join(dir, entry.name);
+        const relPath = base ? path.join(base, entry.name) : entry.name;
+        if (entry.isDirectory()) {
+          results = results.concat(getFiles(fullPath, relPath));
+        } else if (entry.isFile()) {
+          const content = fs.readFileSync(fullPath);
+          const hash = crypto.createHash('sha256').update(content).digest('hex');
+          results.push([relPath.split(path.sep).join('/'), hash]);
+        }
+      }
+      return results;
+    }
+
+    const filesMap = {};
+    for (const [rel, hash] of getFiles(targetDir)) {
+      filesMap[rel] = hash;
+    }
+
+    const manifest = {
+      manifestVersion: '1.0.0',
+      name: 'engineering-workflow',
+      installedAt: new Date().toISOString(),
+      files: filesMap
+    };
+
+    fs.writeFileSync(path.join(targetDir, '.install-manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+  " "${target_dir}"
+}
+
+# Function to verify whether an existing destination has been modified by user
+check_existing_destination() {
+  local dest="$1"
+  local source_dir="$2"
+  local force="$3"
+
+  # 1. Ownership check: Must contain SKILL.md with name: engineering-workflow
+  if [[ ! -f "${dest}/SKILL.md" ]] || ! grep -q "name: engineering-workflow" "${dest}/SKILL.md" 2>/dev/null; then
+    if [[ "${force}" != "true" ]]; then
+      echo "❌ Error: Destination ${dest} exists and is not an engineering-workflow skill (unowned directory). Refusing to overwrite without --force." >&2
+      return 1
+    fi
+    return 0
+  fi
+
+  if [[ "${force}" == "true" ]]; then
+    return 0
+  fi
+
+  # 2. Manifest check: If .install-manifest.json exists, check for user modifications
+  local manifest="${dest}/.install-manifest.json"
+  if [[ -f "${manifest}" ]]; then
+    local check_result
+    check_result=$(node -e "
+      const fs = require('fs');
+      const path = require('path');
+      const crypto = require('crypto');
+
+      const dest = process.argv[1];
+      const manifestPath = path.join(dest, '.install-manifest.json');
+      let manifest;
+      try {
+        manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+      } catch (e) {
+        console.log('CORRUPT_MANIFEST');
+        process.exit(0);
+      }
+
+      function getDiskFiles(dir, base = '') {
+        let results = [];
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+          if (entry.name === '.install-manifest.json' || entry.name.includes('.bak.') || entry.name.includes('.tmp.')) continue;
+          const fullPath = path.join(dir, entry.name);
+          const relPath = base ? path.join(base, entry.name) : entry.name;
+          if (entry.isDirectory()) {
+            results = results.concat(getDiskFiles(fullPath, relPath));
+          } else if (entry.isFile()) {
+            results.push(relPath.split(path.sep).join('/'));
+          }
+        }
+        return results;
+      }
+
+      const diskFiles = getDiskFiles(dest);
+      const manifestFiles = manifest.files || {};
+
+      for (const [rel, expectedHash] of Object.entries(manifestFiles)) {
+        const full = path.join(dest, ...rel.split('/'));
+        if (!fs.existsSync(full)) {
+          console.log('MODIFIED: deleted ' + rel);
+          process.exit(0);
+        }
+        const actualHash = crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex');
+        if (actualHash !== expectedHash) {
+          console.log('MODIFIED: changed ' + rel);
+          process.exit(0);
+        }
+      }
+
+      for (const rel of diskFiles) {
+        if (!(rel in manifestFiles)) {
+          console.log('EXTRA: ' + rel);
+          process.exit(0);
+        }
+      }
+
+      console.log('CLEAN');
+    " "${dest}")
+
+    if [[ "${check_result}" == "CLEAN" ]]; then
+      echo "    ℹ️ Clean previous installation detected. Upgrading to new version..."
+      return 0
+    else
+      echo "❌ Error: Destination ${dest} contains user-modified content (${check_result}). Refusing to overwrite without --force." >&2
+      return 1
+    fi
+  else
+    # Legacy install without manifest: fallback to diff check against SKILL_SOURCE
+    if ! diff -r -q -x "*.bak.*" -x "*.tmp.*" "${dest}" "${source_dir}" >/dev/null 2>&1; then
+      echo "❌ Error: Destination ${dest} contains user-modified content. Refusing to overwrite without --force." >&2
+      return 1
+    fi
+    return 0
+  fi
+}
+
 for dest in "${DESTINATIONS[@]}"; do
   echo "──► Destination: ${dest}"
   if [[ "${DRY_RUN}" == "true" ]]; then
@@ -322,20 +463,8 @@ for dest in "${DESTINATIONS[@]}"; do
       BACKED_UP_DESTS+=("${bak_path}")
     elif [[ -d "${dest}" ]]; then
       # Existing destination is a directory
-      # 1. Ownership check
-      if [[ ! -f "${dest}/SKILL.md" ]] || ! grep -q "name: engineering-workflow" "${dest}/SKILL.md" 2>/dev/null; then
-        if [[ "${FORCE}" != "true" ]]; then
-          echo "❌ Error: Destination ${dest} exists and is not an engineering-workflow skill (unowned directory). Refusing to overwrite without --force." >&2
-          exit 1
-        fi
-      fi
-
-      # 2. Modified content check
-      if [[ "${FORCE}" != "true" ]]; then
-        if ! diff -r -q -x "*.bak.*" -x "*.tmp.*" "${dest}" "${SKILL_SOURCE}" >/dev/null 2>&1; then
-          echo "❌ Error: Destination ${dest} contains user-modified content. Refusing to overwrite without --force." >&2
-          exit 1
-        fi
+      if ! check_existing_destination "${dest}" "${SKILL_SOURCE}" "${FORCE}"; then
+        exit 1
       fi
 
       # Back up existing destination for rollback safety
@@ -364,6 +493,9 @@ for dest in "${DESTINATIONS[@]}"; do
     exit 1
   fi
 
+  # Generate installation ownership manifest in staging directory
+  generate_install_manifest "${tmp_path}"
+
   # Atomic move into final location
   if ! mv "${tmp_path}" "${dest}"; then
     exit 1
@@ -378,10 +510,10 @@ if [[ "${DRY_RUN}" != "true" ]]; then
   echo ""
   echo "🔍 Verifying installed destinations..."
   for dest in "${DESTINATIONS[@]}"; do
-    if [[ -f "${dest}/SKILL.md" && -d "${dest}/references" ]]; then
+    if [[ -f "${dest}/SKILL.md" && -d "${dest}/references" && -f "${dest}/.install-manifest.json" ]]; then
       echo "    ✓ ${dest}/SKILL.md (OK)"
     else
-      echo "    ❌ Verification failed: ${dest}/SKILL.md or references/ missing!" >&2
+      echo "    ❌ Verification failed: ${dest}/SKILL.md, references/, or .install-manifest.json missing!" >&2
       exit 1
     fi
   done

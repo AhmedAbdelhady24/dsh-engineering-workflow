@@ -117,11 +117,12 @@ In your agent's chat or CLI, run setup once per repository:
 ```
 
 The orchestrator will:
-1. Inspect the codebase, package managers, and test runners (non-blocking).
-2. Audit installed skills, MCP tools, and runtime capabilities.
+1. Inspect the codebase, package managers, and test runners (non-blocking read-only).
+2. Audit installed skills, MCP tools, and runtime capabilities against `skill-registry.json`.
 3. Classify project archetype (backend, frontend, monorepo, greenfield).
-4. Initialize the compaction-proof `TASK_LOG.md` and `RECOVERY_LEDGER.md`.
-5. Halt at an explicit **Approval Gate** before modifying any code.
+4. Formulate the proposed implementation plan, standards, and ledger templates in memory.
+5. Halt at an explicit **Approval Gate** presenting the Capability Readiness Report.
+6. **Post-Approval**: Upon human sign-off, write the initialized `TASK_LOG.md`, `TASK_RECOVERY_LEDGER.md`, and approved standards baseline to disk.
 
 ### 3. You're ready to engineer.
 
@@ -139,7 +140,7 @@ Built to eliminate the four fatal failure modes of AI-assisted software engineer
 **The Problem**: Monolithic autonomous frameworks lock you out of your terminal with heavy runtimes, background daemons, and brittle state graphs. If an agent hits a bug, you cannot steer it. At the other extreme, unguided vibe-coding agents quickly descend into chaotic edits, unverified assumptions, and destructive Git commands.
 
 **The Fix**: Four transparent, composable operations that guide the agent without hijacking control:
-- **[`setup`](./skill/engineering-workflow/references/setup.md)**: Audits the repo, establishes test gates, initializes recovery ledger, and halts at an Approval Gate.
+- **[`setup`](./skill/engineering-workflow/references/setup.md)**: Audits the repo, establishes test gates, presents the readiness report, halts at an Approval Gate, and initializes the recovery ledger upon approval.
 - **[`execute`](./skill/engineering-workflow/references/execute.md)**: Executes specs in thin, test-driven vertical slices with a single-writer rule and bounded review loops.
 - **[`review`](./skill/engineering-workflow/references/review.md)**: Strictly read-only, two-axis verification (Repo standards + Originating spec compliance).
 - **[`ux-audit`](./skill/engineering-workflow/references/ux-audit.md)**: Evaluates real-world product usability, visual hierarchy, and accessibility via live browser automation.
@@ -278,8 +279,11 @@ engineering-workflow/
 The repository includes an automated test suite verifying spec compliance, routing rules, installer idempotency, recovery protocols, link integrity, and UX audit contracts:
 
 ```bash
-# Run the automated test suite (60 tests)
+# Run the automated test suite (81 tests)
 npm test
+
+# Run the live agent host smoke suite (CLIs detected in PATH)
+npm run test:live-smoke
 
 # Validate Agent Skills specification compliance
 npm run validate

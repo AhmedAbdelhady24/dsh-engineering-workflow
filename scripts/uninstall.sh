@@ -134,8 +134,18 @@ fi
 for p in "${TARGET_PATHS[@]}"; do
   if [[ -L "${p}" ]]; then
     echo "──► Found symlink: ${p}"
+    # Never delete arbitrary symlinks! Verify target does not belong to another skill or project
+    if [[ -d "${p}" && -f "${p}/SKILL.md" ]] && ! grep -q "name: engineering-workflow" "${p}/SKILL.md" 2>/dev/null; then
+      echo "    ⚠️ Skipping symlink ${p}: Points to an unowned skill (different name in SKILL.md)."
+      continue
+    fi
+    if [[ -d "${p}" && -f "${p}/package.json" ]] && ! grep -q '"engineering-workflow"' "${p}/package.json" 2>/dev/null; then
+      echo "    ⚠️ Skipping symlink ${p}: Points to an arbitrary project directory."
+      continue
+    fi
+
     if [[ "${DRY_RUN}" == "true" ]]; then
-      echo "    [Dry Run] Would remove symlink ${p}"
+      echo "    [Dry Run] Would remove verified symlink ${p}"
     else
       rm -f "${p}"
       echo "    ✓ Successfully removed symlink ${p}"
@@ -148,11 +158,107 @@ for p in "${TARGET_PATHS[@]}"; do
       continue
     fi
 
-    if [[ "${DRY_RUN}" == "true" ]]; then
-      echo "    [Dry Run] Would remove ${p}"
+    manifest="${p}/.install-manifest.json"
+    if [[ -f "${manifest}" ]]; then
+      # Manifest-guided uninstallation:
+      # Removes only unmodified files recorded in the manifest; preserves user-added and modified files.
+      node -e "
+        const fs = require('fs');
+        const path = require('path');
+        const crypto = require('crypto');
+
+        const targetDir = process.argv[1];
+        const dryRun = process.argv[2] === 'true';
+        const manifestPath = path.join(targetDir, '.install-manifest.json');
+
+        let manifest;
+        try {
+          manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+        } catch (e) {
+          manifest = { files: {} };
+        }
+
+        function getDiskFiles(dir, base = '') {
+          let results = [];
+          const entries = fs.readdirSync(dir, { withFileTypes: true });
+          for (const entry of entries) {
+            if (entry.name === '.install-manifest.json' || entry.name.includes('.bak.') || entry.name.includes('.tmp.')) continue;
+            const fullPath = path.join(dir, entry.name);
+            const relPath = base ? path.join(base, entry.name) : entry.name;
+            if (entry.isDirectory()) {
+              results = results.concat(getDiskFiles(fullPath, relPath));
+            } else if (entry.isFile()) {
+              results.push(relPath.split(path.sep).join('/'));
+            }
+          }
+          return results;
+        }
+
+        const diskFiles = getDiskFiles(targetDir);
+        const manifestFiles = manifest.files || {};
+        const removedFiles = [];
+        const preservedFiles = [];
+
+        for (const rel of diskFiles) {
+          const full = path.join(targetDir, ...rel.split('/'));
+          if (rel in manifestFiles) {
+            const expectedHash = manifestFiles[rel];
+            const actualHash = crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex');
+            if (actualHash === expectedHash) {
+              removedFiles.push(rel);
+              if (!dryRun) {
+                fs.unlinkSync(full);
+              }
+            } else {
+              preservedFiles.push(rel + ' (modified by user)');
+            }
+          } else {
+            preservedFiles.push(rel + ' (user-added file)');
+          }
+        }
+
+        if (!dryRun) {
+          if (fs.existsSync(manifestPath)) fs.unlinkSync(manifestPath);
+
+          function cleanEmptyDirs(dir) {
+            const entries = fs.readdirSync(dir);
+            for (const entry of entries) {
+              const full = path.join(dir, entry);
+              if (fs.statSync(full).isDirectory()) {
+                cleanEmptyDirs(full);
+              }
+            }
+            if (fs.readdirSync(dir).length === 0 && dir !== targetDir) {
+              fs.rmdirSync(dir);
+            }
+          }
+          cleanEmptyDirs(targetDir);
+
+          if (fs.readdirSync(targetDir).length === 0) {
+            fs.rmdirSync(targetDir);
+            console.log('    ✓ Completely removed ' + targetDir);
+          } else {
+            console.log('    ⚠️ Preserved user content in ' + targetDir + ':');
+            for (const p of preservedFiles) {
+              console.log('       - ' + p);
+            }
+            console.log('    ✓ Cleaned up unmodified skill files while preserving user content.');
+          }
+        } else {
+          console.log('    [Dry Run] Would remove ' + removedFiles.length + ' unmodified files.');
+          if (preservedFiles.length > 0) {
+            console.log('    [Dry Run] Would preserve ' + preservedFiles.length + ' user files.');
+          }
+        }
+      " "${p}" "${DRY_RUN}"
     else
-      rm -rf "${p}"
-      echo "    ✓ Successfully removed ${p}"
+      # Fallback for unmanifested installations
+      if [[ "${DRY_RUN}" == "true" ]]; then
+        echo "    [Dry Run] Would remove ${p}"
+      else
+        rm -rf "${p}"
+        echo "    ✓ Successfully removed ${p}"
+      fi
     fi
   else
     echo "──► Not found: ${p} (Already clean)"
