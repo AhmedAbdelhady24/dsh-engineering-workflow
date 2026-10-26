@@ -3,22 +3,55 @@
 # Supports Google Antigravity IDE, Antigravity CLI, DeepSeek Harness (DSH), OpenAI Codex, and Claude Code.
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${0}}")" 2>/dev/null && pwd || echo "")"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." 2>/dev/null && pwd || echo "")"
 
-if [[ -d "${ROOT_DIR}/skill/engineering-workflow" ]]; then
+SKILL_SOURCE=""
+BOOTSTRAP_DIR=""
+
+if [[ -n "${ROOT_DIR}" && -d "${ROOT_DIR}/skill/engineering-workflow" && -f "${ROOT_DIR}/skill/engineering-workflow/SKILL.md" ]]; then
   SKILL_SOURCE="${ROOT_DIR}/skill/engineering-workflow"
-elif [[ -d "${ROOT_DIR}/skills/engineering-workflow" ]]; then
+elif [[ -n "${ROOT_DIR}" && -d "${ROOT_DIR}/skills/engineering-workflow" && -f "${ROOT_DIR}/skills/engineering-workflow/SKILL.md" ]]; then
   SKILL_SOURCE="${ROOT_DIR}/skills/engineering-workflow"
+elif [[ -d "$(pwd)/skill/engineering-workflow" && -f "$(pwd)/skill/engineering-workflow/SKILL.md" ]]; then
+  SKILL_SOURCE="$(pwd)/skill/engineering-workflow"
+elif [[ -d "$(pwd)/skills/engineering-workflow" && -f "$(pwd)/skills/engineering-workflow/SKILL.md" ]]; then
+  SKILL_SOURCE="$(pwd)/skills/engineering-workflow"
 else
-  echo "❌ Error: Could not locate source skill directory in ${ROOT_DIR}/skill or ${ROOT_DIR}/skills" >&2
-  exit 1
+  # Piped execution (curl | bash) or standalone invocation: bootstrap from remote repo
+  echo "ℹ️ Local skill source not found. Bootstrapping repository archive from GitHub..."
+  BOOTSTRAP_DIR="$(mktemp -d -t uew-bootstrap-XXXXXX 2>/dev/null || mktemp -d)"
+  if command -v git >/dev/null 2>&1; then
+    git clone --depth 1 -q https://github.com/AhmedAbdelhady24/engineering-workflow.git "${BOOTSTRAP_DIR}/repo" 2>/dev/null || true
+    if [[ -d "${BOOTSTRAP_DIR}/repo/skill/engineering-workflow" ]]; then
+      SKILL_SOURCE="${BOOTSTRAP_DIR}/repo/skill/engineering-workflow"
+    fi
+  fi
+
+  if [[ -z "${SKILL_SOURCE}" ]] && command -v curl >/dev/null 2>&1 && command -v tar >/dev/null 2>&1; then
+    mkdir -p "${BOOTSTRAP_DIR}/repo"
+    if curl -fsSL https://github.com/AhmedAbdelhady24/engineering-workflow/archive/refs/heads/master.tar.gz | tar -xz -C "${BOOTSTRAP_DIR}/repo" --strip-components=1 2>/dev/null; then
+      if [[ -d "${BOOTSTRAP_DIR}/repo/skill/engineering-workflow" ]]; then
+        SKILL_SOURCE="${BOOTSTRAP_DIR}/repo/skill/engineering-workflow"
+      fi
+    fi
+  fi
+
+  if [[ -z "${SKILL_SOURCE}" || ! -f "${SKILL_SOURCE}/SKILL.md" ]]; then
+    echo "❌ Error: Could not locate local skill source, and automated bootstrap failed." >&2
+    echo "   Please clone the repository first: git clone https://github.com/AhmedAbdelhady24/engineering-workflow.git" >&2
+    if [[ -d "${BOOTSTRAP_DIR}" ]]; then
+      rm -rf "${BOOTSTRAP_DIR}"
+    fi
+    exit 1
+  fi
 fi
 
 TARGET="all"
 SCOPE="project"
 PROJECT_DIR="$(pwd)"
 USE_SKILLS_CLI=false
+FORCE=false
 DRY_RUN=false
 
 usage() {
@@ -31,6 +64,7 @@ Options:
   --scope <project|global>     Installation scope (default: project)
   --path <dir>                 Target project directory (default: current working dir)
   --skills-cli                 Use 'npx skills add' where supported
+  -f, --force                  Overwrite unowned directories or user-modified files
   --dry-run                    Preview target paths without copying files
   -h, --help                   Show this help message
 
@@ -60,6 +94,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --skills-cli)
       USE_SKILLS_CLI=true
+      shift
+      ;;
+    -f|--force)
+      FORCE=true
       shift
       ;;
     --dry-run)
@@ -108,13 +146,22 @@ echo "   Source:  ${SKILL_SOURCE}"
 
 # Handle --skills-cli if requested
 if [[ "${USE_SKILLS_CLI}" == "true" ]]; then
+  if [[ "${TARGET}" == "dsh" || "${TARGET}" == "antigravity-cli" ]]; then
+    echo "❌ Error: --skills-cli does not support target '${TARGET}'. Use direct installation for ${TARGET} or choose target 'all', 'claude', or 'codex'." >&2
+    exit 1
+  fi
+
   if command -v npx >/dev/null 2>&1; then
     echo "⚙️  Invoking Skills CLI (npx skills add)..."
+    declare -a CLI_CMD=("npx" "--yes" "skills" "add" "${SKILL_SOURCE}")
+    if [[ "${SCOPE}" == "global" ]]; then
+      CLI_CMD+=("-g")
+    fi
     if [[ "${DRY_RUN}" == "true" ]]; then
-      echo "    [Dry Run] Would execute: npx skills add \"${SKILL_SOURCE}\""
+      echo "    [Dry Run] Would execute: (cd \"${PROJECT_DIR}\" && ${CLI_CMD[*]})"
       exit 0
     else
-      if npx --yes skills add "${SKILL_SOURCE}" 2>/dev/null; then
+      if (cd "${PROJECT_DIR}" && "${CLI_CMD[@]}"); then
         echo "    ✓ Successfully installed via Skills CLI"
         exit 0
       else
@@ -177,14 +224,15 @@ if [[ "${TARGET}" == "all" || "${TARGET}" == "claude" ]]; then
   add_destination "claude"
 fi
 
-# Array to track installed destinations for rollback on partial failure
+# Tracking arrays for transactional rollback
+SUCCESS=false
 declare -a INSTALLED_DESTS=()
 declare -a BACKED_UP_DESTS=()
 
 cleanup_backups() {
   if [[ ${#BACKED_UP_DESTS[@]} -gt 0 ]]; then
     for bak in "${BACKED_UP_DESTS[@]}"; do
-      if [[ -d "${bak}" ]]; then
+      if [[ -L "${bak}" || -d "${bak}" ]]; then
         rm -rf "${bak}"
       fi
     done
@@ -193,20 +241,21 @@ cleanup_backups() {
 
 rollback() {
   echo "❌ Installation failed! Rolling back changes..." >&2
+  # 1. Restore backed-up destinations
   if [[ ${#BACKED_UP_DESTS[@]} -gt 0 ]]; then
     for bak in "${BACKED_UP_DESTS[@]}"; do
       local orig="${bak%.bak.*}"
-      if [[ -d "${bak}" ]]; then
+      if [[ -L "${bak}" || -d "${bak}" ]]; then
         rm -rf "${orig}"
         mv "${bak}" "${orig}"
         echo "    ✓ Restored backup for ${orig}" >&2
       fi
     done
   fi
+  # 2. Remove newly installed destinations without prior backup
   if [[ ${#INSTALLED_DESTS[@]} -gt 0 ]]; then
     for installed in "${INSTALLED_DESTS[@]}"; do
-      if [[ -d "${installed}" ]]; then
-        # If no backup existed, remove the newly created directory
+      if [[ -L "${installed}" || -d "${installed}" ]]; then
         local bak_found=false
         if [[ ${#BACKED_UP_DESTS[@]} -gt 0 ]]; then
           for bak in "${BACKED_UP_DESTS[@]}"; do
@@ -223,10 +272,33 @@ rollback() {
       fi
     done
   fi
-  exit 1
+  # 3. Clean up staging paths
+  if [[ ${#DESTINATIONS[@]} -gt 0 ]]; then
+    for dest in "${DESTINATIONS[@]}"; do
+      local tmp_path="${dest}.tmp.$$"
+      if [[ -d "${tmp_path}" ]]; then
+        rm -rf "${tmp_path}"
+      fi
+    done
+  fi
 }
 
-trap cleanup_backups EXIT
+on_exit() {
+  local exit_code=$?
+  if [[ "${SUCCESS}" != "true" && ${exit_code} -ne 0 ]]; then
+    rollback
+  else
+    cleanup_backups
+  fi
+  if [[ -n "${BOOTSTRAP_DIR}" && -d "${BOOTSTRAP_DIR}" ]]; then
+    rm -rf "${BOOTSTRAP_DIR}"
+  fi
+}
+
+trap on_exit EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+trap 'exit 129' HUP
 
 for dest in "${DESTINATIONS[@]}"; do
   echo "──► Destination: ${dest}"
@@ -235,30 +307,46 @@ for dest in "${DESTINATIONS[@]}"; do
     continue
   fi
 
-  parent_dir="$(dirname "${dest}")"
-  mkdir -p "${parent_dir}"
-
-  # Ownership check if destination already exists
-  if [[ -e "${dest}" ]]; then
+  # Ownership & modification verification before modifying existing destination
+  if [[ -e "${dest}" || -L "${dest}" ]]; then
     if [[ -L "${dest}" ]]; then
-      # If symlink, safely remove symlink without removing target contents
-      rm -f "${dest}"
-    elif [[ -f "${dest}/SKILL.md" ]]; then
-      # Verify it is an engineering-workflow installation
-      if ! grep -q "name: engineering-workflow" "${dest}/SKILL.md" 2>/dev/null; then
-        echo "⚠️ Warning: Target directory ${dest} does not appear to be an engineering-workflow skill. Overwriting after backup."
+      # Existing destination is a symbolic link
+      if [[ "${FORCE}" != "true" ]]; then
+        if [[ ! -f "${dest}/SKILL.md" ]] || ! grep -q "name: engineering-workflow" "${dest}/SKILL.md" 2>/dev/null; then
+          echo "❌ Error: Destination ${dest} is a symlink to an unowned target. Pass --force to overwrite." >&2
+          exit 1
+        fi
       fi
-      # Back up existing for rollback safety
       bak_path="${dest}.bak.$$"
       mv "${dest}" "${bak_path}"
       BACKED_UP_DESTS+=("${bak_path}")
-    else
-      # Directory exists without SKILL.md
+    elif [[ -d "${dest}" ]]; then
+      # Existing destination is a directory
+      # 1. Ownership check
+      if [[ ! -f "${dest}/SKILL.md" ]] || ! grep -q "name: engineering-workflow" "${dest}/SKILL.md" 2>/dev/null; then
+        if [[ "${FORCE}" != "true" ]]; then
+          echo "❌ Error: Destination ${dest} exists and is not an engineering-workflow skill (unowned directory). Refusing to overwrite without --force." >&2
+          exit 1
+        fi
+      fi
+
+      # 2. Modified content check
+      if [[ "${FORCE}" != "true" ]]; then
+        if ! diff -r -q -x "*.bak.*" -x "*.tmp.*" "${dest}" "${SKILL_SOURCE}" >/dev/null 2>&1; then
+          echo "❌ Error: Destination ${dest} contains user-modified content. Refusing to overwrite without --force." >&2
+          exit 1
+        fi
+      fi
+
+      # Back up existing destination for rollback safety
       bak_path="${dest}.bak.$$"
       mv "${dest}" "${bak_path}"
       BACKED_UP_DESTS+=("${bak_path}")
     fi
   fi
+
+  parent_dir="$(dirname "${dest}")"
+  mkdir -p "${parent_dir}"
 
   # Atomic staging
   tmp_path="${dest}.tmp.$$"
@@ -266,19 +354,19 @@ for dest in "${DESTINATIONS[@]}"; do
 
   if ! cp -R "${SKILL_SOURCE}" "${tmp_path}"; then
     rm -rf "${tmp_path}"
-    rollback
+    exit 1
   fi
 
   # Verify staging integrity
   if [[ ! -f "${tmp_path}/SKILL.md" ]]; then
     echo "❌ Staged skill verification failed at ${tmp_path}" >&2
     rm -rf "${tmp_path}"
-    rollback
+    exit 1
   fi
 
   # Atomic move into final location
   if ! mv "${tmp_path}" "${dest}"; then
-    rollback
+    exit 1
   fi
 
   INSTALLED_DESTS+=("${dest}")
@@ -294,8 +382,9 @@ if [[ "${DRY_RUN}" != "true" ]]; then
       echo "    ✓ ${dest}/SKILL.md (OK)"
     else
       echo "    ❌ Verification failed: ${dest}/SKILL.md or references/ missing!" >&2
-      rollback
+      exit 1
     fi
   done
+  SUCCESS=true
   echo "✅ Installation complete and verified!"
 fi

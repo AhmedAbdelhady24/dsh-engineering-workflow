@@ -41,12 +41,12 @@ Activate UI skills **strictly on demand** for user-facing applications. Routine 
 
 | Capability / Skill | Verified Canonical Name | Upstream Repository | Invocation Policy | Purpose & When to Route | Applicability Policy |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **UI/UX Intelligence** | `ui-ux-pro-max` | AhmedAbdelhady24 / Open | `model-invocable` | Usability heuristics, design systems, font pairings, 1-5 scorecard. | **UI Projects Only**. Route during `ux-audit` Stage 3. Pure backend: **NOT APPLICABLE**. |
-| **Frontend Design** | `frontend-design` | AhmedAbdelhady24 / Open | `model-invocable` | Visual hierarchy, typography scales, contrast ratios, and styling. | **UI Projects Only**. Route during visual overhauls. Pure backend: **NOT APPLICABLE**. |
-| **Frontend Engineering** | `frontend-ui-engineering` | AhmedAbdelhady24 / Open | `model-invocable` | Production-grade React/Next.js/Vue/HTML/CSS implementation. | **UI Projects Only**. Route during complex UI state/store changes. |
-| **Interface Polish** | `make-interfaces-feel-better` | AhmedAbdelhady24 / Open | `model-invocable` | Micro-interactions, transition physics, focus rings, optical alignment. | **UI Projects Only**. Route during polish & interaction tuning. |
-| **UI Stress Testing** | `break-ui` | AhmedAbdelhady24 / Open | `model-invocable` | Feeding worst-case data (extreme lengths, empty states, huge numbers). | **UI Projects Only**. Route during edge-case form/table testing. |
-| **Browser DevTools** | `browser-testing-with-devtools` | Official Chrome DevTools MCP | `model-invocable` | Real browser walkthrough, console error monitoring, screenshots. | **UI Projects Only** (requires Chrome DevTools MCP or CDP). If missing: Mark **NOT TESTED**. |
+| **UI/UX Intelligence** | `ui-ux-pro-max` | [`nextlevelbuilder/ui-ux-pro-max-skill`](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | `model-invocable` | Usability heuristics, design systems, font pairings, 1-5 scorecard. | **UI Projects Only**. Route during `ux-audit` Stage 3. Pure backend: **NOT APPLICABLE**. |
+| **Frontend Design** | `frontend-design` | [`anthropics/skills`](https://github.com/anthropics/skills) | `model-invocable` | Visual hierarchy, typography scales, contrast ratios, and styling. | **UI Projects Only**. Route during visual overhauls. Pure backend: **NOT APPLICABLE**. |
+| **Frontend Engineering** | `frontend-ui-engineering` | Open Agent Skills Standard | `model-invocable` | Production-grade React/Next.js/Vue/HTML/CSS implementation. | **UI Projects Only**. Route during complex UI state/store changes. |
+| **Interface Polish** | `make-interfaces-feel-better` | [`jakubkrehel/make-interfaces-feel-better`](https://github.com/jakubkrehel/make-interfaces-feel-better) | `model-invocable` | Micro-interactions, transition physics, focus rings, optical alignment. | **UI Projects Only**. Route during polish & interaction tuning. |
+| **UI Stress Testing** | `break-ui` | [`emilkowalski/skills`](https://github.com/emilkowalski/skills) | `model-invocable` | Feeding worst-case data (extreme lengths, empty states, huge numbers). | **UI Projects Only**. Route during edge-case form/table testing. |
+| **Browser DevTools** | `browser-testing-with-devtools` | [`ChromeDevTools/chrome-devtools-mcp`](https://github.com/ChromeDevTools/chrome-devtools-mcp) | `model-invocable` | Real browser walkthrough, console error monitoring, screenshots. | **UI Projects Only** (requires Chrome DevTools MCP or CDP). If missing: Mark **NOT TESTED**. |
 
 ---
 

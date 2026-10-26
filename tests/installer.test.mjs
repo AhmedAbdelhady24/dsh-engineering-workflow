@@ -214,3 +214,130 @@ test("Installer: --skills-cli flag support and dry-run execution", () => {
     fs.rmSync(tempProject, { recursive: true, force: true });
   }
 });
+
+test("Installer: refuses to replace unowned directory without --force", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-unowned-neg-"));
+  try {
+    const unownedDir = path.join(tempProject, ".agents/skills/engineering-workflow");
+    fs.mkdirSync(unownedDir, { recursive: true });
+    fs.writeFileSync(path.join(unownedDir, "user-secret.txt"), "valuable user data");
+
+    // Attempt installation without --force
+    assert.throws(
+      () =>
+        execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+          stdio: "pipe",
+        }),
+      (err) => {
+        const stderr = err.stderr.toString();
+        return (
+          err.status === 1 &&
+          stderr.includes("unowned directory") &&
+          stderr.includes("Refusing to overwrite without --force")
+        );
+      },
+      "Installer must refuse to replace unowned directory without --force"
+    );
+
+    // Verify existing user file remains intact
+    assert(fs.existsSync(path.join(unownedDir, "user-secret.txt")), "User file must remain intact");
+    assert.equal(
+      fs.readFileSync(path.join(unownedDir, "user-secret.txt"), "utf-8"),
+      "valuable user data",
+      "User file contents must not be altered"
+    );
+
+    // Now test with --force
+    const forceOutput = execSync(
+      `bash "${installScript}" --path "${tempProject}" --target codex --scope project --force`,
+      { encoding: "utf-8" }
+    );
+    assert(forceOutput.includes("Installation complete and verified!"), "Install with --force must succeed");
+    assert(fs.existsSync(path.join(unownedDir, "SKILL.md")), "SKILL.md must be installed after --force");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+  }
+});
+
+test("Installer: refuses to replace user-modified skill directory without --force", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-modified-neg-"));
+  try {
+    // Initial install
+    execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    const skillDir = path.join(tempProject, ".agents/skills/engineering-workflow");
+    const userNotePath = path.join(skillDir, "CUSTOM_USER_NOTE.md");
+    fs.writeFileSync(userNotePath, "# Important user customizations");
+
+    // Attempt repeat install without --force
+    assert.throws(
+      () =>
+        execSync(`bash "${installScript}" --path "${tempProject}" --target codex --scope project`, {
+          stdio: "pipe",
+        }),
+      (err) => {
+        const stderr = err.stderr.toString();
+        return (
+          err.status === 1 &&
+          stderr.includes("user-modified content") &&
+          stderr.includes("Refusing to overwrite without --force")
+        );
+      },
+      "Installer must refuse to overwrite modified content without --force"
+    );
+
+    assert(fs.existsSync(userNotePath), "User note must remain untouched");
+
+    // Repeat install with --force must succeed
+    const forceRun = execSync(
+      `bash "${installScript}" --path "${tempProject}" --target codex --scope project --force`,
+      { encoding: "utf-8" }
+    );
+    assert(forceRun.includes("Installation complete and verified!"), "Force install must succeed");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+  }
+});
+
+test("Installer: uninstaller refuses to delete directory without SKILL.md", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-unowned-uninstall-"));
+  try {
+    const unownedDir = path.join(tempProject, ".agents/skills/engineering-workflow");
+    fs.mkdirSync(unownedDir, { recursive: true });
+    fs.writeFileSync(path.join(unownedDir, "unowned_data.json"), '{"important": true}');
+
+    const uninstallOutput = execSync(`bash "${uninstallScript}" --path "${tempProject}" --target codex --scope project`, {
+      encoding: "utf-8",
+    });
+
+    assert(
+      uninstallOutput.includes("Skipping") && uninstallOutput.includes("unowned directory"),
+      "Uninstaller must report skipping unowned directory"
+    );
+    assert(fs.existsSync(path.join(unownedDir, "unowned_data.json")), "Unowned directory contents must NOT be deleted");
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+  }
+});
+
+test("Installer: rejects unsupported target combination with --skills-cli", () => {
+  const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-skills-cli-unsupported-"));
+  try {
+    assert.throws(
+      () =>
+        execSync(`bash "${installScript}" --path "${tempProject}" --target dsh --skills-cli`, {
+          stdio: "pipe",
+        }),
+      (err) => {
+        const stderr = err.stderr.toString();
+        return err.status === 1 && stderr.includes("--skills-cli does not support target 'dsh'");
+      },
+      "Installer must reject unsupported target combination with --skills-cli"
+    );
+  } finally {
+    fs.rmSync(tempProject, { recursive: true, force: true });
+  }
+});
+

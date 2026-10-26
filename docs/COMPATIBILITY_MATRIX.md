@@ -8,6 +8,7 @@ This document provides platform engineers and agent contributors with a comprehe
 
 | Capability / Dimension | Antigravity IDE | Antigravity CLI | DeepSeek Harness (DSH) | OpenAI Codex | Claude Code |
 | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Verification Tier** | ✅ Runtime-Verified | ✅ Runtime-Verified | ✅ Runtime-Verified (Fixture) | 📋 Spec-Compatible (Docs-Verified) | ✅ Runtime-Verified |
 | **Agent Skills Format (`SKILL.md`)** | ✅ Native | ✅ Native | ✅ Native | ✅ Native | ✅ Native |
 | **Universal Discovery Path (`.agents/skills`)** | ✅ Supported | ✅ Supported | ✅ Supported (Rank 200) | ✅ Supported | ✅ Supported |
 | **Host-Specific Project Directory** | `.gemini/config/skills/` | `.gemini/antigravity-cli/skills/` | `.dsh/skills/` (Rank 100) | `.agents/skills/` | `.claude/skills/` |
@@ -18,7 +19,7 @@ This document provides platform engineers and agent contributors with a comprehe
 | **Argument Forwarding** | ✅ Suffix in turn prompt | ✅ Suffix in turn prompt | ✅ Turn prompt argument | ✅ Suffix in command | ✅ CLI argument capture |
 | **Subagent Process Isolation** | ✅ `invoke_subagent` (Isolated context) | ✅ `invoke_subagent` | ✅ DSH native subagents | ⚠️ Multi-agent / Sequential | ⚠️ Task runner / Sequential |
 | **Compaction Strategy** | Native reactive compaction | Native reactive compaction | Native `compaction-basic` | Native context window | Native `/compact` |
-| **MCP Registry** | `~/.gemini/antigravity/mcp/` | `~/.gemini/antigravity/mcp/` | `~/.dsh/mcp.json` or profile | `~/.codex/mcp.json` | `claude mcp add` |
+| **MCP Registry** | `~/.gemini/antigravity/mcp/` | `~/.gemini/antigravity/mcp/` | `~/.dsh/mcp.json` or profile | `~/.codex/config.toml` (`codex mcp add`) | `claude mcp add` |
 | **Sandbox & Permissions** | UI modal approval | Terminal approval | DSH profile permissions | Execution approval | Interactive CLI prompt |
 
 ---

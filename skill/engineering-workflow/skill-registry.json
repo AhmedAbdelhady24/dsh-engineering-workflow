@@ -1,10 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Machine-readable specialist skill registry and routing matrix for Universal Engineering Workflow",
   "skills": [
     {
       "canonicalName": "grilling",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/mattpocock/skills",
       "category": "architecture",
       "purpose": "Adversarial Socratic interview primitive challenging design decisions until every branch of the design tree is resolved.",
@@ -18,11 +19,13 @@
       "conflicts": ["grill-me"],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "npx skills add mattpocock/skills --skill grilling",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Apply Socratic interview questions directly in execution plan before writing code.",
       "executionEvidence": "Documented question-and-answer exchange clarifying requirements with resolved decision branches."
     },
     {
       "canonicalName": "grill-with-docs",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/mattpocock/skills",
       "category": "architecture",
       "purpose": "Socratic interview that stress-tests architecture against official docs, establishing ubiquitous language in GLOSSARY.md and recording ADRs.",
@@ -32,15 +35,17 @@
         "Major architecture redesigns"
       ],
       "invocationPolicy": "user-only",
-      "dependencies": ["grilling", "Context7"],
+      "dependencies": ["grilling", "domain-modeling", "Context7"],
       "conflicts": [],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "npx skills add mattpocock/skills --skill grill-with-docs",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Use model-invocable 'grilling' primitive and record decisions directly in .agents/adr/.",
       "executionEvidence": "Updated GLOSSARY.md and documented ADR file citing official documentation."
     },
     {
       "canonicalName": "domain-modeling",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/mattpocock/skills",
       "category": "architecture",
       "purpose": "Formulate ubiquitous language, model core business entities, and challenge domain jargon against GLOSSARY.md and ADRs.",
@@ -54,11 +59,13 @@
       "conflicts": [],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "npx skills add mattpocock/skills --skill domain-modeling",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Inspect schema files and document entity definitions and terms inline.",
       "executionEvidence": "Committed or referenced domain glossary/model file defining entities and invariants."
     },
     {
       "canonicalName": "codebase-design",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/mattpocock/skills",
       "category": "architecture",
       "purpose": "Design deep modules with small interfaces hiding implementation complexity behind clean, testable seams.",
@@ -72,11 +79,13 @@
       "conflicts": [],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "npx skills add mattpocock/skills --skill codebase-design",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Apply Ousterhout deep-module principles: small interface, extensive functionality, clean seam.",
       "executionEvidence": "Clear interface contract file separated from concrete implementation with documented seams."
     },
     {
       "canonicalName": "tdd",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/mattpocock/skills",
       "category": "testing",
       "purpose": "Test-driven development enforcing a strict red-green-refactor loop: write failing test first, verify failure, implement, verify pass.",
@@ -90,11 +99,13 @@
       "conflicts": ["test-driven-development"],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "npx skills add mattpocock/skills --skill tdd",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Apply built-in test discipline: create failing test, run test command, confirm failure code, implement, confirm pass.",
       "executionEvidence": "Terminal test output showing failing test execution (RED) followed by passing test execution (GREEN)."
     },
     {
       "canonicalName": "test-driven-development",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/obra/superpowers",
       "category": "testing",
       "purpose": "Superpowers TDD methodology enforcing red-green cycles and behavioral specifications.",
@@ -106,11 +117,13 @@
       "conflicts": ["tdd"],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "claude plugin install superpowers@superpowers-marketplace",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Use built-in workflow test discipline.",
       "executionEvidence": "Terminal test output showing red-green progression."
     },
     {
       "canonicalName": "diagnosing-bugs",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/mattpocock/skills",
       "category": "debugging",
       "purpose": "Disciplined diagnosis loop for hard bugs: build red loop -> minimise -> hypothesise -> instrument -> fix -> regression test.",
@@ -124,11 +137,13 @@
       "conflicts": ["systematic-debugging"],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "npx skills add mattpocock/skills --skill diagnosing-bugs",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Apply systematic debugging: reproduce before mutation, isolate minimal case, verify fix.",
       "executionEvidence": "Reproduction test case or terminal trace proving defect existence prior to source code edits."
     },
     {
       "canonicalName": "systematic-debugging",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/obra/superpowers",
       "category": "debugging",
       "purpose": "Superpowers systematic debugging loop isolating root causes through hypothesis testing.",
@@ -140,11 +155,13 @@
       "conflicts": ["diagnosing-bugs"],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "claude plugin install superpowers@superpowers-marketplace",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Use built-in systematic reproduction protocol.",
       "executionEvidence": "Reproduction script or test confirming bug before fix."
     },
     {
       "canonicalName": "ponytail",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/DietrichGebert/ponytail",
       "category": "minimalism",
       "purpose": "Pragmatic minimalism via the 7-Rung Decision Ladder: YAGNI -> reuse -> stdlib -> platform -> dependency -> one line -> minimum code.",
@@ -158,11 +175,13 @@
       "conflicts": [],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "npx skills add https://github.com/DietrichGebert/ponytail --skill ponytail",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Apply the 7-Rung Decision Ladder directly without claiming external skill invocation: eliminate speculative code, prefer standard library, write smallest diff.",
       "executionEvidence": "Minimal coherent git diff with zero speculative abstractions or unused imports."
     },
     {
       "canonicalName": "code-review",
+      "capabilityType": "external-skill",
       "upstream": "https://github.com/mattpocock/skills",
       "category": "review",
       "purpose": "Two-axis review of diff since fixed point: Standards compliance and Spec compliance.",
@@ -175,11 +194,13 @@
       "conflicts": ["code-review-and-quality"],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "npx skills add mattpocock/skills --skill code-review",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Apply built-in references/review.md two-axis review checklist.",
       "executionEvidence": "Structured review report citing exact file:line references and severity classifications."
     },
     {
       "canonicalName": "browser-testing-with-devtools",
+      "capabilityType": "mcp-tool",
       "upstream": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
       "category": "browser",
       "purpose": "Browser runtime testing, DOM accessibility tree inspection, screenshot capture, and console error monitoring via Chrome DevTools MCP.",
@@ -192,12 +213,34 @@
       "conflicts": [],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
       "installCommand": "claude mcp add chrome-devtools npx -y chrome-devtools-mcp@latest -- --headless=true",
+      "fallbackType": "not-applicable",
       "fallbackPolicy": "Mark runtime tests as NOT TESTED and rely on static component and CSS inspection.",
       "executionEvidence": "Captured browser screenshot paths, console log excerpts, or DOM evaluation outputs."
     },
     {
+      "canonicalName": "Context7",
+      "capabilityType": "mcp-tool",
+      "upstream": "https://github.com/upstash/context7",
+      "category": "architecture",
+      "purpose": "Real-time documentation provider querying official up-to-date framework and library documentation to prevent API hallucination.",
+      "triggerConditions": [
+        "Unfamiliar library APIs",
+        "Framework version migration",
+        "Official SDK integration"
+      ],
+      "invocationPolicy": "model-invocable",
+      "dependencies": [],
+      "conflicts": [],
+      "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
+      "installCommand": "claude mcp add context7 npx -y @upstash/context7-mcp",
+      "fallbackType": "principles-based",
+      "fallbackPolicy": "Inspect local node_modules type definitions, inline docs, and package README files.",
+      "executionEvidence": "Cited documentation references, type definitions, or verified API signatures."
+    },
+    {
       "canonicalName": "ui-ux-pro-max",
-      "upstream": "https://github.com/AhmedAbdelhady24/engineering-workflow",
+      "capabilityType": "external-skill",
+      "upstream": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
       "category": "ui-ux",
       "purpose": "Design systems intelligence, font pairings, layout guidelines, and Nielsen's 10 usability heuristics scorecard.",
       "triggerConditions": [
@@ -208,13 +251,15 @@
       "dependencies": [],
       "conflicts": [],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
-      "installCommand": "Built-in / open standard",
+      "installCommand": "npx skills add nextlevelbuilder/ui-ux-pro-max-skill",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Use references/ux-audit.md heuristic guidelines.",
       "executionEvidence": "1–5 usability scorecard across evaluated heuristics with verified observations."
     },
     {
       "canonicalName": "frontend-design",
-      "upstream": "https://github.com/AhmedAbdelhady24/engineering-workflow",
+      "capabilityType": "external-skill",
+      "upstream": "https://github.com/anthropics/skills",
       "category": "ui-ux",
       "purpose": "Visual hierarchy, typography scales, contrast ratios, and intentional non-generic styling.",
       "triggerConditions": [
@@ -225,13 +270,15 @@
       "dependencies": [],
       "conflicts": [],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
-      "installCommand": "Built-in / open standard",
+      "installCommand": "npx skills add anthropics/skills --skill frontend-design",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Evaluate WCAG 2.2 AA contrast and CSS spacing rhythm directly.",
       "executionEvidence": "Visual design findings citing contrast measurements and typographic scales."
     },
     {
       "canonicalName": "make-interfaces-feel-better",
-      "upstream": "https://github.com/AhmedAbdelhady24/engineering-workflow",
+      "capabilityType": "external-skill",
+      "upstream": "https://github.com/jakubkrehel/make-interfaces-feel-better",
       "category": "ui-ux",
       "purpose": "Design engineering polish: micro-interactions, transition physics, focus rings, optical alignment, and reduced motion.",
       "triggerConditions": [
@@ -242,13 +289,15 @@
       "dependencies": [],
       "conflicts": [],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
-      "installCommand": "Built-in / open standard",
+      "installCommand": "npx skills add jakubkrehel/make-interfaces-feel-better",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Inspect CSS transitions, :focus-visible states, and prefers-reduced-motion media queries.",
       "executionEvidence": "Documented motion duration, easing curves, and focus-visible ring implementations."
     },
     {
       "canonicalName": "break-ui",
-      "upstream": "https://github.com/AhmedAbdelhady24/engineering-workflow",
+      "capabilityType": "external-skill",
+      "upstream": "https://github.com/emilkowalski/skills",
       "category": "ui-ux",
       "purpose": "Stress-testing UI components with worst-case data (extreme strings, emoji, empty states, zero items, huge counts).",
       "triggerConditions": [
@@ -259,7 +308,8 @@
       "dependencies": [],
       "conflicts": [],
       "supportedHosts": ["antigravity", "codex", "claude", "dsh"],
-      "installCommand": "Built-in / open standard",
+      "installCommand": "npx skills add emilkowalski/skills --skill break-ui",
+      "fallbackType": "principles-based",
       "fallbackPolicy": "Pass synthetic extreme boundary values into component props or test runners.",
       "executionEvidence": "Stress test results documenting overflow handling, truncation, and empty state rendering."
     }

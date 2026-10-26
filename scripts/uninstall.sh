@@ -142,9 +142,9 @@ for p in "${TARGET_PATHS[@]}"; do
     fi
   elif [[ -d "${p}" ]]; then
     echo "──► Found: ${p}"
-    # Ownership verification: confirm SKILL.md belongs to engineering-workflow
-    if [[ -f "${p}/SKILL.md" ]] && ! grep -q "name: engineering-workflow" "${p}/SKILL.md" 2>/dev/null; then
-      echo "    ⚠️ Skipping ${p}: SKILL.md does not belong to engineering-workflow (unowned directory)."
+    # Positive ownership verification: SKILL.md must exist and explicitly declare name: engineering-workflow
+    if [[ ! -f "${p}/SKILL.md" ]] || ! grep -q "name: engineering-workflow" "${p}/SKILL.md" 2>/dev/null; then
+      echo "    ⚠️ Skipping ${p}: Destination does not contain a verified engineering-workflow skill (unowned directory)."
       continue
     fi
 

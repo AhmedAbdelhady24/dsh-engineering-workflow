@@ -62,12 +62,13 @@ Optional focus argument for `ux-audit`:
    - No placeholder comments (`// TODO: implement later`, `/* ... */`).
 
 4. **Skill Execution Contract**:
-   - Before performing a task, identify the relevant specialist skills, verify that they are installed and invocable, and explicitly load or invoke them through the host's supported mechanism.
+   - Before performing a task, identify the relevant specialist skills from the machine-readable catalog ([`skill-registry.json`](skill-registry.json)) on demand.
+   - Verify that selected skills are installed and invocable, and explicitly load or invoke them through the host's supported mechanism.
    - Do not treat mentioning a skill in the routing documentation as execution.
-   - If a required skill is unavailable, report the blocker and provide the installation command; never silently downgrade quality gates.
+   - If a required skill is unavailable, report the blocker and provide the installation command; apply its registered `fallbackPolicy` without falsely claiming external skill invocation.
    - At completion, the execution summary must explicitly distinguish between **Skills Actually Invoked** vs. **Skills Merely Considered** vs. **Skills Missing/Blocked**.
    - For non-UI projects, classify UI skills as **NOT APPLICABLE**.
-   - See [references/skill-routing.md](references/skill-routing.md), [references/execute.md](references/execute.md), and [references/mcps.md](references/mcps.md).
+   - See [skill-registry.json](skill-registry.json), [references/skill-routing.md](references/skill-routing.md), [references/execute.md](references/execute.md), and [references/mcps.md](references/mcps.md).
 
 5. **Context Compaction & Ledger Discipline**:
    - The skill does not run custom background daemons or attempt to measure runtime tokens.
@@ -84,6 +85,7 @@ Optional focus argument for `ux-audit`:
 - [Review Operation Reference](references/review.md): Multi-axis read-only review guidelines and severity taxonomy.
 - [UX Audit Operation Reference](references/ux-audit.md): End-to-end product usability, accessibility, and user-facing technical architecture audit.
 - [Skill Routing Matrix](references/skill-routing.md): Core and UI specialist skill matrix, installation methods, and on-demand activation.
+- [Skill Registry](skill-registry.json): Machine-readable catalog of supported specialist capabilities, canonical upstreams, dependencies, and invocation policies.
 - [MCP Integration & Policies](references/mcps.md): Portable guidelines and connection specs for Context7, Chrome DevTools MCP, and external integrations.
 - [Context & Ledger Recovery](references/context-recovery.md): Compaction-resilient ledger format and state reconciliation.
 - [Agent Host Compatibility](references/agent-compatibility.md): Cross-host mapping for Antigravity, DSH, Codex, and Claude Code.

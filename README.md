@@ -2,16 +2,16 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Compliant-brightgreen)](https://agentskills.io/specification)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests: 60 passing](https://img.shields.io/badge/Tests-60%20passing-success)](tests/)
+[![CI Status](https://github.com/AhmedAbdelhady24/engineering-workflow/actions/workflows/ci.yml/badge.svg)](https://github.com/AhmedAbdelhady24/engineering-workflow/actions/workflows/ci.yml)
 [![Platforms: Claude Code | Codex | Antigravity | DSH](https://img.shields.io/badge/Platforms-Claude%20Code%20%7C%20Codex%20%7C%20Antigravity%20%7C%20DSH-orange)](docs/COMPATIBILITY_MATRIX.md)
 
-The compaction-proof orchestrator for real software engineering — not vibe coding.
+The compaction-resilient orchestrator for real software engineering — not vibe coding.
 
 ![Universal Engineering Workflow](docs/visuals/universal-workflow-banner.png)
 
 Developing production applications with coding agents is hard. Monolithic frameworks try to help by owning the process, locking your terminal into rigid state machines and stripping away human control. At the other extreme, unguided agents fly without a compass, hallucinate passing tests, and suffer from total amnesia the moment context compacts.
 
-**Universal Engineering Workflow** provides the missing discipline: four lean operations (`setup`, `execute`, `review`, `ux-audit`), an ironclad **Skill Execution Contract**, a machine-readable [Skill Registry](skill/engineering-workflow/skill-registry.json), a compaction-proof recovery ledger, and end-to-end runtime verification across Claude Code, OpenAI Codex, Google Antigravity, and DeepSeek Harness.
+**Universal Engineering Workflow** provides the missing discipline: four lean operations (`setup`, `execute`, `review`, `ux-audit`), an ironclad **Skill Execution Contract**, a machine-readable [Skill Registry](skill/engineering-workflow/skill-registry.json), a compaction-resilient recovery ledger, and end-to-end runtime verification across Claude Code, OpenAI Codex, Google Antigravity, and DeepSeek Harness.
 
 ---
 
@@ -22,9 +22,9 @@ Developing production applications with coding agents is hard. Monolithic framew
 | **Enforces four disciplined operations**: `setup`, `execute`, `review`, and `ux-audit`. | **Does NOT hijack your terminal** or run proprietary background daemon processes. |
 | **Enforces the Skill Execution Contract**: Verifies installed skills, invokes them explicitly, and requires hard command evidence. | **Does NOT vendor third-party skills**: References canonical upstreams (`DietrichGebert/ponytail`, `mattpocock/skills`, `obra/superpowers`). |
 | **Maintains native test discipline**: Applies red-green cycles natively even when external TDD skills are absent. | **Does NOT claim unverified execution**: Never claims TDD or Ponytail was invoked without real execution evidence. |
-| **Guarantees zero compaction amnesia**: Persists `TASK_LOG.md` and `RECOVERY_LEDGER.md` with explicit checkpoints. | **Does NOT lock you into proprietary runtimes**: Pure markdown, JSON manifests, and standard shell scripts. |
+| **Provides compaction-resilient recovery**: Persists checkpoints in `TASK_LOG.md` and `TASK_RECOVERY_LEDGER.md` with explicit git and test reconciliation protocols. | **Does NOT lock you into proprietary runtimes**: Pure markdown, JSON manifests, and standard shell scripts. |
 | **Conducts two-axis code reviews**: Inspects diffs for both Engineering Standards and Spec fulfillment. | **Does NOT mutate code during reviews or audits**: Review and UX-audit roles are strictly read-only. |
-| **Performs 6-stage UX audits**: Walks real user journeys, audits 10 Nielsen heuristics, and inspects accessibility. | **Does NOT equate automated passes with full WCAG conformance**: Distinguishes automated checks from true accessibility. |
+| **Performs 8-stage UX audits**: Walks real user journeys, audits 10 Nielsen heuristics, and inspects accessibility. | **Does NOT equate automated passes with full WCAG conformance**: Distinguishes automated checks from true accessibility. |
 
 ---
 
@@ -97,11 +97,13 @@ npx skills add AhmedAbdelhady24/engineering-workflow
 <summary><strong>Direct Shell Installer (Universal)</strong></summary>
 
 ```bash
-# Project-local installation (.agents/skills/engineering-workflow)
-curl -fsSL https://raw.githubusercontent.com/AhmedAbdelhady24/engineering-workflow/master/scripts/install.sh | bash -s -- --scope project
+# Recommended: Clone and install locally
+git clone https://github.com/AhmedAbdelhady24/engineering-workflow.git
+cd engineering-workflow
+bash scripts/install.sh --scope project    # or --scope global
 
-# User-global installation
-curl -fsSL https://raw.githubusercontent.com/AhmedAbdelhady24/engineering-workflow/master/scripts/install.sh | bash -s -- --scope global
+# Direct automated bootstrap (clones/extracts archive automatically)
+curl -fsSL https://raw.githubusercontent.com/AhmedAbdelhady24/engineering-workflow/master/scripts/install.sh | bash -s -- --scope project
 ```
 
 </details>
@@ -243,14 +245,14 @@ engineering-workflow/
 │       ├── setup.md                   # Discovery & approval gate
 │       ├── execute.md                 # Adaptive execution, TDD, single-writer & review loop
 │       ├── review.md                  # Read-only two-axis audit & severity taxonomy
-│       ├── ux-audit.md                # 6-stage usability & accessibility audit
+│       ├── ux-audit.md                # 8-stage usability & accessibility audit
 │       ├── skill-routing.md           # Dynamic specialist consideration matrix
 │       ├── mcps.md                    # Context7 & Chrome DevTools policies
 │       ├── context-recovery.md        # Compaction recovery protocol & multi-agent rules
 │       └── agent-compatibility.md     # Multi-agent roles & host invocations
 ├── skills/engineering-workflow/       # Agent Skills standard mirror (strictly synced)
 ├── templates/                         # TASK_LOG, RECOVERY_LEDGER, UX_AUDIT_REPORT, Standards
-├── tests/                             # Comprehensive automated test suite (60 tests)
+├── tests/                             # Comprehensive automated test suite
 ├── package.json
 └── README.md
 ```

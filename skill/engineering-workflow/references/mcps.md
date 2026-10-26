@@ -109,24 +109,31 @@ plugins:
 ```
 
 ### 3. OpenAI Codex
-Configured in `~/.codex/mcp.json` or project-local `.codex/mcp.json`:
+Configured via the Codex CLI or in `~/.codex/config.toml` (global) / `.codex/config.toml` (project-local):
 
-```json
-{
-  "mcpServers": {
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"],
-      "env": {
-        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
-      }
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest", "--headless=true"]
-    }
-  }
-}
+```bash
+# Add Context7 via Codex CLI
+codex mcp add context7 -- npx -y @upstash/context7-mcp@latest
+
+# Add Chrome DevTools via Codex CLI
+codex mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest --headless=true
+```
+
+Or configured directly in `config.toml`:
+
+```toml
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp@latest"]
+enabled = true
+
+[mcp_servers.context7.env]
+CONTEXT7_API_KEY = "your_key_here"
+
+[mcp_servers.chrome-devtools]
+command = "npx"
+args = ["-y", "chrome-devtools-mcp@latest", "--headless=true"]
+enabled = true
 ```
 
 ### 4. Claude Code

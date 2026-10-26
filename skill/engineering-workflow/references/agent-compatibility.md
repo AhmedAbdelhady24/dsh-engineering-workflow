@@ -8,6 +8,7 @@ This document details the operational semantics, discovery paths, invocation syn
 
 | Dimension | Antigravity IDE | Antigravity CLI | DeepSeek Harness (DSH) | OpenAI Codex | Claude Code |
 | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Verification Status** | ✅ Runtime-Verified (Live) | ✅ Runtime-Verified (Live) | ✅ Runtime-Verified (Fixture) | 📋 Spec-Compatible (Docs-Verified) | ✅ Runtime-Verified (Live) |
 | **Standard Discovery Root** | `.agents/skills/` | `.agents/skills/` | `.dsh/skills/` (Rank 100) or `.agents/skills/` (Rank 200) | `.agents/skills/` | `.claude/skills/` or `.agents/skills/` |
 | **User Global Root** | `~/.gemini/config/skills/` | `~/.gemini/antigravity-cli/skills/` | `~/.dsh/skills/` (Rank 400) | `~/.agents/skills/` | `~/.claude/skills/` |
 | **Skills CLI Target** | Supported via open standard | Supported via open standard | Supported via `.agents/skills` or `customSkillDirs` | Supported (`~/.agents/skills`) | Supported (`npx skills add --agent claude-code`) |
@@ -16,7 +17,7 @@ This document details the operational semantics, discovery paths, invocation syn
 | **Argument Forwarding** | Yes (captured as prompt suffix) | Yes (captured in turn prompt) | Yes (captured in turn prompt) | Yes (captured after `$name`) | Yes (passed in command line) |
 | **Subagent Delegation** | Native `invoke_subagent` | Native `invoke_subagent` | Native DSH subagents / sequential pass | Native multi-agent / sequential pass | Native Task runner / sequential pass |
 | **Compaction Engine** | Native reactive compaction | Native reactive compaction | Native `compaction-basic` (near 50%) | Native context sliding window | Native `/compact` and auto-pruning |
-| **MCP Registry** | `~/.gemini/antigravity/mcp/` | `~/.gemini/antigravity/mcp/` | `~/.dsh/mcp.json` or profile config | `~/.codex/mcp.json` | `claude mcp add` / `mcp.json` |
+| **MCP Registry** | `~/.gemini/antigravity/mcp/` | `~/.gemini/antigravity/mcp/` | `~/.dsh/mcp.json` or profile config | `~/.codex/config.toml` (`codex mcp add`) | `claude mcp add` / `mcp.json` |
 | **Sandbox & Approval** | Client permission dialogs | Client permission dialogs | DSH security policies / profile | Codex approval modes | Claude Code confirmation prompts |
 
 ### Supported Operations & Argument Syntax
