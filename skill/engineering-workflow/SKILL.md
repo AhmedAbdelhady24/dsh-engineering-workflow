@@ -66,6 +66,8 @@ Optional focus argument for `ux-audit`:
    - Verify that selected skills are installed and invocable, and explicitly load or invoke them through the host's supported mechanism.
    - Do not treat mentioning a skill in the routing documentation as execution.
    - If a required skill is unavailable, report the blocker and provide the installation command; apply its registered `fallbackPolicy` without falsely claiming external skill invocation.
+   - For user-only skills (`grill-with-docs`, `implement`, `handoff`, `improve-codebase-architecture`), the agent recommends them to the user and applies the registered built-in fallback policy; the agent never reports them as Actually Invoked without explicit user action.
+   - For opt-in alternative skills (`implement`), execute must not route to them automatically, preventing competing implementation loops.
    - At completion, the execution summary must explicitly distinguish between **Skills Actually Invoked** vs. **Skills Merely Considered** vs. **Skills Missing/Blocked**.
    - For non-UI projects, classify UI skills as **NOT APPLICABLE**.
    - See [skill-registry.json](skill-registry.json), [references/skill-routing.md](references/skill-routing.md), [references/execute.md](references/execute.md), and [references/mcps.md](references/mcps.md).

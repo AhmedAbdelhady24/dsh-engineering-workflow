@@ -139,3 +139,125 @@ test("Skill Registry: Testing and debugging mutual conflict declarations", () =>
   const diagPocock = registry.skills.find((s) => s.canonicalName === "diagnosing-bugs");
   assert(diagPocock.conflicts.includes("systematic-debugging"), "diagnosing-bugs must declare conflict with systematic-debugging");
 });
+
+test("Skill Registry: single source of truth for routing tables (no unresolved skill names)", () => {
+  const registry = JSON.parse(fs.readFileSync(canonicalRegistryPath, "utf-8"));
+  const registeredSkills = new Set(registry.skills.map((s) => s.canonicalName));
+  const builtInOps = new Set(["setup", "execute", "review", "ux-audit"]);
+
+  const filesToCheck = [
+    path.join(rootDir, "README.md"),
+    path.join(rootDir, "skill/engineering-workflow/SKILL.md"),
+    path.join(rootDir, "skill/engineering-workflow/references/execute.md"),
+    path.join(rootDir, "skill/engineering-workflow/references/skill-routing.md"),
+  ];
+
+  // Regex to extract backticked identifiers in table rows or task archetype mappings
+  const skillCandidateRegex = /`([a-z0-9]+(?:-[a-z0-9]+)+)`/g;
+  const nonSkillIdentifiers = new Set([
+    "engineering-workflow",
+    "task-recovery-ledger",
+    "git-status",
+    "pre-flight",
+    "single-writer",
+    "smallest-complete-slice",
+    "model-invocable",
+    "user-only",
+    "principles-based",
+    "chrome-devtools",
+    "chrome-devtools-mcp",
+    "context7-mcp",
+    "not-applicable",
+    "not-tested",
+    "prefers-reduced-motion",
+    "focus-visible",
+    "sub-agents",
+    "peer-agents",
+    "host-dependent",
+    "red-green-refactor",
+  ]);
+
+  for (const filePath of filesToCheck) {
+    const content = fs.readFileSync(filePath, "utf-8");
+    const matches = [...content.matchAll(skillCandidateRegex)].map((m) => m[1]);
+
+    for (const name of matches) {
+      if (nonSkillIdentifiers.has(name) || builtInOps.has(name)) {
+        continue;
+      }
+      assert(
+        registeredSkills.has(name),
+        `Unresolved skill '${name}' referenced in ${path.relative(rootDir, filePath)} must be registered in skill-registry.json`
+      );
+    }
+  }
+});
+
+test("Skill Registry: user-only capabilities enforce recommendation, fallback, and no false execution claims", () => {
+  const registry = JSON.parse(fs.readFileSync(canonicalRegistryPath, "utf-8"));
+  const userOnlySkills = ["grill-with-docs", "implement", "handoff", "improve-codebase-architecture"];
+
+  for (const name of userOnlySkills) {
+    const s = registry.skills.find((sk) => sk.canonicalName === name);
+    assert(s, `User-only skill '${name}' must be registered`);
+    assert.equal(s.invocationPolicy, "user-only", `'${name}' must have invocationPolicy === 'user-only'`);
+    assert(
+      s.fallbackPolicy.toLowerCase().includes("without claiming") ||
+      s.fallbackPolicy.toLowerCase().includes("never report as actually invoked") ||
+      s.fallbackPolicy.toLowerCase().includes("execute must not route to implement automatically"),
+      `'${name}' fallbackPolicy must forbid false execution claims or uncommanded routing`
+    );
+  }
+
+  const routingMd = fs.readFileSync(path.join(rootDir, "skill/engineering-workflow/references/skill-routing.md"), "utf-8");
+  const executeMd = fs.readFileSync(path.join(rootDir, "skill/engineering-workflow/references/execute.md"), "utf-8");
+  const skillMd = fs.readFileSync(path.join(rootDir, "skill/engineering-workflow/SKILL.md"), "utf-8");
+
+  for (const doc of [routingMd, executeMd, skillMd]) {
+    assert(
+      doc.includes("recommends them to the user and applies the registered built-in fallback policy") ||
+      doc.includes("recommends them to the user and applies the built-in fallback"),
+      "Documents must instruct the agent to recommend user-only skills and apply fallback"
+    );
+    assert(
+      doc.includes("never reports them as Actually Invoked without explicit user action") ||
+      doc.includes("never report as Actually Invoked without explicit user action") ||
+      doc.includes("NEVER report user-only skills as \"Actually Invoked\" without explicit user action"),
+      "Documents must forbid reporting user-only skills as Actually Invoked without explicit user action"
+    );
+  }
+
+  // Verify opt-in constraint on implement
+  const implementSkill = registry.skills.find((sk) => sk.canonicalName === "implement");
+  assert(implementSkill, "implement must be registered");
+  assert(
+    routingMd.includes("execute does not auto-route to opt-in implement") ||
+    routingMd.includes("execute operation must not route to it automatically"),
+    "routing tables must specify that execute does not auto-route to opt-in implement"
+  );
+  assert(
+    executeMd.includes("Execute does not route to opt-in `implement` automatically") ||
+    executeMd.includes("execute operation must not route to it automatically"),
+    "execute.md must specify that execute does not route to opt-in implement automatically"
+  );
+});
+
+test("Skill Registry: all entries declare valid source metadata with verified git revisions", () => {
+  const registry = JSON.parse(fs.readFileSync(canonicalRegistryPath, "utf-8"));
+  assert.equal(registry.skills.length, 21, "Registry must contain exactly 21 capabilities");
+
+  for (const s of registry.skills) {
+    assert(s.source, `Skill '${s.canonicalName}' must declare source metadata`);
+    assert(s.source.repository.startsWith("https://github.com/"), `Skill '${s.canonicalName}' repository must be a GitHub URL`);
+    if (s.capabilityType === "mcp-tool") {
+      assert(s.source.package && typeof s.source.package === "string", `MCP '${s.canonicalName}' must declare source.package`);
+      assert(/^\d+\.\d+\.\d+/.test(s.source.version), `MCP '${s.canonicalName}' source.version must be a semver string (got '${s.source.version}')`);
+    } else {
+      assert(/^[0-9a-f]{40}$/.test(s.source.revision), `Skill '${s.canonicalName}' revision must be a 40-character commit SHA`);
+    }
+    assert.equal(s.source.verifiedAt, "2026-10-28", `Skill '${s.canonicalName}' verifiedAt must be 2026-10-28`);
+  }
+
+  const readme = fs.readFileSync(path.join(rootDir, "README.md"), "utf-8");
+  assert(readme.includes("addyosmani/agent-skills"), "README.md must list addyosmani/agent-skills among canonical upstreams");
+});

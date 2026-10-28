@@ -112,7 +112,7 @@ test("Skill routing: defines Task-to-Skill Consideration Matrix across archetype
 
   // Verify task-specific skill mappings
   assert(routingMd.includes("grilling") && routingMd.includes("domain-modeling"), "Unclear requirements routes to grilling & domain-modeling");
-  assert(routingMd.includes("codebase-design") && routingMd.includes("implementation-planning"), "Architecture planning routes to codebase-design & planning");
+  assert(routingMd.includes("codebase-design") && routingMd.includes("planning-and-task-breakdown"), "Architecture planning routes to codebase-design & planning");
   assert(routingMd.includes("implement") && routingMd.includes("ponytail") && routingMd.includes("test-driven-development"), "Feature implementation routes to implement, ponytail & TDD");
   assert(routingMd.includes("systematic-debugging"), "Bug fixing routes to systematic debugging");
   assert(routingMd.includes("handoff"), "Engineering handoff routes to handoff skill");

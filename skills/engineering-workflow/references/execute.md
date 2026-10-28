@@ -12,27 +12,31 @@ The **`execute`** operation carries out a specific software engineering task—f
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│ 2. Adaptive Task Sizing         │  (Trivial vs. Medium vs. Complex)
+│ 2. Baseline Verification        │  (Git state, baseline test/type/lint, classify results)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│ 3. On-Demand Skill Routing      │  (Check availability; apply native TDD/minimalism)
+│ 3. Adaptive Task Sizing         │  (Trivial vs. Medium vs. Complex)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│ 4. Incremental Implementation   │  (Smallest coherent diff, single-writer rule)
+│ 4. On-Demand Skill Routing      │  (Check availability; apply native TDD/minimalism)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│ 5. Focused Verification         │  (Targeted unit & integration tests)
+│ 5. Incremental Implementation   │  (Smallest coherent diff, single-writer rule)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│ 6. Independent Review Loop      │  (Read-only reviewer; max 3 fix cycles)
+│ 6. Focused Verification         │  (Targeted unit & integration tests)
 └────────────────┬────────────────┘
                  ▼
 ┌─────────────────────────────────┐
-│ 7. Acceptance Gate & Report     │  (Full project test command, diffs, risks)
+│ 7. Independent Review Loop      │  (Read-only reviewer; max 3 fix cycles)
+└────────────────┬────────────────┘
+                 ▼
+┌─────────────────────────────────┐
+│ 8. Acceptance Gate & Report     │  (Full project test command, diffs, risks)
 └─────────────────────────────────┘
 ```
 
@@ -48,7 +52,35 @@ Before making any modification:
 
 ---
 
-## Phase 2: Adaptive Execution Sizing
+## Phase 2: Baseline Verification & Pre-Modification Integrity Check
+
+Before making any modification to source code:
+1. **Record Baseline Git State**:
+   - Inspect `git status --short` and record `git rev-parse HEAD`.
+   - Confirm the working tree is clean or note any pre-existing unstaged modifications.
+2. **Run Baseline Checks (Proportional to Task Size)**:
+   - **Trivial Edits** (single function, typo, styling tweak, config update):
+     - Run targeted checks only (typecheck on the affected file or targeted unit test).
+   - **Medium and Complex Tasks** (new features, endpoints, refactors, architecture):
+     - Run the full project baseline: test suite (`npm test`, `pytest`, `cargo test`), typecheck (`tsc --noEmit`), and linter.
+3. **Classify Baseline Findings**:
+   - Separate all verification results into three explicit, non-overlapping categories:
+     - `BASELINE FAILURE`: Pre-existing defect or test failure present before any code was modified.
+     - `NEW REGRESSION`: Any failure introduced during the current task's execution.
+     - `PASS`: Clean test, typecheck, or lint execution with zero errors.
+4. **Pre-Existing Baseline Failure Rule**:
+   - **Never report a clean `PASS` for the overall task while unresolved baseline failures remain.**
+   - Pre-existing failures must be reported immediately to the user.
+   - Proceeding to completion with unresolved baseline failures requires **explicit user approval**.
+5. **Vertical Slice Checkpointing**:
+   - On **medium and complex tasks**, update `TASK_RECOVERY_LEDGER.md` after each verified vertical slice leaving tests green.
+   - **Trivial edits do not require ledger updates.**
+6. **Correction Budget & Escalation**:
+   - Maintain the strict **3-cycle correction limit**. If an error or regression cannot be resolved within 3 cycles, halt and escalate to the user with verbatim diagnostics and reproduction commands.
+
+---
+
+## Phase 3: Adaptive Execution Sizing
 
 Proportion execution overhead directly to task complexity:
 
@@ -71,7 +103,7 @@ Proportion execution overhead directly to task complexity:
 
 ---
 
-## Phase 3: On-Demand Specialist Skill Routing & Execution Contract
+## Phase 4: On-Demand Specialist Skill Routing & Execution Contract
 
 In accordance with the **Skill Execution Contract**, specialist skills are identified, verified, and explicitly invoked on demand. Mentioning a skill in documentation or routing tables does NOT constitute execution.
 
@@ -82,14 +114,21 @@ The orchestrator matches the current task to its target archetype using [`skill-
 | Task Archetype | Specialist Skills to Consider | Primary Purpose & Execution Intent |
 | :--- | :--- | :--- |
 | **New feature with unclear requirements** | `grilling` (or `grill-with-docs`), `domain-modeling` | Socratic challenge, interrogating assumptions, establishing ubiquitous language and domain models before writing code. |
-| **Architecture planning** | `codebase-design`, `implementation-planning` (or `planning-and-task-breakdown`) | Establishing deep module boundaries, small interfaces hiding complexity, interface seams, and decomposed vertical slices. |
-| **Feature implementation** | `implement`, `ponytail`, `test-driven-development` (or `tdd`) | Guiding implementation against approved plans, maintaining minimal coherent diffs without speculative bloat, red-green-refactor loop. |
+| **Architecture planning** | `codebase-design`, `planning-and-task-breakdown` | Establishing deep module boundaries, small interfaces hiding complexity, interface seams, and decomposed vertical slices. |
+| **Feature implementation** | `ponytail`, `test-driven-development` (or `tdd`) [opt-in alternative: `implement`] | Minimal coherent diffs without speculative bloat, red-green-refactor loop. Execute does not route to opt-in `implement` automatically. |
 | **Bug fixing** | `systematic-debugging` (or `diagnosing-bugs`), `test-driven-development` (or `tdd`) | Root-cause diagnosis, reproducing failure before mutation, writing failing regression tests, verifying the fix. |
-| **Engineering handoff** | `handoff` | Packaging structured context, recovery ledgers, and architectural summaries for peer agents or session resets. |
-| **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `browser-testing-with-devtools`, `break-ui` | Evaluating usability heuristics, visual hierarchy, micro-interactions, WCAG 2.2 AA accessibility, and runtime browser behavior. |
+| **Engineering handoff** | `handoff` (user-only; fallback: Task Recovery Ledger) | Packaging structured context, recovery ledgers, and architectural summaries for peer agents or session resets. |
+| **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `browser-testing-with-devtools`, `break-ui`, `frontend-ui-engineering` | Evaluating usability heuristics, visual hierarchy, micro-interactions, WCAG 2.2 AA accessibility, and runtime browser behavior. |
 | **Simple change** | `ponytail` principles, focused verification | Minimal complete diff, zero speculative abstractions, focused unit testing, fast turn-around. |
 
-### 2. Built-In Test Discipline (No External Skill Required)
+### 2. User-Only Capabilities & Opt-In Alternatives
+
+For user-only skills (`grill-with-docs`, `implement`, `handoff`, `improve-codebase-architecture`):
+- The agent recommends them to the user and applies the registered built-in fallback policy.
+- **The agent MUST NEVER report user-only skills as "Actually Invoked" without explicit user action.**
+- The `implement` capability is registered strictly as an **opt-in alternative**; the `execute` operation must not route to it automatically, avoiding two competing implementation loops.
+
+### 3. Built-In Test Discipline (No External Skill Required)
 
 The workflow does **NOT** require an external TDD skill merely to run tests:
 - When a specialist TDD skill (`tdd` or `test-driven-development`) is installed: route to it seamlessly.
@@ -107,7 +146,7 @@ The workflow does **NOT** require an external TDD skill merely to run tests:
 
 ---
 
-## Phase 4: Incremental Implementation
+## Phase 5: Incremental Implementation
 
 Follow the **Iron Laws of Execution**:
 1. **Single Writer**: Only the designated Executor agent modifies files.
@@ -118,7 +157,7 @@ Follow the **Iron Laws of Execution**:
 
 ---
 
-## Phase 5: Focused Verification & Failure Handling
+## Phase 6: Focused Verification & Failure Handling
 
 Verify changes in progressive tiers:
 1. **Typecheck & Linter**: Run project typecheck (`tsc --noEmit`, `mypy`, `cargo check`) to ensure contract safety.
@@ -133,7 +172,7 @@ Verify changes in progressive tiers:
 
 ---
 
-## Phase 6: Independent Review Loop
+## Phase 7: Independent Review Loop
 
 1. **Role Separation**:
    - In hosts supporting native subagents (Antigravity, Codex, Claude Code), delegate the diff to a separate read-only Reviewer subagent.
@@ -145,7 +184,7 @@ Verify changes in progressive tiers:
 
 ---
 
-## Phase 7: Acceptance Gate & Completion Report
+## Phase 8: Acceptance Gate & Completion Report
 
 Before declaring completion:
 1. Run the project's full acceptance command (e.g., `pnpm test`, `cargo test`, `npm run build`).

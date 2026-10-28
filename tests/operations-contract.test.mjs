@@ -39,3 +39,32 @@ test("Operation contract: review is strictly read-only and uses formal severity 
   assert(reviewMd.includes("Sequential review pass (same context); independent isolation was unavailable."),
     "review.md must disclose when independent subagent isolation was unavailable");
 });
+
+test("Operation contract: execute enforces baseline verification, result classification, and ledger checkpointing", () => {
+  // Phase 2 Baseline Verification presence
+  assert(executeMd.includes("Phase 2: Baseline Verification & Pre-Modification Integrity Check"),
+    "execute.md must include Phase 2 Baseline Verification before modification");
+
+  // Scaling checks by task size
+  assert(executeMd.includes("Trivial Edits"), "execute.md must scale checks for trivial edits");
+  assert(executeMd.includes("targeted checks only"), "execute.md must specify targeted checks for trivial edits");
+  assert(executeMd.includes("Medium and Complex Tasks"), "execute.md must scale checks for medium and complex tasks");
+  assert(executeMd.includes("full project baseline"), "execute.md must require full baseline for medium/complex tasks");
+
+  // Three explicit result classifications
+  assert(executeMd.includes("BASELINE FAILURE"), "execute.md must define BASELINE FAILURE classification");
+  assert(executeMd.includes("NEW REGRESSION"), "execute.md must define NEW REGRESSION classification");
+  assert(executeMd.includes("`PASS`"), "execute.md must define PASS classification");
+
+  // Policy against reporting clean pass with unresolved baseline failures
+  assert(executeMd.includes("Never report a clean `PASS` for the overall task while unresolved baseline failures remain"),
+    "execute.md must forbid reporting clean PASS with unresolved baseline failures");
+  assert(executeMd.includes("explicit user approval"),
+    "execute.md must require explicit user approval to proceed with unresolved baseline failures");
+
+  // Vertical slice checkpointing to ledger
+  assert(executeMd.includes("update `TASK_RECOVERY_LEDGER.md` after each verified vertical slice"),
+    "execute.md must require ledger updates after each vertical slice on medium/complex tasks");
+  assert(executeMd.includes("Trivial edits do not require ledger updates"),
+    "execute.md must explicitly waive ledger updates for trivial edits");
+});

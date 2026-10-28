@@ -13,13 +13,14 @@ A complete machine-readable version of this matrix is available in [`skill-regis
 | Capability / Skill | Verified Canonical Name | Upstream Repository | Invocation Policy | Purpose & Primary Triggers | Applicable Projects | Verified Install Command | Fallback Policy |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Socratic Interrogation** | `grilling` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | `model-invocable` | Adversarial cross-examination resolving all branches of a design tree. | Unclear requirements, high-stakes decisions. | `npx skills add mattpocock/skills --skill grilling` | Built-in Socratic questions in plan. |
-| **Docs-Grounded Interrogation** | `grill-with-docs` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | `user-only` | Socratic challenge against official docs, ADR creation, glossary building. | Framework migrations, public API redesigns. | `npx skills add mattpocock/skills --skill grill-with-docs` | Use model-invocable `grilling` primitive + local ADR. |
+| **Docs-Grounded Interrogation** | `grill-with-docs` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | `user-only` | Socratic challenge against official docs, ADR creation, glossary building. | Framework migrations, public API redesigns. | `npx skills add mattpocock/skills --skill grill-with-docs` | Recommend to user; apply model-invocable `grilling` primitive + local ADR without claiming external invocation. |
 | **Domain Modeling** | `domain-modeling` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | `model-invocable` | Ubiquitous language, entity modeling, and dictionary updates. | Domain logic, data models, entity relationships. | `npx skills add mattpocock/skills --skill domain-modeling` | Document entity terms and contracts inline. |
 | **Deep Module Design** | `codebase-design` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | `model-invocable` | Deep modules with small interfaces hiding extensive complexity at clean seams. | Public APIs, new module boundaries, service seams. | `npx skills add mattpocock/skills --skill codebase-design` | Apply Ousterhout deep module principles directly. |
 | **Pragmatic Minimalism** | `ponytail` | [`DietrichGebert/ponytail`](https://github.com/DietrichGebert/ponytail) | `model-invocable` | 7-Rung Decision Ladder: YAGNI -> reuse -> stdlib -> platform -> dependency -> one line -> minimum code. | All implementation tasks & simple changes. | `npx skills add https://github.com/DietrichGebert/ponytail --skill ponytail` | Apply 7-Rung ladder principles directly without claiming skill was invoked. |
-| **Implementation Planning** | `planning-and-task-breakdown` / `implementation-planning` | [`obra/superpowers`](https://github.com/obra/superpowers) / open standard | `model-invocable` | Decomposing objectives into thin, verifiable task slices. | Medium and complex tasks. | Open Agent Skills standard / `npx skills add vercel-labs/skills` | Built-in milestone decomposition. |
-| **Context Handoff** | `handoff` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | `user-only` / `host-dependent` | Packaging structured context and recovery packages for peer agents. | Multi-agent boundaries and milestone shifts. | `npx skills add mattpocock/skills --skill handoff` | Built-in `TASK_RECOVERY_LEDGER.md`. |
+| **Implementation Planning** | `planning-and-task-breakdown` | [`addyosmani/agent-skills`](https://github.com/addyosmani/agent-skills) | `model-invocable` | Decomposing objectives into thin, verifiable task slices. | Medium and complex tasks. | `npx skills add addyosmani/agent-skills --skill planning-and-task-breakdown` | Built-in milestone decomposition. |
+| **Context Handoff** | `handoff` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | `user-only` | Packaging structured context and recovery packages for peer agents. | Multi-agent boundaries and milestone shifts. | `npx skills add mattpocock/skills --skill handoff` | Built-in `TASK_RECOVERY_LEDGER.md`. |
 | **Architecture Evolution** | `improve-codebase-architecture` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | `user-only` | Systematic decoupling, inversion of control, dependency hygiene. | Monolith refactoring and legacy modernization. | `npx skills add mattpocock/skills --skill improve-codebase-architecture` | Apply modular decoupling in plan. |
+| **Opt-In Implementation** | `implement` | [`mattpocock/skills`](https://github.com/mattpocock/skills) | `user-only` | Opt-in sequential implementation alternative via TDD and code review. | User-selected implementation. | `npx skills add mattpocock/skills --skill implement` | Apply built-in `execute` operation; execute does not auto-route to opt-in implement. |
 
 ### 2. Testing & Debugging Capabilities (Select One Primary)
 
@@ -43,7 +44,7 @@ Activate UI skills **strictly on demand** for user-facing applications. Routine 
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **UI/UX Intelligence** | `ui-ux-pro-max` | [`nextlevelbuilder/ui-ux-pro-max-skill`](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | `model-invocable` | Usability heuristics, design systems, font pairings, 1-5 scorecard. | **UI Projects Only**. Route during `ux-audit` Stage 3. Pure backend: **NOT APPLICABLE**. |
 | **Frontend Design** | `frontend-design` | [`anthropics/skills`](https://github.com/anthropics/skills) | `model-invocable` | Visual hierarchy, typography scales, contrast ratios, and styling. | **UI Projects Only**. Route during visual overhauls. Pure backend: **NOT APPLICABLE**. |
-| **Frontend Engineering** | `frontend-ui-engineering` | Open Agent Skills Standard | `model-invocable` | Production-grade React/Next.js/Vue/HTML/CSS implementation. | **UI Projects Only**. Route during complex UI state/store changes. |
+| **Frontend Engineering** | `frontend-ui-engineering` | [`addyosmani/agent-skills`](https://github.com/addyosmani/agent-skills) | `model-invocable` | Production-grade React/Next.js/Vue/HTML/CSS implementation. | **UI Projects Only**. Route during complex UI state/store changes. |
 | **Interface Polish** | `make-interfaces-feel-better` | [`jakubkrehel/make-interfaces-feel-better`](https://github.com/jakubkrehel/make-interfaces-feel-better) | `model-invocable` | Micro-interactions, transition physics, focus rings, optical alignment. | **UI Projects Only**. Route during polish & interaction tuning. |
 | **UI Stress Testing** | `break-ui` | [`emilkowalski/skills`](https://github.com/emilkowalski/skills) | `model-invocable` | Feeding worst-case data (extreme lengths, empty states, huge numbers). | **UI Projects Only**. Route during edge-case form/table testing. |
 | **Browser DevTools** | `browser-testing-with-devtools` | [`ChromeDevTools/chrome-devtools-mcp`](https://github.com/ChromeDevTools/chrome-devtools-mcp) | `model-invocable` | Real browser walkthrough, console error monitoring, screenshots. | **UI Projects Only** (requires Chrome DevTools MCP or CDP). If missing: Mark **NOT TESTED**. |
@@ -59,6 +60,11 @@ The orchestrator enforces a strict boundary between **listing skills in routing 
 > 
 > **Do not treat mentioning a skill in the routing documentation as execution.**
 > If a required skill is unavailable, report the blocker clearly with its verified installation command. Never silently downgrade quality gates.
+> 
+> **User-Only Capabilities & Opt-In Alternatives**:
+> For user-only skills (`grill-with-docs`, `implement`, `handoff`, `improve-codebase-architecture`), the agent recommends them to the user and applies the registered built-in fallback policy.
+> **The agent MUST NEVER report user-only skills as "Actually Invoked" without explicit user action.**
+> The `implement` capability is registered strictly as an **opt-in alternative**; the `execute` operation must not route to it automatically, avoiding two competing implementation loops.
 > At completion, identify the skills actually invoked and distinguish them from skills merely considered.
 
 ```text
@@ -99,11 +105,11 @@ The orchestrator enforces a strict boundary between **listing skills in routing 
 | Task Archetype | Specialist Skills Considered | Primary Purpose & Execution Intent |
 | :--- | :--- | :--- |
 | **New feature with unclear requirements** | `grilling` (or `grill-with-docs`), `domain-modeling` | Socratic challenge, clarifying models and entities before writing code. |
-| **Architecture planning** | `codebase-design`, `implementation-planning` | Deep module boundaries, small interfaces hiding complexity, vertical slices. |
-| **Feature implementation** | `implement`, `ponytail`, `test-driven-development` (or `tdd`) | Guided plan execution, minimal/focused changes without bloat, TDD loop. |
+| **Architecture planning** | `codebase-design`, `planning-and-task-breakdown` | Deep module boundaries, small interfaces hiding complexity, vertical slices. |
+| **Feature implementation** | `ponytail`, `test-driven-development` (or `tdd`) [opt-in alternative: `implement`] | Minimal complete diffs without bloat, TDD loop; execute does not auto-route to opt-in implement. |
 | **Bug fixing** | `systematic-debugging` (or `diagnosing-bugs`), `test-driven-development` | Root-cause reproduction before mutation, failing regression tests, verifying fixes. |
-| **Engineering handoff** | `handoff` | Packaging structured context packages and recovery ledgers for peer agents. |
-| **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `browser-testing-with-devtools`, `break-ui` | Usability heuristics, visual design, micro-interactions, WCAG 2.2 AA testing. |
+| **Engineering handoff** | `handoff` (user-only; fallback: Task Recovery Ledger) | Packaging structured context packages and recovery ledgers for peer agents. |
+| **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `browser-testing-with-devtools`, `break-ui`, `frontend-ui-engineering` | Usability heuristics, visual design, micro-interactions, WCAG 2.2 AA testing. |
 | **Simple change** | `ponytail` principles, focused verification | Minimal complete diff, zero speculative abstractions, focused unit testing. |
 
 ---
