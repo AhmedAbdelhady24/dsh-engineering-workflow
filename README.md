@@ -20,7 +20,7 @@ Developing production applications with coding agents is hard. Monolithic framew
 | What This Workflow DOES | What This Workflow Does NOT Do |
 | :--- | :--- |
 | **Enforces four disciplined operations**: `setup`, `execute`, `review`, and `ux-audit`. | **Does NOT hijack your terminal** or run proprietary background daemon processes. |
-| **Enforces the Skill Execution Contract**: Verifies installed skills, invokes them explicitly, and requires hard command evidence. | **Does NOT vendor third-party skills**: References canonical upstreams (`DietrichGebert/ponytail`, `mattpocock/skills`, `obra/superpowers`). |
+| **Enforces the Skill Execution Contract**: Verifies installed skills, invokes them explicitly, and requires hard command evidence. | **Does NOT vendor third-party skills**: References canonical upstreams (`DietrichGebert/ponytail`, `mattpocock/skills`, `obra/superpowers`, `addyosmani/agent-skills`). |
 | **Maintains native test discipline**: Applies red-green cycles natively even when external TDD skills are absent. | **Does NOT claim unverified execution**: Never claims TDD or Ponytail was invoked without real execution evidence. |
 | **Provides compaction-resilient recovery**: Persists checkpoints in `TASK_LOG.md` and `TASK_RECOVERY_LEDGER.md` with explicit git and test reconciliation protocols. | **Does NOT lock you into proprietary runtimes**: Pure markdown, JSON manifests, and standard shell scripts. |
 | **Conducts two-axis code reviews**: Inspects diffs for both Engineering Standards and Spec fulfillment. | **Does NOT mutate code during reviews or audits**: Review and UX-audit roles are strictly read-only. |
@@ -96,13 +96,23 @@ npx skills add AhmedAbdelhady24/engineering-workflow
 <details>
 <summary><strong>Direct Shell Installer (Universal)</strong></summary>
 
+#### Method 1: Clone and Inspect Locally (Recommended)
+
+Inspect all scripts prior to execution for maximum security and local control:
+
 ```bash
-# Recommended: Clone and install locally
 git clone https://github.com/AhmedAbdelhady24/engineering-workflow.git
 cd engineering-workflow
+# Inspect installer script before execution
+cat scripts/install.sh
 bash scripts/install.sh --scope project    # or --scope global
+```
 
-# Direct automated bootstrap (clones/extracts archive automatically)
+#### Method 2: Automated Bootstrap (curl | bash)
+
+If preferred for headless provisioning, verify the script content before piping directly to your shell:
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/AhmedAbdelhady24/engineering-workflow/master/scripts/install.sh | bash -s -- --scope project
 ```
 
@@ -208,11 +218,11 @@ Specialist capabilities are evaluated dynamically via [`skill-registry.json`](sk
 | Task Archetype | Specialist Skills Considered | Primary Purpose & Execution Intent |
 | :--- | :--- | :--- |
 | **New feature with unclear requirements** | `grilling`, `grill-with-docs`, `domain-modeling` | Socratic interview; clarifying domain models and entities before writing code. |
-| **Architecture planning** | `codebase-design`, `implementation-planning` | Deep module boundaries, small interfaces hiding complexity, vertical slices. |
-| **Feature implementation** | `implement`, `ponytail`, `test-driven-development` | Guided plan execution, minimal/focused changes without bloat, TDD loop. |
+| **Architecture planning** | `codebase-design`, `planning-and-task-breakdown` | Deep module boundaries, small interfaces hiding complexity, vertical slices. |
+| **Feature implementation** | `ponytail`, `test-driven-development` (or `tdd`) [opt-in: `implement`] | Minimal complete diffs, TDD loop; execute does not auto-route to opt-in implement. |
 | **Bug fixing** | `systematic-debugging`, `test-driven-development` | Root-cause reproduction before mutation, failing regression tests, verifying fixes. |
-| **Engineering handoff** | `handoff` | Packaging structured context packages and recovery ledgers for peer agents. |
-| **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `break-ui`, `browser-testing-with-devtools` | Usability heuristics, visual design, micro-interactions, WCAG 2.2 AA testing. |
+| **Engineering handoff** | `handoff` (user-only; ledger fallback) | Packaging structured context packages and recovery ledgers for peer agents. |
+| **UX audit** | `ui-ux-pro-max`, `frontend-design`, `make-interfaces-feel-better`, `break-ui`, `browser-testing-with-devtools`, `frontend-ui-engineering` | Usability heuristics, visual design, micro-interactions, WCAG 2.2 AA testing. |
 | **Simple change** | `ponytail` principles, focused verification | Minimal complete diff, zero speculative abstractions, focused unit testing. |
 
 ---

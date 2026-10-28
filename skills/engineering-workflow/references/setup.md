@@ -69,7 +69,7 @@ All discovery steps in Phase 1 and 2 are **strictly read-only** and must proceed
 Audit the active agent environment against project requirements:
 
 1. **Core Skills Check**:
-   - Inspect loaded skills for core capabilities: `test-driven-development` (or `tdd`), `systematic-debugging` (or `diagnosing-bugs`), `code-review`, `implementation-planning`, `ponytail`.
+   - Inspect loaded skills for core capabilities: `test-driven-development` (or `tdd`), `systematic-debugging` (or `diagnosing-bugs`), `code-review`, `planning-and-task-breakdown`, `ponytail`.
    - If missing, note installation command (e.g., `npx skills add <source>`).
 
 2. **Project Domain & UI Capabilities Check**:

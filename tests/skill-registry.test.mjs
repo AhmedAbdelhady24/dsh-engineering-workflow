@@ -21,13 +21,28 @@ test("Skill Registry: canonical and mirror registry files exist and are identica
 
 test("Skill Registry: schema validity, taxonomy, and mandatory skill fields", () => {
   const registry = JSON.parse(fs.readFileSync(canonicalRegistryPath, "utf-8"));
+  assert.equal(registry.$schema, "./registry.schema.json", "Registry must reference local registry.schema.json schema");
   assert(registry.version, "Registry must define version");
   assert(Array.isArray(registry.skills), "Registry must contain skills array");
-  assert(registry.skills.length >= 10, "Registry must contain at least 10 registered capabilities");
+  assert.equal(registry.skills.length, 21, "Registry must contain exactly 21 registered capabilities");
+
+  const canonicalSchemaPath = path.join(rootDir, "skill/engineering-workflow/registry.schema.json");
+  const mirrorSchemaPath = path.join(rootDir, "skills/engineering-workflow/registry.schema.json");
+  assert(fs.existsSync(canonicalSchemaPath), "Canonical registry.schema.json must exist");
+  assert(fs.existsSync(mirrorSchemaPath), "Mirror registry.schema.json must exist");
+  assert.equal(
+    fs.readFileSync(canonicalSchemaPath, "utf-8"),
+    fs.readFileSync(mirrorSchemaPath, "utf-8"),
+    "Canonical and mirror registry.schema.json must be identical"
+  );
+
+  const schema = JSON.parse(fs.readFileSync(canonicalSchemaPath, "utf-8"));
+  assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema", "Schema must be Draft 2020-12");
 
   const validPolicies = ["model-invocable", "user-only", "host-dependent"];
   const validCapabilityTypes = ["external-skill", "mcp-tool", "bundled-operation"];
   const validFallbackTypes = ["principles-based", "not-applicable", "static-analysis"];
+  const validStrategies = ["skills-cli", "mcp-server", "claude-plugin", "bundled"];
 
   for (const s of registry.skills) {
     assert(s.canonicalName && typeof s.canonicalName === "string", `Skill missing valid canonicalName: ${JSON.stringify(s)}`);
@@ -39,6 +54,18 @@ test("Skill Registry: schema validity, taxonomy, and mandatory skill fields", ()
     assert(validFallbackTypes.includes(s.fallbackType), `Skill '${s.canonicalName}' has invalid fallbackType: ${s.fallbackType}`);
     assert(s.fallbackPolicy && s.fallbackPolicy.length > 10, `Skill '${s.canonicalName}' must define explicit fallbackPolicy`);
     assert(s.executionEvidence && s.executionEvidence.length > 10, `Skill '${s.canonicalName}' must define executionEvidence requirements`);
+
+    // Installation object structure
+    assert(s.installation && typeof s.installation === "object", `Skill '${s.canonicalName}' must define installation object`);
+    assert(validStrategies.includes(s.installation.strategy), `Skill '${s.canonicalName}' has invalid installation.strategy: ${s.installation.strategy}`);
+    assert(s.installation.command && s.installation.command.length > 5, `Skill '${s.canonicalName}' must define non-trivial installation.command`);
+
+    // Evidence-based hosts object structure
+    assert(s.hosts && typeof s.hosts === "object", `Skill '${s.canonicalName}' must define hosts object`);
+    assert(Array.isArray(s.hosts.compatible) && s.hosts.compatible.length > 0, `Skill '${s.canonicalName}' must define hosts.compatible`);
+    assert(Array.isArray(s.hosts.installable), `Skill '${s.canonicalName}' must define hosts.installable array`);
+    assert(["none", "installer-test", "host-e2e"].includes(s.hosts.evidence), `Skill '${s.canonicalName}' must define valid hosts.evidence marker`);
+    assert(Array.isArray(s.hosts.verifiedExecuted), `Skill '${s.canonicalName}' must define hosts.verifiedExecuted array`);
   }
 });
 
@@ -138,4 +165,163 @@ test("Skill Registry: Testing and debugging mutual conflict declarations", () =>
 
   const diagPocock = registry.skills.find((s) => s.canonicalName === "diagnosing-bugs");
   assert(diagPocock.conflicts.includes("systematic-debugging"), "diagnosing-bugs must declare conflict with systematic-debugging");
+});
+
+test("Skill Registry: single source of truth for routing tables (no unresolved skill names)", () => {
+  const registry = JSON.parse(fs.readFileSync(canonicalRegistryPath, "utf-8"));
+  const registeredSkills = new Set(registry.skills.map((s) => s.canonicalName));
+  const builtInOps = new Set(["setup", "execute", "review", "ux-audit"]);
+
+  const filesToCheck = [
+    path.join(rootDir, "README.md"),
+    path.join(rootDir, "skill/engineering-workflow/SKILL.md"),
+    path.join(rootDir, "skill/engineering-workflow/references/execute.md"),
+    path.join(rootDir, "skill/engineering-workflow/references/skill-routing.md"),
+  ];
+
+  // Regex to extract backticked identifiers in table rows or task archetype mappings
+  const skillCandidateRegex = /`([a-z0-9]+(?:-[a-z0-9]+)+)`/g;
+  const nonSkillIdentifiers = new Set([
+    "engineering-workflow",
+    "task-recovery-ledger",
+    "git-status",
+    "pre-flight",
+    "single-writer",
+    "smallest-complete-slice",
+    "model-invocable",
+    "user-only",
+    "principles-based",
+    "chrome-devtools",
+    "chrome-devtools-mcp",
+    "context7-mcp",
+    "not-applicable",
+    "not-tested",
+    "prefers-reduced-motion",
+    "focus-visible",
+    "sub-agents",
+    "peer-agents",
+    "host-dependent",
+    "red-green-refactor",
+  ]);
+
+  for (const filePath of filesToCheck) {
+    const content = fs.readFileSync(filePath, "utf-8");
+    const matches = [...content.matchAll(skillCandidateRegex)].map((m) => m[1]);
+
+    for (const name of matches) {
+      if (nonSkillIdentifiers.has(name) || builtInOps.has(name)) {
+        continue;
+      }
+      assert(
+        registeredSkills.has(name),
+        `Unresolved skill '${name}' referenced in ${path.relative(rootDir, filePath)} must be registered in skill-registry.json`
+      );
+    }
+  }
+});
+
+test("Skill Registry: user-only capabilities enforce recommendation, fallback, and no false execution claims", () => {
+  const registry = JSON.parse(fs.readFileSync(canonicalRegistryPath, "utf-8"));
+  const userOnlySkills = ["grill-with-docs", "implement", "handoff", "improve-codebase-architecture"];
+
+  for (const name of userOnlySkills) {
+    const s = registry.skills.find((sk) => sk.canonicalName === name);
+    assert(s, `User-only skill '${name}' must be registered`);
+    assert.equal(s.invocationPolicy, "user-only", `'${name}' must have invocationPolicy === 'user-only'`);
+    assert(
+      s.fallbackPolicy.toLowerCase().includes("without claiming") ||
+      s.fallbackPolicy.toLowerCase().includes("never report as actually invoked") ||
+      s.fallbackPolicy.toLowerCase().includes("execute must not route to implement automatically"),
+      `'${name}' fallbackPolicy must forbid false execution claims or uncommanded routing`
+    );
+  }
+
+  const routingMd = fs.readFileSync(path.join(rootDir, "skill/engineering-workflow/references/skill-routing.md"), "utf-8");
+  const executeMd = fs.readFileSync(path.join(rootDir, "skill/engineering-workflow/references/execute.md"), "utf-8");
+  const skillMd = fs.readFileSync(path.join(rootDir, "skill/engineering-workflow/SKILL.md"), "utf-8");
+
+  for (const doc of [routingMd, executeMd, skillMd]) {
+    assert(
+      doc.includes("recommends them to the user and applies the registered built-in fallback policy") ||
+      doc.includes("recommends them to the user and applies the built-in fallback"),
+      "Documents must instruct the agent to recommend user-only skills and apply fallback"
+    );
+    assert(
+      doc.includes("never reports them as Actually Invoked without explicit user action") ||
+      doc.includes("never report as Actually Invoked without explicit user action") ||
+      doc.includes("NEVER report user-only skills as \"Actually Invoked\" without explicit user action"),
+      "Documents must forbid reporting user-only skills as Actually Invoked without explicit user action"
+    );
+  }
+
+  // Verify opt-in constraint on implement
+  const implementSkill = registry.skills.find((sk) => sk.canonicalName === "implement");
+  assert(implementSkill, "implement must be registered");
+  assert(
+    routingMd.includes("execute does not auto-route to opt-in implement") ||
+    routingMd.includes("execute operation must not route to it automatically"),
+    "routing tables must specify that execute does not auto-route to opt-in implement"
+  );
+  assert(
+    executeMd.includes("Execute does not route to opt-in `implement` automatically") ||
+    executeMd.includes("execute operation must not route to it automatically"),
+    "execute.md must specify that execute does not route to opt-in implement automatically"
+  );
+});
+
+test("Skill Registry: all entries declare valid source metadata with verified git revisions", () => {
+  const registry = JSON.parse(fs.readFileSync(canonicalRegistryPath, "utf-8"));
+  assert.equal(registry.skills.length, 21, "Registry must contain exactly 21 capabilities");
+
+  for (const s of registry.skills) {
+    assert(s.source, `Skill '${s.canonicalName}' must declare source metadata`);
+    assert(s.source.repository.startsWith("https://github.com/"), `Skill '${s.canonicalName}' repository must be a GitHub URL`);
+    if (s.capabilityType === "mcp-tool") {
+      assert(s.source.package && typeof s.source.package === "string", `MCP '${s.canonicalName}' must declare source.package`);
+      assert(/^\d+\.\d+\.\d+/.test(s.source.version), `MCP '${s.canonicalName}' source.version must be a semver string (got '${s.source.version}')`);
+      // Assert no unpinned @latest
+      assert(!s.installation.command.includes("@latest"), `MCP '${s.canonicalName}' must not use floating @latest tag`);
+      assert(s.installation.command.includes(s.source.version), `MCP '${s.canonicalName}' installation must pin exact version ${s.source.version}`);
+    } else {
+      assert(/^[0-9a-f]{40}$/.test(s.source.revision), `Skill '${s.canonicalName}' revision must be a 40-character commit SHA`);
+    }
+    assert.equal(s.source.verifiedAt, "2026-10-28", `Skill '${s.canonicalName}' verifiedAt must be 2026-10-28`);
+
+    // Evidence-based host verification: only claim installable when backed by installer test
+    const validHosts = ["claude", "codex", "antigravity", "dsh"];
+    for (const h of [...s.hosts.compatible, ...s.hosts.installable, ...s.hosts.verifiedExecuted]) {
+      assert(validHosts.includes(h), `Host '${h}' in skill '${s.canonicalName}' must be one of: ${validHosts.join(", ")}`);
+    }
+
+    if (s.capabilityType === "mcp-tool") {
+      assert.deepEqual(s.hosts.installable, [], `'${s.canonicalName}' installable must be empty without installer test coverage`);
+      assert.equal(s.hosts.evidence, "none", `'${s.canonicalName}' hosts.evidence must be 'none'`);
+    } else {
+      assert.deepEqual(s.hosts.installable, ["codex"], `'${s.canonicalName}' installable must list only 'codex' (covered by installer test)`);
+      if (s.canonicalName === "tdd" || s.canonicalName === "code-review") {
+        assert.equal(s.hosts.evidence, "host-e2e", `'${s.canonicalName}' hosts.evidence must be 'host-e2e'`);
+      } else {
+        assert.equal(s.hosts.evidence, "installer-test", `'${s.canonicalName}' hosts.evidence must be 'installer-test'`);
+      }
+    }
+
+    // Evidence-based host verification: only claim verifiedExecuted when backed by test
+    if (s.canonicalName === "tdd" || s.canonicalName === "code-review") {
+      assert.deepEqual(s.hosts.verifiedExecuted, ["codex"], `'${s.canonicalName}' verifiedExecuted must reflect Codex host e2e test`);
+    } else {
+      assert.deepEqual(s.hosts.verifiedExecuted, [], `'${s.canonicalName}' verifiedExecuted must be empty without live host test proof`);
+    }
+  }
+
+  const readme = fs.readFileSync(path.join(rootDir, "README.md"), "utf-8");
+  assert(readme.includes("addyosmani/agent-skills"), "README.md must list addyosmani/agent-skills among canonical upstreams");
+
+  // Verify Package Update Policy document
+  const policyPath = path.join(rootDir, "docs/PACKAGE_UPDATE_POLICY.md");
+  assert(fs.existsSync(policyPath), "docs/PACKAGE_UPDATE_POLICY.md must exist");
+  const policyText = fs.readFileSync(policyPath, "utf-8");
+  assert(policyText.includes("Review Cadence"), "Update policy must define Review Cadence");
+  assert(policyText.includes("Monthly"), "Update policy must specify Monthly review cadence");
+  assert(policyText.includes("Security Out-of-Band"), "Update policy must specify security-fix bump policy");
+  assert(policyText.includes("Verification Protocol"), "Update policy must specify verification gates");
 });
