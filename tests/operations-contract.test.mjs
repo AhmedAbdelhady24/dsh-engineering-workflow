@@ -68,3 +68,16 @@ test("Operation contract: execute enforces baseline verification, result classif
   assert(executeMd.includes("Trivial edits do not require ledger updates"),
     "execute.md must explicitly waive ledger updates for trivial edits");
 });
+
+test("Operation contract: execute enforces fresh-context reviewer preference and change-sensitive security checks", () => {
+  // Fresh-context review preference
+  assert(executeMd.includes("fresh context"), "execute.md must prefer fresh-context reviewer");
+  assert(executeMd.includes("never a hard dependency"), "execute.md must specify different-model review is never a hard dependency");
+  assert(executeMd.includes("Sequential review pass (same context); independent isolation was unavailable."),
+    "execute.md must require disclosure when review is sequential in executor context");
+
+  // Change-sensitive security checks
+  assert(executeMd.includes("Secrets Scan on Diff"), "execute.md must require secrets scan on diff");
+  assert(executeMd.includes("Dependency & Lockfile Audit"), "execute.md must require dependency and lockfile audit");
+  assert(executeMd.includes("references/review.md"), "execute.md must reference review.md checklist");
+});

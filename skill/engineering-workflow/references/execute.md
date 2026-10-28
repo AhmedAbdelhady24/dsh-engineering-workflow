@@ -174,12 +174,19 @@ Verify changes in progressive tiers:
 
 ## Phase 7: Independent Review Loop
 
-1. **Role Separation**:
-   - In hosts supporting native subagents (Antigravity, Codex, Claude Code), delegate the diff to a separate read-only Reviewer subagent.
-   - In environments without delegation (or standalone CLI), perform a distinct, sequential review pass and explicitly report: *"Independent isolation unavailable; executed as sequential review pass."*
-2. **Review Scope**: Inspect diff for correctness, security regressions, memory leaks, and missing edge tests.
+1. **Role Separation & Context Isolation**:
+   - **Preferred**: Delegate the git diff to a separate, read-only Reviewer running in a **fresh context** (isolated subagent or separate session) to eliminate context contamination and confirmation bias.
+   - Using a different model family for review is **optional** (e.g., cross-model second opinion), but is **never a hard dependency**.
+   - **Sequential Fallback & Disclosure**: When running in single-session environments without subagent isolation, execute review sequentially as a distinct pass in the executor's context and explicitly disclose in the completion report:
+     *"Sequential review pass (same context); independent isolation was unavailable."*
+2. **Review Scope & Change-Sensitive Checks**:
+   - Inspect diff for correctness, performance, edge-case test coverage, and documentation integrity.
+   - **Change-Sensitive Security Checks**:
+     - **Secrets Scan on Diff**: Scan the full git diff for committed API keys, tokens, credentials, or private certs.
+     - **Dependency & Lockfile Audit**: When package manifests or lockfiles (`package.json`, `package-lock.json`, `pnpm-lock.yaml`, `Cargo.lock`) are touched, audit all new direct and transitive dependencies for supply chain confusion, unpinned versions, or typosquatting.
+     - Reference the existing security checklist in [references/review.md](review.md#axis-1-engineering-standards-correctness--hardening) instead of duplicating inspection rules.
 3. **Bounded Correction Cycles**:
-   - If the Reviewer finds evidence-backed defects, the Executor fixes them.
+   - If the Reviewer finds evidence-backed defects (`BLOCKER`, `HIGH`, `MEDIUM`), the Executor fixes them.
    - **Maximum of 3 correction cycles**. If unresolved after 3 cycles, halt and escalate to the user with full diagnostics.
 
 ---
@@ -192,7 +199,8 @@ Before declaring completion:
 3. Present the final completion report containing:
    - **Exact Files Modified**: Summary of changes per file.
    - **Verification Evidence**: Commands run and verbatim test summary results.
-   - **Independent Review Findings**: Resolutions of any reviewed concerns.
+   - **Independent Review Findings**: Resolutions of reviewed concerns and review isolation disclosure (`Fresh context subagent` vs `Sequential pass (same context)`).
+   - **Change-Sensitive Security Checks**: Secrets scan on diff status (`Clean`), dependency/lockfile audit status (`Verified` / `No dependency changes`).
    - **Residual Risks & Limitations**: Any unverified edge cases or deferred tasks.
    - **Skills Execution Summary**:
      - **Skills Considered**: Specialist skills evaluated based on task archetype.

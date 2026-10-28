@@ -96,13 +96,23 @@ npx skills add AhmedAbdelhady24/engineering-workflow
 <details>
 <summary><strong>Direct Shell Installer (Universal)</strong></summary>
 
+#### Method 1: Clone and Inspect Locally (Recommended)
+
+Inspect all scripts prior to execution for maximum security and local control:
+
 ```bash
-# Recommended: Clone and install locally
 git clone https://github.com/AhmedAbdelhady24/engineering-workflow.git
 cd engineering-workflow
+# Inspect installer script before execution
+cat scripts/install.sh
 bash scripts/install.sh --scope project    # or --scope global
+```
 
-# Direct automated bootstrap (clones/extracts archive automatically)
+#### Method 2: Automated Bootstrap (curl | bash)
+
+If preferred for headless provisioning, verify the script content before piping directly to your shell:
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/AhmedAbdelhady24/engineering-workflow/master/scripts/install.sh | bash -s -- --scope project
 ```
 

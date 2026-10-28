@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "./registry.schema.json",
   "version": "1.1.0",
   "description": "Machine-readable specialist skill registry and routing matrix for Universal Engineering Workflow",
   "skills": [
@@ -19,13 +19,6 @@
       "conflicts": [
         "grill-me"
       ],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill grilling",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Apply Socratic interview questions directly in execution plan before writing code.",
       "executionEvidence": "Documented question-and-answer exchange clarifying requirements with resolved decision branches.",
@@ -33,6 +26,25 @@
         "repository": "https://github.com/mattpocock/skills",
         "revision": "59db609eb1e18aaf59b63284d0e52255aff0c63c",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill grilling"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -53,13 +65,6 @@
         "Context7"
       ],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill grill-with-docs",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Recommend grill-with-docs to the user and apply model-invocable grilling primitive directly, recording decisions in .agents/adr/; never report as Actually Invoked without explicit user action.",
       "executionEvidence": "Updated GLOSSARY.md and documented ADR file citing official documentation.",
@@ -67,6 +72,25 @@
         "repository": "https://github.com/mattpocock/skills",
         "revision": "59db609eb1e18aaf59b63284d0e52255aff0c63c",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill grill-with-docs"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -83,13 +107,6 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill domain-modeling",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Inspect schema files and document entity definitions and terms inline.",
       "executionEvidence": "Committed or referenced domain glossary/model file defining entities and invariants.",
@@ -97,6 +114,25 @@
         "repository": "https://github.com/mattpocock/skills",
         "revision": "59db609eb1e18aaf59b63284d0e52255aff0c63c",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill domain-modeling"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -113,13 +149,6 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill codebase-design",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Apply Ousterhout deep-module principles: small interface, extensive functionality, clean seam.",
       "executionEvidence": "Clear interface contract file separated from concrete implementation with documented seams.",
@@ -127,6 +156,25 @@
         "repository": "https://github.com/mattpocock/skills",
         "revision": "59db609eb1e18aaf59b63284d0e52255aff0c63c",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill codebase-design"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -145,13 +193,6 @@
       "conflicts": [
         "test-driven-development"
       ],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill tdd",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Apply built-in test discipline: create failing test, run test command, confirm failure code, implement, confirm pass.",
       "executionEvidence": "Terminal test output showing failing test execution (RED) followed by passing test execution (GREEN).",
@@ -159,6 +200,27 @@
         "repository": "https://github.com/mattpocock/skills",
         "revision": "59db609eb1e18aaf59b63284d0e52255aff0c63c",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill tdd"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": [
+          "codex"
+        ]
       }
     },
     {
@@ -175,13 +237,6 @@
       "conflicts": [
         "tdd"
       ],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "claude plugin install superpowers@superpowers-marketplace",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Use built-in workflow test discipline.",
       "executionEvidence": "Terminal test output showing red-green progression.",
@@ -189,6 +244,28 @@
         "repository": "https://github.com/obra/superpowers",
         "revision": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add https://github.com/obra/superpowers --skill test-driven-development",
+        "hosts": {
+          "claude": "claude plugin install superpowers@superpowers-marketplace"
+        }
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -207,13 +284,6 @@
       "conflicts": [
         "systematic-debugging"
       ],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill diagnosing-bugs",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Apply systematic debugging: reproduce before mutation, isolate minimal case, verify fix.",
       "executionEvidence": "Reproduction test case or terminal trace proving defect existence prior to source code edits.",
@@ -221,6 +291,25 @@
         "repository": "https://github.com/mattpocock/skills",
         "revision": "59db609eb1e18aaf59b63284d0e52255aff0c63c",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill diagnosing-bugs"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -237,13 +326,6 @@
       "conflicts": [
         "diagnosing-bugs"
       ],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "claude plugin install superpowers@superpowers-marketplace",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Use built-in systematic reproduction protocol.",
       "executionEvidence": "Reproduction script or test confirming bug before fix.",
@@ -251,6 +333,28 @@
         "repository": "https://github.com/obra/superpowers",
         "revision": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add https://github.com/obra/superpowers --skill systematic-debugging",
+        "hosts": {
+          "claude": "claude plugin install superpowers@superpowers-marketplace"
+        }
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -267,13 +371,6 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add https://github.com/DietrichGebert/ponytail --skill ponytail",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Apply the 7-Rung Decision Ladder directly without claiming external skill invocation: eliminate speculative code, prefer standard library, write smallest diff.",
       "executionEvidence": "Minimal coherent git diff with zero speculative abstractions or unused imports.",
@@ -281,6 +378,25 @@
         "repository": "https://github.com/DietrichGebert/ponytail",
         "revision": "09c434ab73ca43761c5d8b0c5d341926c2fba710",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add https://github.com/DietrichGebert/ponytail --skill ponytail"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -298,13 +414,6 @@
       "conflicts": [
         "code-review-and-quality"
       ],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill code-review",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Apply built-in references/review.md two-axis review checklist.",
       "executionEvidence": "Structured review report citing exact file:line references and severity classifications.",
@@ -312,6 +421,27 @@
         "repository": "https://github.com/mattpocock/skills",
         "revision": "59db609eb1e18aaf59b63284d0e52255aff0c63c",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill code-review"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": [
+          "codex"
+        ]
       }
     },
     {
@@ -329,13 +459,6 @@
         "Chrome DevTools MCP"
       ],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "claude mcp add chrome-devtools npx -y chrome-devtools-mcp@latest -- --headless=true",
       "fallbackType": "not-applicable",
       "fallbackPolicy": "Mark runtime tests as NOT TESTED and rely on static component and CSS inspection.",
       "executionEvidence": "Captured browser screenshot paths, console log excerpts, or DOM evaluation outputs.",
@@ -344,6 +467,29 @@
         "package": "chrome-devtools-mcp",
         "version": "1.12.0",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "mcp-server",
+        "command": "npx -y chrome-devtools-mcp@1.12.0 -- --headless=true",
+        "hosts": {
+          "claude": "claude mcp add chrome-devtools npx -y chrome-devtools-mcp@1.12.0 -- --headless=true",
+          "codex": "codex mcp add chrome-devtools npx -y chrome-devtools-mcp@1.12.0 -- --headless=true"
+        }
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -360,13 +506,6 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "claude mcp add context7 npx -y @upstash/context7-mcp",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Inspect local node_modules type definitions, inline docs, and package README files.",
       "executionEvidence": "Cited documentation references, type definitions, or verified API signatures.",
@@ -375,6 +514,29 @@
         "package": "@upstash/context7-mcp",
         "version": "4.4.4",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "mcp-server",
+        "command": "npx -y @upstash/context7-mcp@4.4.4",
+        "hosts": {
+          "claude": "claude mcp add context7 npx -y @upstash/context7-mcp@4.4.4",
+          "codex": "codex mcp add context7 npx -y @upstash/context7-mcp@4.4.4"
+        }
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -390,13 +552,6 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add nextlevelbuilder/ui-ux-pro-max-skill",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Use references/ux-audit.md heuristic guidelines.",
       "executionEvidence": "1\u20135 usability scorecard across evaluated heuristics with verified observations.",
@@ -404,6 +559,25 @@
         "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
         "revision": "28b3b8dee8c976df4fa3e94aed4e092ad43fcb03",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add nextlevelbuilder/ui-ux-pro-max-skill"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -419,13 +593,6 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add anthropics/skills --skill frontend-design",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Evaluate WCAG 2.2 AA contrast and CSS spacing rhythm directly.",
       "executionEvidence": "Visual design findings citing contrast measurements and typographic scales.",
@@ -433,6 +600,25 @@
         "repository": "https://github.com/anthropics/skills",
         "revision": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add anthropics/skills --skill frontend-design"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -448,13 +634,6 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add jakubkrehel/make-interfaces-feel-better",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Inspect CSS transitions, :focus-visible states, and prefers-reduced-motion media queries.",
       "executionEvidence": "Documented motion duration, easing curves, and focus-visible ring implementations.",
@@ -462,6 +641,25 @@
         "repository": "https://github.com/jakubkrehel/make-interfaces-feel-better",
         "revision": "35545ea1512ad59fa463e6b1f95ca9c052981fe6",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add jakubkrehel/make-interfaces-feel-better"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -477,13 +675,6 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add emilkowalski/skills --skill break-ui",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Pass synthetic extreme boundary values into component props or test runners.",
       "executionEvidence": "Stress test results documenting overflow handling, truncation, and empty state rendering.",
@@ -491,6 +682,25 @@
         "repository": "https://github.com/emilkowalski/skills",
         "revision": "2d228630ba1446365f614a108cb8252f1feda202",
         "verifiedAt": "2026-10-28"
+      },
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add emilkowalski/skills --skill break-ui"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
       }
     },
     {
@@ -512,16 +722,28 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add addyosmani/agent-skills --skill planning-and-task-breakdown",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Apply built-in milestone decomposition (Phase 3 Adaptive Task Sizing in references/execute.md) in chat or TASK_RECOVERY_LEDGER.md.",
-      "executionEvidence": "Documented task breakdown with vertical slices, verification criteria, and dependency order."
+      "executionEvidence": "Documented task breakdown with vertical slices, verification criteria, and dependency order.",
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add addyosmani/agent-skills --skill planning-and-task-breakdown"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
+      }
     },
     {
       "canonicalName": "frontend-ui-engineering",
@@ -542,16 +764,28 @@
       "invocationPolicy": "model-invocable",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add addyosmani/agent-skills --skill frontend-ui-engineering",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Direct AST and source code inspection checking component colocation, explicit interaction states, semantic HTML, and responsive rules.",
-      "executionEvidence": "Frontend implementation or UX audit findings citing component architecture, token usage, and interaction states."
+      "executionEvidence": "Frontend implementation or UX audit findings citing component architecture, token usage, and interaction states.",
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add addyosmani/agent-skills --skill frontend-ui-engineering"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
+      }
     },
     {
       "canonicalName": "handoff",
@@ -572,16 +806,28 @@
       "invocationPolicy": "user-only",
       "dependencies": [],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill handoff",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Recommend handoff to the user and apply the built-in TASK_RECOVERY_LEDGER.md reconciliation protocol; never report as Actually Invoked without explicit user action.",
-      "executionEvidence": "Updated TASK_RECOVERY_LEDGER.md or user-invoked handoff document in OS temp directory."
+      "executionEvidence": "Updated TASK_RECOVERY_LEDGER.md or user-invoked handoff document in OS temp directory.",
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill handoff"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
+      }
     },
     {
       "canonicalName": "improve-codebase-architecture",
@@ -604,16 +850,28 @@
         "codebase-design"
       ],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill improve-codebase-architecture",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Recommend to the user and apply modular decoupling in execution plan using codebase-design principles; never report as Actually Invoked without explicit user action.",
-      "executionEvidence": "HTML report from user invocation or committed ADR documenting modular seams."
+      "executionEvidence": "HTML report from user invocation or committed ADR documenting modular seams.",
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill improve-codebase-architecture"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
+      }
     },
     {
       "canonicalName": "implement",
@@ -636,16 +894,28 @@
         "code-review"
       ],
       "conflicts": [],
-      "supportedHosts": [
-        "antigravity",
-        "codex",
-        "claude",
-        "dsh"
-      ],
-      "installCommand": "npx skills add mattpocock/skills --skill implement",
       "fallbackType": "principles-based",
       "fallbackPolicy": "Apply built-in execute operation (red-green-refactor loop, single writer, bounded correction cycles). Execute must not route to implement automatically to avoid competing loops; never report as Actually Invoked without explicit user action.",
-      "executionEvidence": "User-confirmed external implementation execution with test results and code review report."
+      "executionEvidence": "User-confirmed external implementation execution with test results and code review report.",
+      "installation": {
+        "strategy": "skills-cli",
+        "command": "npx skills add mattpocock/skills --skill implement"
+      },
+      "hosts": {
+        "compatible": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "installable": [
+          "antigravity",
+          "codex",
+          "claude",
+          "dsh"
+        ],
+        "verifiedExecuted": []
+      }
     }
   ]
 }

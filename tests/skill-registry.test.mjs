@@ -21,13 +21,28 @@ test("Skill Registry: canonical and mirror registry files exist and are identica
 
 test("Skill Registry: schema validity, taxonomy, and mandatory skill fields", () => {
   const registry = JSON.parse(fs.readFileSync(canonicalRegistryPath, "utf-8"));
+  assert.equal(registry.$schema, "./registry.schema.json", "Registry must reference local registry.schema.json schema");
   assert(registry.version, "Registry must define version");
   assert(Array.isArray(registry.skills), "Registry must contain skills array");
-  assert(registry.skills.length >= 10, "Registry must contain at least 10 registered capabilities");
+  assert.equal(registry.skills.length, 21, "Registry must contain exactly 21 registered capabilities");
+
+  const canonicalSchemaPath = path.join(rootDir, "skill/engineering-workflow/registry.schema.json");
+  const mirrorSchemaPath = path.join(rootDir, "skills/engineering-workflow/registry.schema.json");
+  assert(fs.existsSync(canonicalSchemaPath), "Canonical registry.schema.json must exist");
+  assert(fs.existsSync(mirrorSchemaPath), "Mirror registry.schema.json must exist");
+  assert.equal(
+    fs.readFileSync(canonicalSchemaPath, "utf-8"),
+    fs.readFileSync(mirrorSchemaPath, "utf-8"),
+    "Canonical and mirror registry.schema.json must be identical"
+  );
+
+  const schema = JSON.parse(fs.readFileSync(canonicalSchemaPath, "utf-8"));
+  assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema", "Schema must be Draft 2020-12");
 
   const validPolicies = ["model-invocable", "user-only", "host-dependent"];
   const validCapabilityTypes = ["external-skill", "mcp-tool", "bundled-operation"];
   const validFallbackTypes = ["principles-based", "not-applicable", "static-analysis"];
+  const validStrategies = ["skills-cli", "mcp-server", "claude-plugin", "bundled"];
 
   for (const s of registry.skills) {
     assert(s.canonicalName && typeof s.canonicalName === "string", `Skill missing valid canonicalName: ${JSON.stringify(s)}`);
@@ -39,6 +54,17 @@ test("Skill Registry: schema validity, taxonomy, and mandatory skill fields", ()
     assert(validFallbackTypes.includes(s.fallbackType), `Skill '${s.canonicalName}' has invalid fallbackType: ${s.fallbackType}`);
     assert(s.fallbackPolicy && s.fallbackPolicy.length > 10, `Skill '${s.canonicalName}' must define explicit fallbackPolicy`);
     assert(s.executionEvidence && s.executionEvidence.length > 10, `Skill '${s.canonicalName}' must define executionEvidence requirements`);
+
+    // Installation object structure
+    assert(s.installation && typeof s.installation === "object", `Skill '${s.canonicalName}' must define installation object`);
+    assert(validStrategies.includes(s.installation.strategy), `Skill '${s.canonicalName}' has invalid installation.strategy: ${s.installation.strategy}`);
+    assert(s.installation.command && s.installation.command.length > 5, `Skill '${s.canonicalName}' must define non-trivial installation.command`);
+
+    // Evidence-based hosts object structure
+    assert(s.hosts && typeof s.hosts === "object", `Skill '${s.canonicalName}' must define hosts object`);
+    assert(Array.isArray(s.hosts.compatible) && s.hosts.compatible.length > 0, `Skill '${s.canonicalName}' must define hosts.compatible`);
+    assert(Array.isArray(s.hosts.installable) && s.hosts.installable.length > 0, `Skill '${s.canonicalName}' must define hosts.installable`);
+    assert(Array.isArray(s.hosts.verifiedExecuted), `Skill '${s.canonicalName}' must define hosts.verifiedExecuted array`);
   }
 });
 
@@ -252,12 +278,31 @@ test("Skill Registry: all entries declare valid source metadata with verified gi
     if (s.capabilityType === "mcp-tool") {
       assert(s.source.package && typeof s.source.package === "string", `MCP '${s.canonicalName}' must declare source.package`);
       assert(/^\d+\.\d+\.\d+/.test(s.source.version), `MCP '${s.canonicalName}' source.version must be a semver string (got '${s.source.version}')`);
+      // Assert no unpinned @latest
+      assert(!s.installation.command.includes("@latest"), `MCP '${s.canonicalName}' must not use floating @latest tag`);
+      assert(s.installation.command.includes(s.source.version), `MCP '${s.canonicalName}' installation must pin exact version ${s.source.version}`);
     } else {
       assert(/^[0-9a-f]{40}$/.test(s.source.revision), `Skill '${s.canonicalName}' revision must be a 40-character commit SHA`);
     }
     assert.equal(s.source.verifiedAt, "2026-10-28", `Skill '${s.canonicalName}' verifiedAt must be 2026-10-28`);
+
+    // Evidence-based host verification: only claim verifiedExecuted when backed by test
+    if (s.canonicalName === "tdd" || s.canonicalName === "code-review") {
+      assert.deepEqual(s.hosts.verifiedExecuted, ["codex"], `'${s.canonicalName}' verifiedExecuted must reflect Codex host e2e test`);
+    } else {
+      assert.deepEqual(s.hosts.verifiedExecuted, [], `'${s.canonicalName}' verifiedExecuted must be empty without live host test proof`);
+    }
   }
 
   const readme = fs.readFileSync(path.join(rootDir, "README.md"), "utf-8");
   assert(readme.includes("addyosmani/agent-skills"), "README.md must list addyosmani/agent-skills among canonical upstreams");
+
+  // Verify Package Update Policy document
+  const policyPath = path.join(rootDir, "docs/PACKAGE_UPDATE_POLICY.md");
+  assert(fs.existsSync(policyPath), "docs/PACKAGE_UPDATE_POLICY.md must exist");
+  const policyText = fs.readFileSync(policyPath, "utf-8");
+  assert(policyText.includes("Review Cadence"), "Update policy must define Review Cadence");
+  assert(policyText.includes("Monthly"), "Update policy must specify Monthly review cadence");
+  assert(policyText.includes("Security Out-of-Band"), "Update policy must specify security-fix bump policy");
+  assert(policyText.includes("Verification Protocol"), "Update policy must specify verification gates");
 });
