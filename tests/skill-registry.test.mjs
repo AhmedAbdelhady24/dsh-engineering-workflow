@@ -286,6 +286,13 @@ test("Skill Registry: all entries declare valid source metadata with verified gi
     }
     assert.equal(s.source.verifiedAt, "2026-10-28", `Skill '${s.canonicalName}' verifiedAt must be 2026-10-28`);
 
+    // Evidence-based host verification: only claim installable when backed by installer test
+    if (s.capabilityType === "mcp-tool") {
+      assert.deepEqual(s.hosts.installable, ["unknown"], `'${s.canonicalName}' installable must be marked 'unknown' without installer test coverage`);
+    } else {
+      assert.deepEqual(s.hosts.installable, ["codex"], `'${s.canonicalName}' installable must list only 'codex' (covered by installer test)`);
+    }
+
     // Evidence-based host verification: only claim verifiedExecuted when backed by test
     if (s.canonicalName === "tdd" || s.canonicalName === "code-review") {
       assert.deepEqual(s.hosts.verifiedExecuted, ["codex"], `'${s.canonicalName}' verifiedExecuted must reflect Codex host e2e test`);
