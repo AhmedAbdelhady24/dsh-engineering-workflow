@@ -63,7 +63,8 @@ test("Skill Registry: schema validity, taxonomy, and mandatory skill fields", ()
     // Evidence-based hosts object structure
     assert(s.hosts && typeof s.hosts === "object", `Skill '${s.canonicalName}' must define hosts object`);
     assert(Array.isArray(s.hosts.compatible) && s.hosts.compatible.length > 0, `Skill '${s.canonicalName}' must define hosts.compatible`);
-    assert(Array.isArray(s.hosts.installable) && s.hosts.installable.length > 0, `Skill '${s.canonicalName}' must define hosts.installable`);
+    assert(Array.isArray(s.hosts.installable), `Skill '${s.canonicalName}' must define hosts.installable array`);
+    assert(["none", "installer-test", "host-e2e"].includes(s.hosts.evidence), `Skill '${s.canonicalName}' must define valid hosts.evidence marker`);
     assert(Array.isArray(s.hosts.verifiedExecuted), `Skill '${s.canonicalName}' must define hosts.verifiedExecuted array`);
   }
 });
@@ -287,10 +288,21 @@ test("Skill Registry: all entries declare valid source metadata with verified gi
     assert.equal(s.source.verifiedAt, "2026-10-28", `Skill '${s.canonicalName}' verifiedAt must be 2026-10-28`);
 
     // Evidence-based host verification: only claim installable when backed by installer test
+    const validHosts = ["claude", "codex", "antigravity", "dsh"];
+    for (const h of [...s.hosts.compatible, ...s.hosts.installable, ...s.hosts.verifiedExecuted]) {
+      assert(validHosts.includes(h), `Host '${h}' in skill '${s.canonicalName}' must be one of: ${validHosts.join(", ")}`);
+    }
+
     if (s.capabilityType === "mcp-tool") {
-      assert.deepEqual(s.hosts.installable, ["unknown"], `'${s.canonicalName}' installable must be marked 'unknown' without installer test coverage`);
+      assert.deepEqual(s.hosts.installable, [], `'${s.canonicalName}' installable must be empty without installer test coverage`);
+      assert.equal(s.hosts.evidence, "none", `'${s.canonicalName}' hosts.evidence must be 'none'`);
     } else {
       assert.deepEqual(s.hosts.installable, ["codex"], `'${s.canonicalName}' installable must list only 'codex' (covered by installer test)`);
+      if (s.canonicalName === "tdd" || s.canonicalName === "code-review") {
+        assert.equal(s.hosts.evidence, "host-e2e", `'${s.canonicalName}' hosts.evidence must be 'host-e2e'`);
+      } else {
+        assert.equal(s.hosts.evidence, "installer-test", `'${s.canonicalName}' hosts.evidence must be 'installer-test'`);
+      }
     }
 
     // Evidence-based host verification: only claim verifiedExecuted when backed by test

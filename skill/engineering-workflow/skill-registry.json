@@ -41,7 +41,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -84,7 +85,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -123,7 +125,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -162,7 +165,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -205,7 +209,8 @@
         ],
         "verifiedExecuted": [
           "codex"
-        ]
+        ],
+        "evidence": "host-e2e"
       }
     },
     {
@@ -247,7 +252,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -288,7 +294,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -330,7 +337,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -369,7 +377,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -411,7 +420,8 @@
         ],
         "verifiedExecuted": [
           "codex"
-        ]
+        ],
+        "evidence": "host-e2e"
       }
     },
     {
@@ -453,10 +463,9 @@
           "claude",
           "dsh"
         ],
-        "installable": [
-          "unknown"
-        ],
-        "verifiedExecuted": []
+        "installable": [],
+        "verifiedExecuted": [],
+        "evidence": "none"
       }
     },
     {
@@ -497,10 +506,9 @@
           "claude",
           "dsh"
         ],
-        "installable": [
-          "unknown"
-        ],
-        "verifiedExecuted": []
+        "installable": [],
+        "verifiedExecuted": [],
+        "evidence": "none"
       }
     },
     {
@@ -518,7 +526,7 @@
       "conflicts": [],
       "fallbackType": "principles-based",
       "fallbackPolicy": "Use references/ux-audit.md heuristic guidelines.",
-      "executionEvidence": "1\u20135 usability scorecard across evaluated heuristics with verified observations.",
+      "executionEvidence": "1–5 usability scorecard across evaluated heuristics with verified observations.",
       "source": {
         "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
         "revision": "28b3b8dee8c976df4fa3e94aed4e092ad43fcb03",
@@ -538,7 +546,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -576,7 +585,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -614,7 +624,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -652,7 +663,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -691,7 +703,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -730,7 +743,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -769,7 +783,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -810,7 +825,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     },
     {
@@ -851,7 +867,8 @@
         "installable": [
           "codex"
         ],
-        "verifiedExecuted": []
+        "verifiedExecuted": [],
+        "evidence": "installer-test"
       }
     }
   ]

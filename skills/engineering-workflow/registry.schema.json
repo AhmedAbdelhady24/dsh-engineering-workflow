@@ -132,25 +132,32 @@
           },
           "hosts": {
             "type": "object",
-            "required": ["compatible", "installable", "verifiedExecuted"],
+            "required": ["compatible", "installable", "evidence", "verifiedExecuted"],
             "additionalProperties": false,
             "properties": {
               "compatible": {
                 "type": "array",
                 "items": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": ["claude", "codex", "antigravity", "dsh"]
                 }
               },
               "installable": {
                 "type": "array",
                 "items": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": ["claude", "codex", "antigravity", "dsh"]
                 }
+              },
+              "evidence": {
+                "type": "string",
+                "enum": ["none", "installer-test", "host-e2e"]
               },
               "verifiedExecuted": {
                 "type": "array",
                 "items": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": ["claude", "codex", "antigravity", "dsh"]
                 }
               }
             }
