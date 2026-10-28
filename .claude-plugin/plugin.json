@@ -1,6 +1,6 @@
 {
   "name": "engineering-workflow",
-  "version": "1.1.0",
+  "version": "2.2.0",
   "description": "Compaction-proof software engineering orchestrator for Claude Code, Codex, Antigravity, and DSH. Featuring the Skill Execution Contract, TDD vertical slices, two-axis review, and live UX audit.",
   "author": {
     "name": "Ahmed Abdelhady",

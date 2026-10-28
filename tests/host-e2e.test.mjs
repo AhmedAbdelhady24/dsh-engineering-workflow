@@ -78,7 +78,7 @@ test("Host E2E: Skills CLI live skill discovery and multi-agent compatibility", 
   }
 });
 
-test("Host E2E: Real-host setup operation halts before writing files and initializes only post-approval", () => {
+test("Host Contract (Simulated): Setup operation halts before writing files and initializes only post-approval", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-e2e-setup-"));
   try {
     // Install skill into host directory structure
@@ -111,7 +111,7 @@ test("Host E2E: Real-host setup operation halts before writing files and initial
   }
 });
 
-test("Host E2E: Real-host read-only review operation evaluates git diff without mutating working tree", () => {
+test("Host Contract (Simulated): Read-only review operation evaluates git diff without mutating working tree", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-e2e-review-"));
   try {
     execSync("git init -q", { cwd: tempProject });
@@ -153,7 +153,7 @@ test("Host E2E: Real-host read-only review operation evaluates git diff without 
   }
 });
 
-test("Host E2E: Real-host recovery behavior reconciles git commit and flags stale evidence on dirty tree", () => {
+test("Host Contract (Simulated): Recovery behavior reconciles git commit and flags stale evidence on dirty tree", () => {
   const tempProject = fs.mkdtempSync(path.join(os.tmpdir(), "uew-e2e-recovery-"));
   try {
     execSync("git init -q", { cwd: tempProject });

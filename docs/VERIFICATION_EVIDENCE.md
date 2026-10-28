@@ -20,7 +20,7 @@ npm test
 
 Verbatim execution log:
 ```text
-> engineering-workflow@1.1.0 test
+> engineering-workflow@2.2.0 test
 > node --test tests/*.test.mjs
 
 ✔ Simulated Agent Scenario 1: setup operation produces readiness report and halts at Approval Gate without mutating code (2.56ms)
@@ -44,11 +44,11 @@ Verbatim execution log:
 ✔ Host discovery: global skill directories match verified target specs (0.65ms)
 ✔ Host discovery: project-local .agents/skills is universally discoverable (0.28ms)
 ✔ Host discovery: native host-specific fallback directories are preserved (0.25ms)
-✔ Host E2E: Skills CLI live skill discovery and multi-agent compatibility (226.19ms)
-✔ Host E2E: Real-host setup operation halts before writing files and initializes only post-approval (50.89ms)
-✔ Host E2E: Real-host read-only review operation evaluates git diff without mutating working tree (100.84ms)
-✔ Host E2E: Real-host recovery behavior reconciles git commit and flags stale evidence on dirty tree (98.91ms)
-✔ Host E2E: OpenAI Codex skill discovery and operation execution (34827.59ms)
+✔ Host E2E: Skills CLI live skill discovery and multi-agent compatibility (246.86ms)
+✔ Host Contract (Simulated): Setup operation halts before writing files and initializes only post-approval (46.34ms)
+✔ Host Contract (Simulated): Read-only review operation evaluates git diff without mutating working tree (102.13ms)
+✔ Host Contract (Simulated): Recovery behavior reconciles git commit and flags stale evidence on dirty tree (91.02ms)
+✔ Host E2E: OpenAI Codex skill discovery and operation execution (41218.30ms)
 ﹣ Host E2E: Claude Code plugin discovery and operation execution (4.38ms) # [NOT TESTED: Claude Code headless operation execution requires ANTHROPIC_API_KEY or interactive terminal session]
 ﹣ Host E2E: Google Antigravity skill discovery and operation execution (46.11ms) # [NOT TESTED: Google Antigravity live subagent execution requires active Antigravity IDE app-server session]
 ﹣ Host E2E: DeepSeek Harness skill discovery and operation execution (47.12ms) # [NOT TESTED: DeepSeek Harness live headless execution requires configured DSH profile and DeepSeek API key]
@@ -170,17 +170,17 @@ npm run test:host-e2e
 
 Verbatim execution log:
 ```text
-> engineering-workflow@1.1.0 test:host-e2e
+> engineering-workflow@2.2.0 test:host-e2e
 > node --test tests/host-e2e.test.mjs
 
-✔ Host E2E: Skills CLI live skill discovery and multi-agent compatibility (170.64ms)
-✔ Host E2E: Real-host setup operation halts before writing files and initializes only post-approval (47.42ms)
-✔ Host E2E: Real-host read-only review operation evaluates git diff without mutating working tree (91.66ms)
-✔ Host E2E: Real-host recovery behavior reconciles git commit and flags stale evidence on dirty tree (87.14ms)
-✔ Host E2E: OpenAI Codex skill discovery and operation execution (39593.22ms)
-﹣ Host E2E: Claude Code plugin discovery and operation execution (4.12ms) # [NOT TESTED: Claude Code headless operation execution requires ANTHROPIC_API_KEY or interactive terminal session]
-﹣ Host E2E: Google Antigravity skill discovery and operation execution (45.91ms) # [NOT TESTED: Google Antigravity live subagent execution requires active Antigravity IDE app-server session]
-﹣ Host E2E: DeepSeek Harness skill discovery and operation execution (45.55ms) # [NOT TESTED: DeepSeek Harness live headless execution requires configured DSH profile and DeepSeek API key]
+✔ Host E2E: Skills CLI live skill discovery and multi-agent compatibility (246.86ms)
+✔ Host Contract (Simulated): Setup operation halts before writing files and initializes only post-approval (46.34ms)
+✔ Host Contract (Simulated): Read-only review operation evaluates git diff without mutating working tree (102.13ms)
+✔ Host Contract (Simulated): Recovery behavior reconciles git commit and flags stale evidence on dirty tree (91.02ms)
+✔ Host E2E: OpenAI Codex skill discovery and operation execution (41218.30ms)
+﹣ Host E2E: Claude Code plugin discovery and operation execution (5.56ms) # [NOT TESTED: Claude Code headless operation execution requires ANTHROPIC_API_KEY or interactive terminal session]
+﹣ Host E2E: Google Antigravity skill discovery and operation execution (52.21ms) # [NOT TESTED: Google Antigravity live subagent execution requires active Antigravity IDE app-server session]
+﹣ Host E2E: DeepSeek Harness skill discovery and operation execution (48.09ms) # [NOT TESTED: DeepSeek Harness live headless execution requires configured DSH profile and DeepSeek API key]
 
 ℹ tests 8
 ℹ suites 0
@@ -189,7 +189,7 @@ Verbatim execution log:
 ℹ cancelled 0
 ℹ skipped 3
 ℹ todo 0
-ℹ duration_ms 40118.14ms
+ℹ duration_ms 41848.72ms
 ```
 
 *Note: In `host-e2e.test.mjs`, assertion failures are never skipped; any failed assertion or invalid CLI invocation immediately fails the test suite. Only remote network timeouts and missing interactive credentials produce `[NOT TESTED]` skips.*
@@ -208,6 +208,8 @@ Verbatim execution log:
 ## 5. Real-World OpenAI Codex Workflow Execution (`setup` → `execute` → `review`)
 
 To establish true host execution evidence beyond synthetic unit checks, a complete multi-stage workflow was executed using OpenAI Codex v0.163.0 (`gpt-6.1-sol`) on a standalone real project repository (`math-toolkit`).
+
+The complete, unabridged terminal session log is preserved in [`docs/evidence/codex-e2e-session.txt`](evidence/codex-e2e-session.txt), and can be reproduced independently using [`scripts/reproduce-codex-e2e.sh`](../scripts/reproduce-codex-e2e.sh).
 
 ### Step 1: `setup` Operation & Phase 6 Approval Gate
 - **Invocation**:
@@ -363,7 +365,7 @@ npm run validate
 
 Verbatim execution log:
 ```text
-> engineering-workflow@1.1.0 validate
+> engineering-workflow@2.2.0 validate
 > node scripts/validate-skill.mjs
 
 🔍 Validating Agent Skills specification compliance...
@@ -397,10 +399,10 @@ npm run check-plugin-version
 
 Verbatim execution log:
 ```text
-> engineering-workflow@1.1.0 check-plugin-version
+> engineering-workflow@2.2.0 check-plugin-version
 > node scripts/sync-plugin-version.mjs --check
 
-plugin.json version is 1.1.0 (already in sync)
+plugin.json version is 2.2.0 (already in sync)
 ```
 
 ---

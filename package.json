@@ -1,6 +1,6 @@
 {
   "name": "engineering-workflow",
-  "version": "1.1.0",
+  "version": "2.2.0",
   "description": "Compaction-proof universal software engineering workflow orchestrator for Claude Code, Codex, Antigravity, and DSH",
   "type": "module",
   "repository": {
