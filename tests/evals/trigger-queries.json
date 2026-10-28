@@ -1,0 +1,156 @@
+{
+  "version": "1.0.0",
+  "description": "Evaluation dataset of 20 balanced queries testing trigger accuracy for engineering-workflow SKILL.md",
+  "queries": [
+    {
+      "id": "pos-01-setup-slash",
+      "query": "/engineering-workflow setup",
+      "shouldTrigger": true,
+      "isSlashCommand": true,
+      "targetOperation": "setup",
+      "reason": "Explicit slash command invocation for project onboarding and capability readiness audit."
+    },
+    {
+      "id": "pos-02-execute-slash",
+      "query": "/engineering-workflow execute implement the customer notification dispatch service",
+      "shouldTrigger": true,
+      "isSlashCommand": true,
+      "targetOperation": "execute",
+      "reason": "Explicit slash command invocation for feature implementation lifecycle."
+    },
+    {
+      "id": "pos-03-ux-audit-slash",
+      "query": "/engineering-workflow ux-audit navigation",
+      "shouldTrigger": true,
+      "isSlashCommand": true,
+      "targetOperation": "ux-audit",
+      "reason": "Explicit slash command invocation for focused UX audit."
+    },
+    {
+      "id": "pos-04-setup-nl",
+      "query": "We just started this repository. Please inspect our codebase, audit available testing tools and capabilities, and prepare an onboarding readiness report before making changes.",
+      "shouldTrigger": true,
+      "isSlashCommand": false,
+      "targetOperation": "setup",
+      "reason": "Natural language request matching setup operation objectives and approval gate requirements."
+    },
+    {
+      "id": "pos-05-execute-nl-tdd",
+      "query": "Build the shopping cart checkout calculation service following TDD red-green cycles, minimal complete diffs, and bounded review.",
+      "shouldTrigger": true,
+      "isSlashCommand": false,
+      "targetOperation": "execute",
+      "reason": "Natural language request matching the full execute lifecycle: TDD, single-writer rule, and review."
+    },
+    {
+      "id": "pos-06-review-nl",
+      "query": "Perform an independent read-only review of this git diff against repository engineering standards and originating spec compliance.",
+      "shouldTrigger": true,
+      "isSlashCommand": false,
+      "targetOperation": "review",
+      "reason": "Natural language request matching two-axis read-only review operation."
+    },
+    {
+      "id": "pos-07-ux-audit-nl",
+      "query": "Audit the user onboarding flow for WCAG 2.2 AA accessibility, Nielsen usability heuristics, and visual hierarchy using browser walkthroughs.",
+      "shouldTrigger": true,
+      "isSlashCommand": false,
+      "targetOperation": "ux-audit",
+      "reason": "Natural language request matching multi-stage UX audit lifecycle."
+    },
+    {
+      "id": "pos-08-bugfix-nl",
+      "query": "Diagnose and fix the regression in invoice tax calculations: reproduce the failure with a red test first, isolate root cause, and verify green before approval.",
+      "shouldTrigger": true,
+      "isSlashCommand": false,
+      "targetOperation": "execute",
+      "reason": "Natural language request matching bug fixing workflow under execute."
+    },
+    {
+      "id": "pos-09-recovery-nl",
+      "query": "Resume our engineering task from TASK_RECOVERY_LEDGER.md after context compaction, reconciling git status and test results.",
+      "shouldTrigger": true,
+      "isSlashCommand": false,
+      "targetOperation": "execute",
+      "reason": "Natural language request matching context recovery and ledger reconciliation."
+    },
+    {
+      "id": "pos-10-refactor-nl",
+      "query": "Refactor the payment gateway adapter into deep modules hiding implementation complexity behind clean seams, verifying with tests after each vertical slice.",
+      "shouldTrigger": true,
+      "isSlashCommand": false,
+      "targetOperation": "execute",
+      "reason": "Natural language request for complex architectural refactoring with vertical slice verification."
+    },
+    {
+      "id": "neg-01-syntax-explanation",
+      "query": "What is the syntax for declaring a generic mapped type in TypeScript?",
+      "shouldTrigger": false,
+      "isNearMiss": true,
+      "reason": "Pure language syntax Q&A; should answer directly in conversation without triggering a workflow orchestrator."
+    },
+    {
+      "id": "neg-02-single-test-run",
+      "query": "Run the auth test file using vitest to see if it is currently passing.",
+      "shouldTrigger": false,
+      "isNearMiss": true,
+      "reason": "Single test execution command; should execute the shell test command directly without entering workflow."
+    },
+    {
+      "id": "neg-03-commit-message",
+      "query": "Suggest a clean git commit message for these three staged files.",
+      "shouldTrigger": false,
+      "isNearMiss": true,
+      "reason": "Trivial git message formatting request; should answer inline without initiating a workflow."
+    },
+    {
+      "id": "neg-04-code-search",
+      "query": "Find all files in this project where OrderService is imported.",
+      "shouldTrigger": false,
+      "isNearMiss": true,
+      "reason": "Code navigation search query; should use grep or file search directly."
+    },
+    {
+      "id": "neg-05-regex-review",
+      "query": "Check this regular expression for potential exponential backtracking vulnerability: ^(a+)+$",
+      "shouldTrigger": false,
+      "isNearMiss": true,
+      "reason": "Focused regex analysis snippet; should analyze directly without a multi-stage review audit."
+    },
+    {
+      "id": "neg-06-css-snippet",
+      "query": "Convert this CSS flexbox snippet into equivalent CSS grid rules.",
+      "shouldTrigger": false,
+      "isNearMiss": true,
+      "reason": "Inline styling snippet conversion; should answer directly."
+    },
+    {
+      "id": "neg-07-typo-fix",
+      "query": "Fix the spelling mistake in the comment on line 42 of auth.ts.",
+      "shouldTrigger": false,
+      "isNearMiss": true,
+      "reason": "Trivial one-line comment typo fix; should edit the file directly without multi-stage orchestrator overhead."
+    },
+    {
+      "id": "neg-08-docker-check",
+      "query": "Check if docker and docker-compose are installed on this machine.",
+      "shouldTrigger": false,
+      "isNearMiss": false,
+      "reason": "Environment CLI check; should run command directly."
+    },
+    {
+      "id": "neg-09-git-branch-list",
+      "query": "List all remote git branches that were merged into master.",
+      "shouldTrigger": false,
+      "isNearMiss": false,
+      "reason": "Routine git porcelain query; should execute git branch -r --merged directly."
+    },
+    {
+      "id": "neg-10-env-var-lookup",
+      "query": "What is the standard environment variable name for setting Node.js to production mode?",
+      "shouldTrigger": false,
+      "isNearMiss": false,
+      "reason": "Factual configuration query; should answer NODE_ENV directly in chat."
+    }
+  ]
+}
